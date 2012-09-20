@@ -1,0 +1,27 @@
+<h1>Listing robot_states</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Activity</th>
+    <th>Robots</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @robot_states.each do |robot_state| %>
+  <tr>
+    <td><%= robot_state.user %></td>
+    <td><%= robot_state.activity %></td>
+    <td><%= robot_state.robots %></td>
+    <td><%= link_to 'Show', robot_state %></td>
+    <td><%= link_to 'Edit', edit_robot_state_path(robot_state) %></td>
+    <td><%= link_to 'Destroy', robot_state, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Robot state', new_robot_state_path %>
