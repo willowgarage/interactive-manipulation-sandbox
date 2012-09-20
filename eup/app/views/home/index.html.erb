@@ -1,0 +1,22 @@
+<!-- Display list of robots -->
+<h1>Robot command center</h1>
+
+<table>
+<tr>
+  <th> Robot name </th>
+  <th> Picture </th>
+  <th> Status </th>
+  <th> Actions </th>
+</tr>
+
+<% for robot in @robots %>
+<tr>
+  <td> <b><%= robot.name %></b></td>
+  <td> <%= image_tag robot.image.url(:thumb) %></td>
+  <td> Available</td>
+
+  <td> <%= link_to content_tag(:span, "Use this one", :class => "button"), :controller => :robots,
+    :action => "claim", :id => robot.id %></td>
+<% end %>
+</table>
+

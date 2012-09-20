@@ -1,0 +1,148 @@
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+  [1m[36m (2.1ms)[0m  [1mbegin transaction[0m
+  [1m[35mFixture Delete (1.5ms)[0m  DELETE FROM "robots"
+  [1m[36mFixture Insert (0.2ms)[0m  [1mINSERT INTO "robots" ("name", "description", "locx", "locy", "created_at", "updated_at", "id") VALUES ('MyString', 'MyString', 1, 1, '2012-09-15 00:53:41', '2012-09-15 00:53:41', 980190962)[0m
+  [1m[35mFixture Insert (0.1ms)[0m  INSERT INTO "robots" ("name", "description", "locx", "locy", "created_at", "updated_at", "id") VALUES ('MyString', 'MyString', 1, 1, '2012-09-15 00:53:41', '2012-09-15 00:53:41', 298486374)
+  [1m[36mFixture Delete (0.0ms)[0m  [1mDELETE FROM "places"[0m
+  [1m[35mFixture Insert (0.1ms)[0m  INSERT INTO "places" ("name", "tags", "locx", "locy", "created_at", "updated_at", "id") VALUES ('MyString', 'MyString', 1, 1, '2012-09-15 00:53:41', '2012-09-15 00:53:41', 980190962)
+  [1m[36mFixture Insert (0.1ms)[0m  [1mINSERT INTO "places" ("name", "tags", "locx", "locy", "created_at", "updated_at", "id") VALUES ('MyString', 'MyString', 1, 1, '2012-09-15 00:53:41', '2012-09-15 00:53:41', 298486374)[0m
+  [1m[35m (5.3ms)[0m  commit transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+Processing by HomeController#index as HTML
+  [1m[35mRobot Load (5.1ms)[0m  SELECT "robots".* FROM "robots" 
+  Rendered home/index.html.erb within layouts/application (6.7ms)
+Completed 200 OK in 69ms (Views: 45.7ms | ActiveRecord: 5.1ms)
+  [1m[36m (0.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mPlace Load (1.6ms)[0m  [1mSELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+  [1m[35m (0.1ms)[0m  SELECT COUNT(*) FROM "places" 
+Processing by PlacesController#create as HTML
+  Parameters: {"place"=>{"locx"=>"1", "locy"=>"1", "name"=>"MyString", "tags"=>"MyString"}}
+  [1m[36m (0.0ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (20.1ms)[0m  INSERT INTO "places" ("created_at", "image_content_type", "image_file_name", "image_file_size", "image_updated_at", "locx", "locy", "name", "tags", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  [["created_at", Sat, 15 Sep 2012 00:53:41 UTC +00:00], ["image_content_type", nil], ["image_file_name", nil], ["image_file_size", nil], ["image_updated_at", nil], ["locx", 1], ["locy", 1], ["name", "MyString"], ["tags", "MyString"], ["updated_at", Sat, 15 Sep 2012 00:53:41 UTC +00:00]]
+[paperclip] Saving attachments.
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/places/980190963
+Completed 302 Found in 24ms (ActiveRecord: 20.1ms)
+  [1m[35m (0.1ms)[0m  SELECT COUNT(*) FROM "places" 
+  [1m[36m (1.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mPlace Load (1.9ms)[0m  [1mSELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+  [1m[35m (0.0ms)[0m  SELECT COUNT(*) FROM "places" 
+Processing by PlacesController#destroy as HTML
+  Parameters: {"id"=>"980190962"}
+  [1m[36mPlace Load (0.0ms)[0m  [1mSELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1[0m  [["id", "980190962"]]
+  [1m[35m (0.0ms)[0m  SAVEPOINT active_record_1
+[paperclip] Scheduling attachments for deletion.
+  [1m[36mSQL (0.8ms)[0m  [1mDELETE FROM "places" WHERE "places"."id" = ?[0m  [["id", 980190962]]
+[paperclip] Deleting attachments.
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+Redirected to http://test.host/places
+Completed 302 Found in 3ms (ActiveRecord: 0.9ms)
+  [1m[36m (0.0ms)[0m  [1mSELECT COUNT(*) FROM "places" [0m
+  [1m[35m (1.4ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mPlace Load (1.5ms)[0m  SELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1  [["id", 980190962]]
+Processing by PlacesController#edit as HTML
+  Parameters: {"id"=>"980190962"}
+  [1m[36mPlace Load (0.0ms)[0m  [1mSELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1[0m  [["id", "980190962"]]
+  Rendered places/_form.html.erb (12.3ms)
+Completed 200 OK in 26ms (Views: 25.0ms | ActiveRecord: 0.0ms)
+  [1m[35m (0.3ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mPlace Load (1.5ms)[0m  SELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1  [["id", 980190962]]
+Processing by PlacesController#index as HTML
+  [1m[36mPlace Load (0.1ms)[0m  [1mSELECT "places".* FROM "places" [0m
+Completed 200 OK in 12ms (Views: 11.6ms | ActiveRecord: 0.1ms)
+  [1m[35m (0.3ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mPlace Load (1.3ms)[0m  SELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1  [["id", 980190962]]
+Processing by PlacesController#new as HTML
+  Rendered places/_form.html.erb (2.2ms)
+Completed 200 OK in 10ms (Views: 9.2ms | ActiveRecord: 0.0ms)
+  [1m[36m (0.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mPlace Load (1.5ms)[0m  [1mSELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+Processing by PlacesController#show as HTML
+  Parameters: {"id"=>"980190962"}
+  [1m[35mPlace Load (0.1ms)[0m  SELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1  [["id", "980190962"]]
+Completed 200 OK in 10ms (Views: 8.9ms | ActiveRecord: 0.1ms)
+  [1m[36m (0.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mPlace Load (1.3ms)[0m  [1mSELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+Processing by PlacesController#update as HTML
+  Parameters: {"place"=>{"locx"=>"1", "locy"=>"1", "name"=>"MyString", "tags"=>"MyString"}, "id"=>"980190962"}
+  [1m[35mPlace Load (0.1ms)[0m  SELECT "places".* FROM "places" WHERE "places"."id" = ? LIMIT 1  [["id", "980190962"]]
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+[paperclip] Saving attachments.
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+Redirected to http://test.host/places/980190962
+Completed 302 Found in 4ms (ActiveRecord: 0.2ms)
+  [1m[36m (0.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mRobot Load (1.4ms)[0m  [1mSELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+  [1m[35m (0.2ms)[0m  SELECT COUNT(*) FROM "robots" 
+Processing by RobotsController#create as HTML
+  Parameters: {"robot"=>{"description"=>"MyString", "locx"=>"1", "locy"=>"1", "name"=>"MyString"}}
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (1.1ms)[0m  INSERT INTO "robots" ("created_at", "description", "image_content_type", "image_file_name", "image_file_size", "image_updated_at", "locx", "locy", "name", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  [["created_at", Sat, 15 Sep 2012 00:53:41 UTC +00:00], ["description", "MyString"], ["image_content_type", nil], ["image_file_name", nil], ["image_file_size", nil], ["image_updated_at", nil], ["locx", 1], ["locy", 1], ["name", "MyString"], ["updated_at", Sat, 15 Sep 2012 00:53:41 UTC +00:00]]
+[paperclip] Saving attachments.
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/robots/980190963
+Completed 302 Found in 7ms (ActiveRecord: 1.2ms)
+  [1m[35m (0.1ms)[0m  SELECT COUNT(*) FROM "robots" 
+  [1m[36m (1.8ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mRobot Load (1.8ms)[0m  [1mSELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+  [1m[35m (0.1ms)[0m  SELECT COUNT(*) FROM "robots" 
+Processing by RobotsController#destroy as HTML
+  Parameters: {"id"=>"980190962"}
+  [1m[36mRobot Load (0.1ms)[0m  [1mSELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1[0m  [["id", "980190962"]]
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+[paperclip] Scheduling attachments for deletion.
+  [1m[36mSQL (0.9ms)[0m  [1mDELETE FROM "robots" WHERE "robots"."id" = ?[0m  [["id", 980190962]]
+[paperclip] Deleting attachments.
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+Redirected to http://test.host/robots
+Completed 302 Found in 5ms (ActiveRecord: 1.1ms)
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(*) FROM "robots" [0m
+  [1m[35m (1.4ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mRobot Load (2.2ms)[0m  SELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1  [["id", 980190962]]
+Processing by RobotsController#edit as HTML
+  Parameters: {"id"=>"980190962"}
+  [1m[36mRobot Load (0.1ms)[0m  [1mSELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1[0m  [["id", "980190962"]]
+  Rendered robots/_form.html.erb (5.2ms)
+Completed 200 OK in 24ms (Views: 23.0ms | ActiveRecord: 0.1ms)
+  [1m[35m (0.3ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mRobot Load (1.5ms)[0m  SELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1  [["id", 980190962]]
+Processing by RobotsController#index as HTML
+  [1m[36mRobot Load (0.2ms)[0m  [1mSELECT "robots".* FROM "robots" [0m
+Completed 200 OK in 13ms (Views: 11.4ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.4ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mRobot Load (1.7ms)[0m  SELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1  [["id", 980190962]]
+Processing by RobotsController#new as HTML
+  Rendered robots/_form.html.erb (4.0ms)
+Completed 200 OK in 12ms (Views: 11.2ms | ActiveRecord: 0.0ms)
+  [1m[36m (0.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mRobot Load (1.2ms)[0m  [1mSELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+Processing by RobotsController#show as HTML
+  Parameters: {"id"=>"980190962"}
+  [1m[35mRobot Load (0.1ms)[0m  SELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1  [["id", "980190962"]]
+Completed 200 OK in 10ms (Views: 8.9ms | ActiveRecord: 0.1ms)
+  [1m[36m (0.3ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36mRobot Load (1.1ms)[0m  [1mSELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1[0m  [["id", 980190962]]
+Processing by RobotsController#update as HTML
+  Parameters: {"robot"=>{"description"=>"MyString", "locx"=>"1", "locy"=>"1", "name"=>"MyString"}, "id"=>"980190962"}
+  [1m[35mRobot Load (0.1ms)[0m  SELECT "robots".* FROM "robots" WHERE "robots"."id" = ? LIMIT 1  [["id", "980190962"]]
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+[paperclip] Saving attachments.
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+Redirected to http://test.host/robots/980190962
+Completed 302 Found in 4ms (ActiveRecord: 0.2ms)
+  [1m[36m (0.6ms)[0m  [1mrollback transaction[0m

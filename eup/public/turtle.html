@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>Turtle control via ROSbridge</title>
+<style type="text/css" src="button.css">
+</style>
+</head>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script type="text/javascript" src="ros/ros.js"></script>
+<script type="text/javascript">
+    // This is the turtle to connect to
+    var con = new Bridge("ws://10.0.129.19:9090");
+    // And this is the version of ROS it has
+    var USE_ELECTRIC = true;
+
+    // send velocity command to the robot
+
+    function start_moving_electric(keycode) {
+	    console.log("Starting to move, keycode: " + keycode);
+	    //con.publish('/cmd_vel', {"linear":{"x":5,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    if (keycode == 38) {
+		// Forward
+		//con.publish('/cmd_vel', {"linear":1.0,"angular":0.0});
+		con.publish('/cmd_vel', {"linear":{"x":1.0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    } else if (keycode == 40) {
+		// Backward
+		//con.publish('/cmd_vel', {"linear":-1.0,"angular":0.0});
+		con.publish('/cmd_vel', {"linear":{"x":-1.0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    } else if (keycode == 39) {
+		// Left
+		//con.publish('/cmd_vel', {"linear":0.0,"angular":1.0});
+		con.publish('/cmd_vel', {"linear":{"x":0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":-1.0}});
+	    } else if (keycode == 37) {
+		// Right
+		//con.publish('/cmd_vel', {"linear":0.0,"angular":-1.0});
+		con.publish('/cmd_vel', {"linear":{"x":0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":1.0}});
+	    }
+    }
+
+    function stop_moving_electric(keycode) {
+	    console.log("ELECTRIC Done moving, keycode: " + keycode);
+	    //con.publish('/turtle1/command_velocity', {"linear":{"x":0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    if (keycode >= 37 && keycode <= 40) {
+		//con.publish('/cmd_vel', {"linear":0,"angular":0});
+		con.publish('/cmd_vel', {"linear":{"x":0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    }
+    }
+
+    function main() { 
+	if (USE_ELECTRIC) {
+	    // electric
+	    document.addEventListener('keydown', function(e) {start_moving_electric(e.keyCode); }, true);
+	    document.addEventListener('keyup', function(e) {stop_moving_electric(e.keyCode); }, true);
+	} else {
+	    // fuerte
+	    document.addEventListener('keydown', function(e) {start_moving_fuerte(e.keyCode); }, true);
+	    document.addEventListener('keyup', function(e) {stop_moving_fuerte(e.keyCode); }, true);
+	}
+    }
+
+    main();
+
+</script>
+
+<h1>Turtle controller</h1>
+
+Drive your turtle by pressing the arrow keys
+
+<p>
+<!--
+<div id="startbutton" class="button" onclick="start_moving()">Start moving</div>
+<p>
+<div id="stopbutton" class="button" onclick="stop_moving()">Stop moving</div>
+-->
+
+</body>
+</html>
+
+<!-- 
+    function start_moving_fuerte(keycode) {
+	    console.log("Starting to move, keycode: " + keycode);
+	    //con.publish('/cmd_vel', {"linear":{"x":5,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    if (keycode == 38) {
+		// Forward
+		con.publish('/turtle1/command_velocity', {"linear": 1, "angular": 0});
+	    } else if (keycode == 40) {
+		// Backward
+		con.publish('/turtle1/command_velocity', {"linear": -1, "angular": 0});
+	    } else if (keycode == 39) {
+		// Left
+		con.publish('/turtle1/command_velocity', {"linear": 0, "angular": -1});
+	    } else if (keycode == 37) {
+		// Right
+		con.publish('/turtle1/command_velocity', {"linear": 0, "angular": 1});
+	    }
+    }
+
+    function stop_moving_fuerte(keycode) {
+	    console.log("Done moving, keycode: " + keycode);
+	    //con.publish('/turtle1/command_velocity', {"linear":{"x":0,"y":0,"z":0},"angular":{"x":0,"y":0,"z":0}});
+	    con.publish('/turtle1/command_velocity', {"linear":0, "angular": 0});
+    }
+
+-->
