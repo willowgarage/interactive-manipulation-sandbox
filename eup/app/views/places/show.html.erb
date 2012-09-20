@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @place.name %>
+</p>
+
+<p>
+  <b>Tags:</b>
+  <%= @place.tags %>
+</p>
+
+<p>
+  <b>Locx:</b>
+  <%= @place.locx %>
+</p>
+
+<p>
+  <b>Locy:</b>
+  <%= @place.locy %>
+</p>
+
+<p>
+  <b>Image:</b>
+  <%= image_tag @place.image.url(:medium) %>
+</p>
+
+<%= link_to 'Edit', edit_place_path(@place) %> |
+<%= link_to 'Back', places_path %>

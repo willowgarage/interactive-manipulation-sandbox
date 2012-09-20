@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @robot.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @robot.description %>
+</p>
+
+<p>
+  <b>Locx:</b>
+  <%= @robot.locx %>
+</p>
+
+<p>
+  <b>Locy:</b>
+  <%= @robot.locy %>
+</p>
+
+<p>
+  <b>Image:</b>
+  <%= image_tag @robot.image.url(:medium) %>
+</p>
+
+<%= link_to 'Edit', edit_robot_path(@robot) %> |
+<%= link_to 'Back', robots_path %>

@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @robot_state.user %>
+</p>
+
+<p>
+  <b>Activity:</b>
+  <%= @robot_state.activity %>
+</p>
+
+<p>
+  <b>Robots:</b>
+  <%= @robot_state.robots %>
+</p>
+
+
+<%= link_to 'Edit', edit_robot_state_path(@robot_state) %> |
+<%= link_to 'Back', robot_states_path %>
