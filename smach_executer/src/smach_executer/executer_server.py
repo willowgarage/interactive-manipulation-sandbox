@@ -1,3 +1,4 @@
+import traceback
 import json
 import rospy
 import actionlib
@@ -40,6 +41,7 @@ class ExecuterServer:
             outcome = self.execute_action(action_dict)
         except ValueError as e:
             rospy.logerr('Runtime error while executing state machine: %s' % str(e))
+            traceback.print_exc()
             result = ExecuteResult()
             result.retval = result.RETVAL_RUNTIME_ERROR
             result.error_string = str(e)

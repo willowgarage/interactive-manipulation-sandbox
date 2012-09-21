@@ -2,8 +2,9 @@
     "type": "action"
   , "name": "NavigateToPose"
   , "inputs": {
-      "x": 1.0
-    , "y": 2.0
-    , "theta": 3.14
+      "frame_id": "/map"
+    , "x": 7.908
+    , "y": 28.707
+    , "theta": 0.0
   }
 }
