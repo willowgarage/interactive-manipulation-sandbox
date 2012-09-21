@@ -4,28 +4,28 @@ import sys
 import rospy
 import actionlib
 
-from smach_executer.msg import ExecuterInterfaceAction, ExecuterInterfaceGoal
+from executer_actions.msg import ExecuteAction, ExecuteGoal
 
 # parse command line args
 json_filename = sys.argv[1]
 if len(sys.argv) > 2:
     executer_action_topic = sys.argv[2]
 else:
-    executer_action_topic = '/executer_interface'
+    execute_action_topic = '/executer/execute'
 
 
 
 # create node and connect to action server
 rospy.init_node('executer_caller', anonymous=True)
 print '== Connecting to action server'
-ac = actionlib.SimpleActionClient(executer_action_topic, ExecuterInterfaceAction)
+ac = actionlib.SimpleActionClient(execute_action_topic, ExecuteAction)
 ac.wait_for_server()
 
 # send goal and wait for result
-goal = ExecuterInterfaceGoal()
-goal.json_str = open(json_filename).read()
+goal = ExecuteGoal()
+goal.action = open(json_filename).read()
 print '== Sending json:'
-print goal.json_str
+print goal.action
 ac.send_goal(goal)
 ac.wait_for_result()
 

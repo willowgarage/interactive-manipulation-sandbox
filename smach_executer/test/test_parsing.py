@@ -18,7 +18,7 @@ def test_parse_empty_dict():
     except ValueError:
         return
 
-def test_execute_dummy_action():
+def test_parse_dummy_action():
     ''' Parse a simple action from JSON '''
     json_filename = os.path.join(json_dir, 'execute_dummy_action.js')
     request_str = open(json_filename).read()
@@ -26,4 +26,3 @@ def test_execute_dummy_action():
     sm = parser.create_state_machine_from_action_dict(
         request_dict, {'Dummy':Dummy})
     sm.execute()
-

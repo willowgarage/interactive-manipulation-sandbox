@@ -2,7 +2,7 @@ import json
 import rospy
 import actionlib
 
-from smach_executer.msg import ExecuterInterfaceAction, ExecuterInterfaceResult
+from executer_actions.msg import ExecuteAction, ExecuteResult
 from smach_executer import parser
 from smach_executer.actions.dummy import Dummy
 from smach_executer.actions.navigate_to_pose import NavigateToPose
@@ -12,7 +12,7 @@ class ExecuterServer:
         self.debug_mode = debug_mode
         
         self.actionlib_server = actionlib.SimpleActionServer(
-            'executer_interface', ExecuterInterfaceAction, self.execute, False)
+            'executer/execute', ExecuteAction, self.execute, False)
 
         # set of actions should eventually be found dynamically, instead of defined explicitly here
         self.actions = {'Dummy': Dummy, 'NavigateToPose': NavigateToPose}
@@ -26,61 +26,33 @@ class ExecuterServer:
 
         # parse the json string
         try:
-            request_dict = json.loads(goal.json_str)
+            action_dict = json.loads(goal.action)
         except KeyError as e:
             rospy.logerr('Unable to parse json string (%s)' % (str(e),))
-            result = ExecuterInterfaceResult()
+            result = ExecuteResult()
             result.retval = result.RETVAL_PARSE_ERROR
             result.error_string = str(e)
             self.actionlib_server.set_succeeded(result)
             return
 
-        # check what operation is being requested
+        # execute the action
         try:
-            op = request_dict['op']
+            outcome = self.execute_action(action_dict)
         except ValueError as e:
-            rospy.logerr('JSON message missing "op" field')
-            result = ExecuterInterfaceResult()
-            result.retval = result.RETVAL_PARSE_ERROR
+            rospy.logerr('Runtime error while executing state machine: %s' % str(e))
+            result = ExecuteResult()
+            result.retval = result.RETVAL_RUNTIME_ERROR
             result.error_string = str(e)
-            self.actionlib_server.set_succeeded(result)
-            return
-
-        if op == 'execute':
-            try:
-                action_dict = request_dict['action']
-            except KeyError as e:
-                rospy.logerr('Execute requested but no "action" field specified')
-                result = ExecuterInterfaceResult()
-                result.retval = result.RETVAL_PARSE_ERROR
-                result.error_string = str(e)
-                self.actionlib_server.set_succeeded(result)
-                return
-
-            # execute the operation
-            try:
-                outcome = self.execute_action(action_dict)
-            except ValueError as e:
-                rospy.logerr('Runtime error while executing state machine: %s' % str(e))
-                result = ExecuterInterfaceResult()
-                result.retval = result.RETVAL_RUNTIME_ERROR
-                result.error_string = str(e)
-                result.retval = result.RETVAL_SUCCESS
-                self.actionlib_server.set_succeeded(result)
-                return
-            
-            result = ExecuterInterfaceResult()
             result.retval = result.RETVAL_SUCCESS
-            result.outcome = outcome
             self.actionlib_server.set_succeeded(result)
             return
-        else:
-            rospy.logerr('Unkown operation "%s"' % op)
-            result = ExecuterInterfaceResult()    
-            result.retval = result.RETVAL_PARSE_ERROR
-            result.error_string = str(e)
-            self.actionlib_server.set_succeeded(result)
-            return
+
+        # finished successfully (even though the action itself may have failed)
+        result = ExecuteResult()
+        result.retval = result.RETVAL_SUCCESS
+        result.outcome = outcome
+        self.actionlib_server.set_succeeded(result)
+        return
             
     def execute_action(self, action_dict):
         # create a state machine wrapper for the action
