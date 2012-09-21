@@ -5,7 +5,7 @@ import json
 
 from smach_executer import parser
 from smach_executer.action import Action
-from smach_executer.actions.dummy_action import DummyAction
+from smach_executer.actions.dummy import Dummy
 
 # find directories we need
 package_root_dir = roslib.packages.get_pkg_dir(PACKAGE_NAME)
@@ -18,12 +18,12 @@ def test_parse_empty_dict():
     except ValueError:
         return
 
-def test_dummy_action():
+def test_execute_dummy_action():
     ''' Parse a simple action from JSON '''
     json_filename = os.path.join(json_dir, 'execute_dummy_action.js')
     request_str = open(json_filename).read()
     request_dict = json.loads(request_str)
     sm = parser.create_state_machine_from_action_dict(
-        request_dict['action'], {'Dummy':Dummy})
+        request_dict, {'Dummy':Dummy})
     sm.execute()
 
