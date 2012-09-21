@@ -34,13 +34,15 @@ var w = 480,
 
 // x, y, width, height
 var rooms = [
-  [310, 338, 29, 34, "Tessa's office"],
-  [307, 149, 42, 97, "The Green Room"],
-  [187, 235, 70, 75, "The pool room"],
-  [72, 190, 102, 73, "The Cathedral"],
-  [341, 339, 28, 33, "Brandon's office"],
-  [259, 248, 50, 32, "The Cave"]
-  ];
+  [310, 338, 29, 34, "Tessa's office", 1],
+  [280, 348, 28, 23, "Chad's office", 2],
+  [341, 339, 28, 33, "Brandon's office", 3],
+  [259, 248, 50, 32, "The Cave", 4],
+  [307, 149, 42, 97, "The Green Room", 5],
+  [279, 50, 181, 78, "The cafeteria", 6],
+  [187, 235, 70, 75, "The pool room", 7],
+  [72, 190, 102, 73, "The Cathedral", 8]
+];
 /* TODO: get room data from Rails
 var rooms = d3.json("<%= url_for(:controller => :room, :action => :list) %>");
 alert(rooms);
@@ -69,6 +71,10 @@ alert(rooms);
         })
       .on("mouseout", function() {
         d3.select("#placename").text("");
+        })
+      .on("click", function(d) {
+        var url = "<%= url_for(:controller => :places, :action => :navigate) %>" + "/" + d[5];
+        window.location = url;
         });
 
 })();
