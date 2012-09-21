@@ -1,0 +1,7 @@
+*.pyc
+*~
+bin
+build
+msg
+msg_gen
+*#*

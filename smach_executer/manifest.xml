@@ -1,0 +1,17 @@
+<package>
+  <description brief="smach_executer">
+  </description>
+  <author>Jon Binney</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/smach_executer</url>
+
+  <depend package="rospy" />
+  <depend package="tf" />
+  <depend package="smach" />
+  <depend package="smach_ros" />
+  <depend package="actionlib"/>
+  <depend package="actionlib_msgs"/>
+  <depend package="move_base_msgs"/>
+
+</package>
