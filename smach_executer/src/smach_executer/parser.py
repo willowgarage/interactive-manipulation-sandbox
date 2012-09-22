@@ -32,8 +32,13 @@ def create_state_machine_from_action_dict(action_dict, actions):
         sm.userdata[input_name] = action_inputs[input_name]
 
     # add this one action to the wrapper state machine
+
+    transitions = {}
+    for x in outcomes:
+        transitions[x] = x
+
     with sm:
-        smach.StateMachine.add('state_%d' % (0,), action, transitions={x:x for x in outcomes})
+        smach.StateMachine.add('state_%d' % (0,), action, transitions=transitions)
         
     return sm
 
