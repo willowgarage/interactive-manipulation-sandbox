@@ -114,6 +114,8 @@ var ActionClient = function(options) {
     actionClient.goals[goal.goalId] = this;
 
     goal.send = function(timeout) {
+      console.log(goal.goalMessage);
+      console.log(actionClient.goalTopic);
       actionClient.goalTopic.publish(goal.goalMessage);
       if (timeout) {
          setTimeout(function() {

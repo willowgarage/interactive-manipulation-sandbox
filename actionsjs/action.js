@@ -9,7 +9,7 @@ var Action = function(options) {
 
     var actionClient = new ActionClient({
       ros        : action.ros
-    , actionName : 'SmachExecuter'
+    , actionName : 'executer_actions/ExecuteAction'
     , serverName : '/executer/execute'
     });
 
