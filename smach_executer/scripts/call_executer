@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+import roslib; roslib.load_manifest("smach_executer")
+import sys
+import rospy
+import actionlib
+
+from executer_actions.msg import ExecuteAction, ExecuteGoal
+
+# parse command line args
+json_filename = sys.argv[1]
+if len(sys.argv) > 2:
+    executer_action_topic = sys.argv[2]
+else:
+    execute_action_topic = '/executer/execute'
+
+
+
+# create node and connect to action server
+rospy.init_node('executer_caller', anonymous=True)
+print '== Connecting to action server'
+ac = actionlib.SimpleActionClient(execute_action_topic, ExecuteAction)
+ac.wait_for_server()
+
+# send goal and wait for result
+goal = ExecuteGoal()
+goal.action = open(json_filename).read()
+print '== Sending json:'
+print goal.action
+ac.send_goal(goal)
+ac.wait_for_result()
+
+result = ac.get_result()
+print '== Result:'
+print result

@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+import roslib; roslib.load_manifest('smach_executer')
+import argparse
+import rospy
+
+from smach_executer.executer_server import ExecuterServer
+
+rospy.init_node('executer')
+ex_server = ExecuterServer(debug_mode=True)
+ex_server.start()
+rospy.spin()
