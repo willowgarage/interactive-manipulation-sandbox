@@ -1,4 +1,4 @@
-<%= form_for(@place, :url => places_path, :html => { :multipart => true }) do |f| %>
+<%= form_for(@place, :html => { :multipart => true }) do |f| %>
   <% if @place.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@place.errors.count, "error") %> prohibited this place from being saved:</h2>
@@ -21,13 +21,18 @@
   </div>
   <div class="field">
     <%= f.label :locx %><br />
-    <%= f.number_field :locx %>
+    <%= f.number_field :locx, :type => 'float' %>
   </div>
   <div class="field">
     <%= f.label :locy %><br />
-    <%= f.number_field :locy %>
+    <%= f.number_field :locy, :type => 'float' %>
   </div>
   <div class="field">
+    <%= f.label :angle %><br />
+    <%= f.number_field :angle, :type => 'float' %>
+  </div>
+  <div class="field">
+    <%= image_tag @place.image.url(:thumb) %>
     <%= f.label :image %><br />
     <%= f.file_field :image %>
   </div>

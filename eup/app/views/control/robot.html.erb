@@ -1,17 +1,14 @@
-<h1><%= @robot.name %></h1>
 
-<%= image_tag "robot.jpg", :style => "float: right; height: 100px;" %>
-<%= image_tag @robot.image.url(:thumb), :style => "float: left; margin-right: 20px;" %>
+<% if @q.nil? %>
+
 <p>Enter the name of a place:</p>
 
-<%= form_tag(:controller => 'home', :action => 'search') %>
+<%= form_tag(:controller => 'control', :action => 'robot') %>
 <input name="q" type="text" size="100">
 <%= submit_tag("Go") %>
 </form>
 
 <br clear="both">
-
-<% if @q.nil? %>
 
 <p>or select it from this map:</p>
 
@@ -32,14 +29,14 @@ var w = 480,
   x = d3.scale.linear().domain([0, w])
   y = d3.scale.ordinal().domain([0, h]);
 
-// x, y, width, height
+// x, y, width, height, name, place-id
 var rooms = [
   [310, 338, 29, 34, "Tessa's office", 1],
   [280, 348, 28, 23, "Chad's office", 2],
   [341, 339, 28, 33, "Brandon's office", 3],
   [259, 248, 50, 32, "The Cave", 4],
   [307, 149, 42, 97, "The Green Room", 5],
-  [279, 50, 181, 78, "The cafeteria", 6],
+//  [279, 50, 181, 78, "The cafeteria", 6],
   [187, 235, 70, 75, "The pool room", 7],
   [72, 190, 102, 73, "The Cathedral", 8]
 ];
@@ -73,7 +70,7 @@ alert(rooms);
         d3.select("#placename").text("");
         })
       .on("click", function(d) {
-        var url = "<%= url_for(:controller => :places, :action => :navigate) %>" + "/" + d[5];
+        var url = "<%= url_for(:controller => :control, :action => :navigate) %>" + "/" + d[5];
         window.location = url;
         });
 
@@ -85,11 +82,11 @@ alert(rooms);
   <ul>
     <% for place in @places %>
     <!--
-      <li> <%= link_to image_tag(place.image(:thumb)), :controller => :places, :action => :navigate, :id => place.id %>
-        <%= link_to place.name, :controller => :places, :action => :navigate, :id => place.id %>
+      <li> <%= link_to image_tag(place.image(:thumb)), :controller => :control, :action => :navigate, :id => place.id %>
+        <%= link_to place.name, :controller => :control, :action => :navigate, :id => place.id %>
       -->
       <li> <%= image_tag(place.image(:thumb)) %> <%= place.name %>
-        <%= link_to content_tag(:span, "Drive here", :class=>"button"), :controller => :places, :action => :navigate, :id => place.id %>
+        <%= link_to content_tag(:span, "Drive here", :class=>"button"), :controller => :control, :action => :navigate, :id => place.id %>
     <% end %>
   </ul>
 <% end %>
