@@ -1,15 +1,16 @@
 from django.db import models
+from djangotoolbox.fields import ListField
 
-class Place(model.Model):
-    name = model.TextField()
-    tags = model.ListField()
-    image = model.ImageField()
+class Place(models.Model):
+    name = models.TextField()
+    tags = ListField()
+    image = models.ImageField()
 
-    pose_x = model.FloatField()
-    pose_y = model.FloatField()
-    pose_angle = model.FloatField()
+    pose_x = models.FloatField()
+    pose_y = models.FloatField()
+    pose_angle = models.FloatField()
 
-    map_x = model.IntegerField()
-    map_y = model.integerField()
-    map_width = model.IntegerField()
-    map_height = model.IntegerField()
+    map_x = models.IntegerField()
+    map_y = models.IntegerField()
+    map_width = models.IntegerField()
+    map_height = models.IntegerField()
