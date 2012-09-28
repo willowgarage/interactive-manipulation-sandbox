@@ -29,9 +29,6 @@ function(
     }
 
   , render: function() {
-      this.collection.each(function(e) {
-        console.log(e);
-      });
       var html = this.template({ 'locations': this.collection });
       this.$el.html(html);
       return this;
