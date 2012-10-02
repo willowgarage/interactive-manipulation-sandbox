@@ -1,0 +1,8 @@
+This is a sample UI to command the TurtleBot from a Mobile Web interface
+using jquery-mobile and the latest rosjs API
+
+TO-DO:
+ * Configurable TurtleBot IP address
+ * Smooth movements (instead of clicks / taps)
+ * Auto-registration and discovery of clients
+ 
