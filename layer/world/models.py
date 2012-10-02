@@ -2,23 +2,27 @@ from django.db import models
 from djangotoolbox.fields import ListField
 from .forms import StringListField
 
+"""
+JAC: Commenting out TagsField: not used at the moment (giving trouble left and right)
+
 class TagsField(ListField):
     def formfield(self, **kwargs):
         return models.Field.formfield(self, StringListField, **kwargs)
+"""
 
 class Place(models.Model):
     name = models.TextField()
-    tags = TagsField()
-    image = models.ImageField(upload_to="images")
+    tags = models.TextField(blank=True,null=True)
+    image = models.ImageField(upload_to="images",blank=True,null=True)
 
-    pose_x = models.FloatField()
-    pose_y = models.FloatField()
-    pose_angle = models.FloatField()
+    pose_x = models.FloatField(blank=True,null=True)
+    pose_y = models.FloatField(blank=True,null=True)
+    pose_angle = models.FloatField(blank=True,null=True)
 
-    map_x = models.IntegerField()
-    map_y = models.IntegerField()
-    map_width = models.IntegerField()
-    map_height = models.IntegerField()
+    map_x = models.IntegerField(blank=True,null=True)
+    map_y = models.IntegerField(blank=True,null=True)
+    map_width = models.IntegerField(blank=True,null=True)
+    map_height = models.IntegerField(blank=True,null=True)
 
 class Robot(models.Model):
     pass
