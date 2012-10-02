@@ -1,9 +1,14 @@
 from django.db import models
 from djangotoolbox.fields import ListField
+from .forms import StringListField
+
+class TagsField(ListField):
+    def formfield(self, **kwargs):
+        return models.Field.formfield(self, StringListField, **kwargs)
 
 class Place(models.Model):
     name = models.TextField()
-    tags = ListField()
+    tags = TagsField()
     image = models.ImageField(upload_to="images")
 
     pose_x = models.FloatField()
