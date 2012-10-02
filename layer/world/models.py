@@ -4,7 +4,7 @@ from djangotoolbox.fields import ListField
 class Place(models.Model):
     name = models.TextField()
     tags = ListField()
-    image = models.ImageField()
+    image = models.ImageField(upload_to="images")
 
     pose_x = models.FloatField()
     pose_y = models.FloatField()
@@ -14,3 +14,6 @@ class Place(models.Model):
     map_y = models.IntegerField()
     map_width = models.IntegerField()
     map_height = models.IntegerField()
+
+class Robot(models.Model):
+    pass
