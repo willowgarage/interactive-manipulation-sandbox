@@ -15,6 +15,9 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
+    # TL: Robot access layer
+    url(r'^world/$', 'layer.world.views.index'),
+
     # JAC: application URLs
     url(r'^$', 'layer.robotman.views.home'),
 )
