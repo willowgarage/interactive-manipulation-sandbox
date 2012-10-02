@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>mottle - Mobile Turtle</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- jquery-mobile includes -->
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+	
+	<!-- rosjs API includes -->
+	<script src="http://babylon1.willowgarage.com/rosjs/example/eventemitter2.js"></script>
+	<script src="http://babylon1.willowgarage.com/rosjs/ros.js"></script>
+	
+	<!-- Mobile TurtleBot code -->
+	<script src="mottle.js"></script>
+</head>
+<body>
+<div data-role="page">
+
+	<div data-role="header">
+		<h1>Mobile TurtleBot</h1>
+	</div><!-- /header -->
+	
+	<!--  div data-role="controlgroup">
+		<label for="hostname">TurtleBot hostname/IP address:</label>
+	    <input type="text" name="name" id="hostname" value="10.0.1.1"  />
+	    <a href="index.html" data-role="button" data-inline="true">Connect</a>
+	</div -->
+
+	<div data-role="content">	
+	    <a href="#" id="forward" data-role="button">Go Forward</a>
+	    <a href="#" id="left" data-role="button" data-inline="true">Turn Left</a>
+	    <a href="#" id="right" data-role="button" data-inline="true">Turn Right</a>
+	    <a href="#" id="backwards" data-role="button">Go Backwards</a>
+	</div><!-- /content -->
+</div><!-- /page -->
+</body>
+</html>
