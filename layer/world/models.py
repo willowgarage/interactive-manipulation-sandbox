@@ -13,7 +13,7 @@ class TagsField(ListField):
 class Place(models.Model):
     name = models.TextField()
     tags = models.TextField(blank=True,null=True)
-    image = models.ImageField(upload_to="images",blank=True,null=True)
+    image = models.ImageField(upload_to="static/images",blank=True,null=True)
 
     pose_x = models.FloatField(blank=True,null=True)
     pose_y = models.FloatField(blank=True,null=True)
@@ -25,4 +25,12 @@ class Place(models.Model):
     map_height = models.IntegerField(blank=True,null=True)
 
 class Robot(models.Model):
-    pass
+    name = models.TextField()
+    image = models.ImageField(upload_to="static/images",blank=True,null=True)
+
+    state = models.IntegerField(choices=(
+        (0,'Idle'), (1,'Busy'),
+    ))
+
+    service_url = models.URLField(verify_exists=False)     # URL to robot's rosbridge instance
+    camera_url = models.URLField(verify_exists=False)      # URL to mjpeg output for Robot's camera
