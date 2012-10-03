@@ -17,7 +17,7 @@ DATABASES = {
         'NAME': 'rwt',                     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': 'babylon1.willowgarage.com', # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'box',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -123,6 +123,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    # Other dependencies
+    'djangorestframework',
+
+    # Layer applications
     'layer.world',
     'layer.robotman',
 )

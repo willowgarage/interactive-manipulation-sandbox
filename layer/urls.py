@@ -15,9 +15,13 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
-    # TL: Robot access layer
-    url(r'^world/$', 'layer.world.views.index'),
+    # REST framework Login/Logout views (see http://django-rest-framework.org/)
+    url(r'^api-auth/', include('djangorestframework.urls', namespace='djangorestframework')),
 
-    # JAC: application URLs
-    url(r'^$', 'layer.robotman.views.home'),
+    # JAC: layer application URLs
+    # Robot Manager
+    url(r'^robotman/$', 'layer.robotman.views.home'),
+
+    # Database of objects and prototype application
+    url(r'^world/', include('layer.world.urls')),
 )
