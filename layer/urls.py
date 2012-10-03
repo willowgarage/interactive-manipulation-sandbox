@@ -24,4 +24,8 @@ urlpatterns = patterns('',
 
     # Database of objects and prototype application
     url(r'^world/', include('layer.world.urls')),
+
+    # TL: Robot access layer
+    url(r'^$', 'layer.world.views.index'),
+
 )

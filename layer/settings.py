@@ -17,7 +17,7 @@ DATABASES = {
         'NAME': 'rwt',                     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': 'box',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'babylon1',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -74,7 +74,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/julian/aaad/wg/interactive-manipulation-sandbox/layer/static/",
+#    "/home/julian/aaad/wg/interactive-manipulation-sandbox/layer/static/",
+    "/home/tlau/src/interactive-manipulation-sandbox/layer/static/",
 )
 
 # List of finder classes that know how to find static files in
@@ -109,7 +110,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/home/julian/aaad/wg/interactive-manipulation-sandbox/layer/templates'
+#    '/home/julian/aaad/wg/interactive-manipulation-sandbox/layer/templates'
+    '/home/tlau/src/interactive-manipulation-sandbox/layer/templates'
 )
 
 INSTALLED_APPS = (
@@ -130,6 +132,7 @@ INSTALLED_APPS = (
     # Layer applications
     'layer.world',
     'layer.robotman',
+    'ember',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -154,3 +157,6 @@ LOGGING = {
         },
     }
 }
+
+from django.template import add_to_builtins
+add_to_builtins('ember.templatetags.ember')
