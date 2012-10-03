@@ -1,0 +1,63 @@
+<h1>Navigating to <%= @place.name %></h1>
+
+<table>
+<tr>
+  <th> Destination </th>
+  <th> Camera view </th>
+</tr>
+<tr>
+<td>
+<%= image_tag @place.image.url(:medium) %>
+</td>
+<td>
+<%= image_tag @robot.camera_url, :width => 300, :height => 225 %>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+  <td><b>Robot URL:</b></td>
+  <td><%= @robot.url %></td>
+</tr>
+<tr>
+  <td><b>Coordinates:</b></td>
+  <td>(x=<%= @place.locx %>, y=<%= @place.locy %>, angle=<%= @place.angle %>)</td>
+</tr>
+
+<script type="text/javascript">
+    ros.on("error", function(error) { alert(error); });
+
+    ros.on("connection", function() {
+      console.log("Connection active!");
+      var action = new Action({
+        ros    : ros
+      , name   : 'NavigateToPose'
+      });
+      action.inputs.x = <%= @place.locx %>;
+      action.inputs.y = <%= @place.locy %>;
+      action.inputs.theta = <%= @place.angle %>;
+
+      action.inputs.frame_id = '/map';
+
+      action.on('status', function(status) {
+        console.log('Status');
+        console.log(status);
+      });
+
+      action.on('feedback', function(feedback) {
+        console.log('Feedback');
+        console.log(feedback);
+      });
+
+      action.on('result', function(result) {
+        console.log('Result');
+        console.log(result);
+      });
+
+      console.log('Calling NavigateTo action');
+      action.execute();
+    });
+
+</script>
+

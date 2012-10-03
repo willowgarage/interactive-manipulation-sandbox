@@ -1,5 +1,11 @@
 # Django settings for layer project.
 
+# NOTE: The settings you configure here are going to be deployed on babylon1
+# If you want to change a setting in your own local development environment
+# or on a test server you're running, please create a file named
+# local_settings.py in the layer/ directory and override any settings you
+# need in that file
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -17,7 +23,7 @@ DATABASES = {
         'NAME': 'rwt',                     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': 'babylon1.willowgarage.com', # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'babylon1.willowgarage.com',  # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -29,13 +35,13 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Los_Angeles'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
+SITE_ID = "506384d49932933347a03820"
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -47,7 +53,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = '/home/rwt/layer/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -58,7 +64,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = '/home/rwt/layer/media/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -74,6 +80,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    "/home/rwt/layer/static/",
 )
 
 # List of finder classes that know how to find static files in
@@ -108,6 +115,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    '/home/rwt/layer/templates'
 )
 
 INSTALLED_APPS = (
@@ -118,9 +126,16 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    # Other dependencies
+    'djangorestframework',
+
+    # Layer applications
+    'layer.world',
+    'layer.robotman',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -145,3 +160,9 @@ LOGGING = {
         },
     }
 }
+
+try:
+    from layer.local_settings import *
+    print "Using settings from local_settings.py"
+except ImportError:
+    pass

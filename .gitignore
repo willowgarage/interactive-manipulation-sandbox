@@ -1,3 +1,5 @@
 *.pyc
 .project
 .settings
+*.swp
+layer/local_settings.py

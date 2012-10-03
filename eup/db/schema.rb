@@ -11,19 +11,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120915010547) do
+ActiveRecord::Schema.define(:version => 20120926210119) do
 
   create_table "places", :force => true do |t|
     t.string   "name"
     t.string   "tags"
-    t.integer  "locx"
-    t.integer  "locy"
+    t.float    "locx"
+    t.float    "locy"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
     t.string   "image_file_name"
     t.string   "image_content_type"
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
+    t.integer  "width"
+    t.integer  "height"
+    t.float    "angle"
   end
 
   create_table "robot_states", :force => true do |t|
@@ -47,6 +50,8 @@ ActiveRecord::Schema.define(:version => 20120915010547) do
     t.string   "image_content_type"
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
+    t.string   "url"
+    t.string   "camera_url"
   end
 
   create_table "sessions", :force => true do |t|
@@ -58,5 +63,11 @@ ActiveRecord::Schema.define(:version => 20120915010547) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "testmodels", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
 end

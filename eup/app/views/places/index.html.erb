@@ -6,6 +6,8 @@
     <th>Tags</th>
     <th>Locx</th>
     <th>Locy</th>
+    <th>Width</th>
+    <th>Height</th>
     <th>Image</th>
     <th></th>
     <th></th>
@@ -18,6 +20,8 @@
     <td><%= place.tags %></td>
     <td><%= place.locx %></td>
     <td><%= place.locy %></td>
+    <td><%= place.width %></td>
+    <td><%= place.height %></td>
     <td><%= image_tag place.image.url(:thumb) %></td>
     <td><%= link_to 'Show', place %></td>
     <td><%= link_to 'Edit', edit_place_path(place) %></td>
