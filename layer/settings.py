@@ -1,5 +1,11 @@
 # Django settings for layer project.
 
+# NOTE: The settings you configure here are going to be deployed on babylon1
+# If you want to change a setting in your own local development environment
+# or on a test server you're running, please create a file named
+# local_settings.py in the layer/ directory and override any settings you
+# need in that file
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
