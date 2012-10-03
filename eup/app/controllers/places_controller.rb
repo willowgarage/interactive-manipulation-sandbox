@@ -81,7 +81,4 @@ class PlacesController < ApplicationController
     end
   end
 
-  def navigate
-    @place = Place.find(params[:id])
-  end
 end

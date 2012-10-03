@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rosie home</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "http://d3js.org/d3.v2.js" %>
+
+<!-- for rosjs -->
+<%= javascript_include_tag "https://raw.github.com/hij1nx/EventEmitter2/master/lib/eventemitter2.js" %>
+<%= javascript_include_tag "https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/ros.js" %>
+<%= javascript_include_tag "https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js" %>
+<%= javascript_include_tag "http://babylon1.willowgarage.com/actionsjs/action.js" %>
+
+  <%= csrf_meta_tags %>
+
+<script type="text/javascript">
+    // This is the robot to connect to
+    var ros = new ROS("<%= @robot.url %>");
+    console.log("Hello, starting ROS on robot <%= @robot.url %>!");
+</script>
+
+</head>
+<body>
+
+<!-- Robot header -->
+<h1><%= @robot.name %></h1>
+
+<!-- Set up common ROS object for this page -->
+<script type="text/javascript">
+    // Create a std_msgs/String topic named /listener.
+    var listener = new ros.Topic({
+        name        : '/dashboard_agg',
+        messageType : 'pr2_msgs/DashboardState'
+      });
+
+    // Any time a message is published to the /listener topic, the callback will
+    // fire.
+    listener.subscribe(function(message) {
+        // message is an instance of ros.Message.
+        var batt = document.getElementById("battery");
+        batt.innerHTML = message.power_state.relative_capacity;
+        });
+</script>
+
+<div>
+<b>Battery:</b>
+<span id="battery">--</span>%
+</div>
+
+<hr>
+
+<%= yield %>
+
+</body>
+</html>
