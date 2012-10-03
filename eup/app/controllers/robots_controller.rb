@@ -85,6 +85,6 @@ class RobotsController < ApplicationController
     @robot = Robot.find(params[:id])
     session[:robot] = @robot.id
     # TODO: note in a database table that this robot is claimed
-    redirect_to :controller => :home, :action => :search
+    redirect_to :controller => :control, :action => :robot
   end
 end

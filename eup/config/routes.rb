@@ -1,4 +1,6 @@
 Rosie2::Application.routes.draw do
+  resources :testmodels
+
   resources :robot_states
 
   get "home/index"

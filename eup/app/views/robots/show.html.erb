@@ -21,8 +21,18 @@
 </p>
 
 <p>
+  <b>URL:</b>
+  <%= @robot.url %>
+</p>
+
+<p>
   <b>Image:</b>
   <%= image_tag @robot.image.url(:medium) %>
+</p>
+
+<p>
+  <b>Camera view:</b>
+  <%= image_tag @robot.camera_url %>
 </p>
 
 <%= link_to 'Edit', edit_robot_path(@robot) %> |
