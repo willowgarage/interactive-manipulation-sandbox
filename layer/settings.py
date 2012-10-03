@@ -23,7 +23,11 @@ DATABASES = {
         'NAME': 'rwt',                     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
+<<<<<<< HEAD
         'HOST': 'babylon1.willowgarage.com',  # Set to empty string for localhost. Not used with sqlite3.
+=======
+        'HOST': 'babylon1',                      # Set to empty string for localhost. Not used with sqlite3.
+>>>>>>> 3bba79598ecbf618c507977f6fe7703dae2787ba
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -80,7 +84,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/rwt/layer/static/",
+    "/home/tlau/src/interactive-manipulation-sandbox/layer/static/",
 )
 
 # List of finder classes that know how to find static files in
@@ -115,7 +119,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/home/rwt/layer/templates'
+    '/home/tlau/src/interactive-manipulation-sandbox/layer/templates'
 )
 
 INSTALLED_APPS = (
@@ -136,6 +140,7 @@ INSTALLED_APPS = (
     # Layer applications
     'layer.world',
     'layer.robotman',
+    'ember',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -161,8 +166,5 @@ LOGGING = {
     }
 }
 
-try:
-    from layer.local_settings import *
-    print "Using settings from local_settings.py"
-except ImportError:
-    pass
+from django.template import add_to_builtins
+add_to_builtins('ember.templatetags.ember')
