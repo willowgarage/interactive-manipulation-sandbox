@@ -7,6 +7,7 @@
 <script type="text/javascript" src="https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js"></script>
 <script type="text/javascript" src="http://babylon1.willowgarage.com/actionsjs/action.js"></script>
 <script type="text/javascript" src="http://d3js.org/d3.v2.js"></script>
+<script type="text/javascript" src="/static/battery.js"></script>
 <script type="text/javascript" src="/static/app.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/stylesheet.css">
 
@@ -34,14 +35,15 @@
 
 	{{#each robot in controller}}
 	<tr>
-	<td> <b> {{robot.name}}, {{robot.image}} </b></td>
-	<td> <img {{bindAttr src="robot.image"}}> </td>
+	<td> <b> {{robot.name}} </b></td>
+	<td> <img {{bindAttr src="robot.image"}} width="100"> </td>
 	<td> Available </td>
 	<td> <a {{action showRobot robot}} class="button"> Use this one </a>
 	</tr>
 	{{/each}}
 
 	</table>
+
 {% endhandlebars %}
 
 <!-- ********************************************************************** -->
@@ -50,7 +52,7 @@
 <!-- Header with robot information -->
 <h1>{{name}}</h1>
 
-{{image}}
+<img {{bindAttr src="image"}} width="200">
 <div>
 	<b>Battery:</b> <span id="battery">--</span>%
 </div>
