@@ -1,6 +1,6 @@
 /* Configuration variables */
-var ROBOT_API = 'http://localhost:8000/world/api/robots?format=json-p'
-var PLACE_API = 'http://localhost:8000/world/api/places?format=json-p'
+var ROBOT_API = '/world/api/robots?format=json-p'
+var PLACE_API = '/world/api/places?format=json-p'
 
 /* Starting point for our Ember application */
 var App = Ember.Application.create();
