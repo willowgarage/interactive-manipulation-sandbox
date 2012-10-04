@@ -13,6 +13,7 @@ class TagsField(ListField):
 class Place(models.Model):
     name = models.TextField()
     tags = models.TextField(blank=True,null=True)
+    description = models.TextField(blank=True,null=True)
     image = models.ImageField(upload_to="static/images",blank=True,null=True)
 
     pose_x = models.FloatField(blank=True,null=True)
@@ -26,6 +27,8 @@ class Place(models.Model):
 
 class Robot(models.Model):
     name = models.TextField()
+    tags = models.TextField(blank=True,null=True)
+    description = models.TextField(blank=True,null=True)
     image = models.ImageField(upload_to="static/images",blank=True,null=True)
 
     state = models.IntegerField(choices=(
