@@ -35,5 +35,9 @@ class Robot(models.Model):
         (0,'Idle'), (1,'Busy'),
     ))
 
-    service_url = models.URLField(verify_exists=False)     # URL to robot's rosbridge instance
-    camera_url = models.URLField(verify_exists=False)      # URL to mjpeg output for Robot's camera
+    # Disabled using URLFields since for the time being they do not support
+    # Web Socket addresses
+    #service_url = models.URLField(verify_exists=False)     # URL to robot's rosbridge instance
+    #camera_url = models.URLField(verify_exists=False)      # URL to mjpeg output for Robot's camera
+    service_url = models.CharField(max_length=512)     # URL to robot's rosbridge instance
+    camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's camera
