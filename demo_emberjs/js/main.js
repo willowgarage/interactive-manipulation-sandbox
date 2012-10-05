@@ -7,7 +7,7 @@ requirejs.config({
   , handlebars    : 'libs/handlebars/handlebars-1.0.0.beta.6'
   , ember         : 'libs/ember/ember-1.0.pre'
     // Require.js Plugins
-  , text          : 'https://raw.github.com/requirejs/text/latest/text'
+  , text          : 'libs/require/text'
     // Templates
   , templates     : '../templates'
   }

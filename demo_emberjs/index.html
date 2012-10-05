@@ -8,25 +8,8 @@
   <meta name="author" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css?v=2">
-  <script src="http://requirejs.org/docs/release/2.0.6/comments/require.js" type="text/javascript" data-main="js/main"></script>
+  <script src="js/libs/require/require.js" type="text/javascript" data-main="js/main"></script>
 </head>
 <body>
-  <script type="text/x-handlebars" data-template-name="application">
-    <h1>Willow Garage Locations</h1>
-    {{outlet}}
-  </script>
-
-  <script type="text/x-handlebars" data-template-name="locations">
-    {{#each location in controller}}
-      <a {{action showLocation location}}>{{location.login}}</a>
-    {{/each}}
-  </script>
-
-  <script type="text/x-handlebars" data-template-name="location">
-    <div>
-      <a {{action showLocations}}>All Locations</a>
-    </div>
-    {{login}} - {{contributions}} contributions to Ember.js
-  </script>
 </body>
 </html>
