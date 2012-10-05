@@ -1,14 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-{% ember_full_js %}
-<script type="text/javascript" src="https://raw.github.com/hij1nx/EventEmitter2/master/lib/eventemitter2.js"></script>
-<script type="text/javascript" src="https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/ros.js"></script>
-<script type="text/javascript" src="https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js"></script>
-<script type="text/javascript" src="http://babylon1.willowgarage.com/actionsjs/action.js"></script>
-<script type="text/javascript" src="http://d3js.org/d3.v2.js"></script>
-<script type="text/javascript" src="/static/battery.js"></script>
-<script type="text/javascript" src="/static/app.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/stylesheet.css">
 
 <title>Robots robots robots</title>
@@ -16,13 +8,13 @@
 <body>
 
 <!-- Main application template -->
-{% handlebars "application" %}
+<script type="text/x-handlebars" data-template-name="application">
 {{outlet}}
-{% endhandlebars %}
+</script>
 
 <!-- ********************************************************************** -->
 <!-- Template for displaying list of robots -->
-{% handlebars "robots" %}
+<script type="text/x-handlebars" data-template-name="robots">
 <h1>Robot lobby</h1>
 
 	<table>
@@ -44,11 +36,11 @@
 
 	</table>
 
-{% endhandlebars %}
+</script>
 
 <!-- ********************************************************************** -->
 <!-- Template for displaying one robot -->
-{% handlebars "a-robot" %}
+<script type="text/x-handlebars" data-template-name="a-robot">
 <!-- Header with robot information -->
 <h1>{{name}}</h1>
 
@@ -82,15 +74,21 @@
 
 <hr>
 <a {{action showAllRobots}}> Back to list of robots </a>
-{% endhandlebars %}
+</script>
 
 <!-- ********************************************************************** -->
 <!-- Template for displaying list of places -->
-{% handlebars "places" %}
+<script type="text/x-handlebars" data-template-name="places">
 {{#each place in controller}}
 <div><b>{{place.name}}</b> ({{place.tags}})</div>
 {{/each}}
-{% endhandlebars %}
+</script>
+
+
+<script type="text/javascript" src="libs/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="libs/handlebars-1.0.0.beta.6.js"></script>
+<script type="text/javascript" src="libs/ember-latest.js"></script>
+<script type="text/javascript" src="app.js"></script>
 
 </body>
 </html>
