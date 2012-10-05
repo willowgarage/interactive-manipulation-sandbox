@@ -5,11 +5,57 @@ var PLACE_API = '/world/api/places?format=json-p'
 /* Starting point for our Ember application */
 var App = Ember.Application.create();
 
-App.ApplicationView = Ember.View.extend({
-	templateName: 'application'
+
+/* ---------------------------------------------------------------------- */
+/* Overriding behavior in RESTAdapter to handle responses of the type
+     [{ object },{ object }, ...]
+   as returned by default in django-rest-framework 
+   instead of currently required:
+    { robots: [{ object },{ object }, ...]}
+
+   NOTE: This can be greatly reduced in code size by generalizing the
+   code that repeats between functions. I'm leaving it out for now
+   to focus on the basics, but I should contribute this soon
+*/
+
+DS.DjangoRESTAdapter = DS.RESTAdapter.extend({
+    findMany: function( store, type, ids) {
+        var root = this.rootForType(type), plural = this.pluralize(root);
+        this.ajax( this.buildURL(root), "GET", {
+            data: { ids: ids },
+            success: function( djson) {
+                json = {}; json[plural] = djson;
+                this.sideload(store, type, json, plural);
+                store.loadMany(type, json[plural]);
+            }
+        });
+    },
+    findAll: function( store, type) {
+        var root = this.rootForType(type), plural = this.pluralize(root);
+        this.ajax( this.buildURL(root), "GET", {
+            success: function( djson) {
+                json = {}; json[plural] = djson;
+                this.sideload(store, type, json, plural);
+                store.loadMany(type, json[plural]);
+            }
+        });
+    },
+    findQuery: function( store, type) {
+        var root = this.rootForType(type), plural = this.pluralize(root);
+        this.ajax( this.buildURL(root), "GET", {
+            success: function( djson) {
+                json = {}; json[plural] = djson;
+                this.sideload(store, type, json, plural);
+                store.loadMany(type, json[plural]);
+            }
+        });
+    }
 });
 
-App.ApplicationController = Ember.Controller.extend({
+App.store = DS.Store.create({ 
+    revision: 4, 
+    //adapter: DS.DjangoRESTAdapter.create({ namespace: 'world/api' })
+    adapter: DS.RESTAdapter.create({ namespace: 'static/test' })
 });
 
 /* ---------------------------------------------------------------------- */
@@ -27,41 +73,15 @@ App.OneRobotView = Ember.View.extend({
 /* ---------------------------------------------------------------------- */
 /* Robot class */
 
-App.Robot = Ember.Object.extend();
-App.Robot.reopenClass({
-	allRobots : [],
-	find : function() {
-		$.ajax({
-			url: ROBOT_API,
-			dataType: 'jsonp',
-			context: this,
-			success: function(response) {
-				console.log(response);
-				response.forEach(function(robot) {
-					this.allRobots.addObject(App.Robot.create(robot))
-				}, this)
-			},
-			error: function(response) {
-				alert("Error retrieving robots!");
-			}
-		})
-		return this.allRobots;
-	},
-
-	findOne: function(robot_id) {
-		var robot = App.Robot.create({id: robot_id});
-
-		$.ajax({
-			url: ROBOT_API,
-			dataType: 'jsonp',
-			context: robot,
-			success: function(response) {
-				this.setProperties(response.findProperty('id', robot_id));
-			}
-		})
-
-		return robot;
-	},
+App.Robot = DS.Model.extend({
+    //  ember-data mapping variables (?)
+    name: DS.attr('string'),
+    description: DS.attr('string'),
+    tags: DS.attr('string'),
+    image: DS.attr('string'),
+    state: DS.attr('number'),
+    service_url: DS.attr('string'),
+    camera_url: DS.attr('string'),
 
 	drawMap : function() {
 		var w = 480,
@@ -115,6 +135,18 @@ App.Robot.reopenClass({
 });
 
 /* ---------------------------------------------------------------------- */
+/* Main application controller */
+
+App.ApplicationView = Ember.View.extend({
+	templateName: 'application',
+    postBinding: 'App.ApplicationController'
+});
+
+App.ApplicationController = Ember.Controller.extend({
+    robt: App.store.findAll( App.Robot)
+});
+
+/* ---------------------------------------------------------------------- */
 /* Place controller */
 App.AllPlacesController = Ember.ArrayController.extend();
 App.AllPlacesView = Ember.View.extend({
@@ -150,7 +182,9 @@ App.Router = Ember.Router.extend({
 	root : Ember.Route.extend({
 		index: Ember.Route.extend({
 			route: '/',
-			redirectsTo: 'robots'
+			// redirectsTo: 'robots'
+
+			start: Ember.Route.transitionTo('robots')
 		}),
 
 		robots: Ember.Route.extend({
@@ -160,7 +194,7 @@ App.Router = Ember.Router.extend({
 
 			connectOutlets: function(router) {
 				router.get('applicationController').
-					connectOutlet('allRobots', App.Robot.find());
+					connectOutlet('allRobots', App.Robot.find({format:'json'}));
 			}
 		}),
 

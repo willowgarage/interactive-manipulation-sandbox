@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript" src="/static/js/libs/jquery.js"></script>
+<script type="text/javascript" src="/static/js/libs/handlebars.js"></script>
+<script type="text/javascript" src="/static/libs/ember-1.0.pre.js"></script>
+<script type="text/javascript" src="/static/libs/ember-data.js"></script>
+<!-- script type="text/javascript" src="https://raw.github.com/hij1nx/EventEmitter2/master/lib/eventemitter2.js"></script -->
+<!-- script type="text/javascript" src="https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/ros.js"></script -->
+<!-- script type="text/javascript" src="https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js"></script -->
+<!-- script type="text/javascript" src="http://babylon1.willowgarage.com/actionsjs/action.js"></script -->
+<!-- script type="text/javascript" src="http://d3js.org/d3.v2.js"></script -->
+<script type="text/javascript" src="/static/app.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/stylesheet.css">
+
+<title>Robots robots robots</title>
+</head>
+<body>
+
+<!-- Main application template -->
+{% handlebars "application" %}
+{{#each robot in robots}}
+<div>{{ name }}</div>
+{{/each}}
+{{outlet}}
+<a {{action start}} href="#">Let's go!</a>
+{% endhandlebars %}
+
+<!-- ********************************************************************** -->
+<!-- Template for displaying list of robots -->
+{% handlebars "robots" %}
+<h1>Robot lobby</h1>
+
+	<table>
+	<tr>
+		<th> Robot name </th>
+		<th> Picture </th>
+		<th> Status </th>
+		<th> Actions </th>
+	</tr>
+
+	{{#each robot in allRobots}}
+	<tr>
+	<td> <b> {{robot.name}} </b></td>
+	<td> <img {{bindAttr src="robot.image"}} width="100"> </td>
+	<td> Available </td>
+	<td> <a {{action showRobot robot}} class="button"> Use this one </a>
+	</tr>
+	{{/each}}
+
+	</table>
+
+{% endhandlebars %}
+
+<!-- ********************************************************************** -->
+<!-- Template for displaying one robot -->
+{% handlebars "a-robot" %}
+<!-- Header with robot information -->
+<h1>{{name}}</h1>
+
+<img {{bindAttr src="image"}} width="200">
+<div>
+	<b>Battery:</b> <span id="battery">--</span>%
+</div>
+
+<hr>
+<p>Enter the name of a place:</p>
+
+<form>
+<input name="q" type="text" size="100">
+<input type="submit" text="Go">
+</form>
+
+<br clear="both">
+
+<p>or select it from this map:</p>
+<table>
+<tr><td>
+<div class="chart" id="floorplan-div"></div>
+</td>
+<td valign="top">
+<div class="placeinfo" style="margin-left: 50px;">
+  <div><b>Place name:</b> <span id="placename"></span></div>
+  <div><b>Distance:</b> <span id="distance"></span></div>
+</div>
+</td></tr>
+</div>
+
+<hr>
+<a {{action showAllRobots}}> Back to list of robots </a>
+{% endhandlebars %}
+
+<!-- ********************************************************************** -->
+<!-- Template for displaying list of places -->
+{% handlebars "places" %}
+{{#each place in controller}}
+<div><b>{{place.name}}</b> ({{place.tags}})</div>
+{{/each}}
+{% endhandlebars %}
+
+</body>
+</html>
+
