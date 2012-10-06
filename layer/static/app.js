@@ -19,6 +19,16 @@ var App = Ember.Application.create();
 */
 
 DS.DjangoRESTAdapter = DS.RESTAdapter.extend({
+    find: function( store, type, id) {
+        var root = this.rootForType(type);
+        this.ajax( this.buildURL(root, id), "GET", {
+            success: function( djson) {
+                var json = {}; json[root] = djson;
+                this.sideload(store, type, json, root);
+                store.load(type, json[root]);
+            }
+        });
+    },
     findMany: function( store, type, ids) {
         ids = this.get('serializer').serializeIds(ids);
         var root = this.rootForType(type), plural = this.pluralize(root);
@@ -205,7 +215,7 @@ App.Router = Ember.Router.extend({
 				return { robot_id : context.get('id') }
 			},
 			deserialize: function(router, urlParams) {
-				return App.Robot.findOne(urlParams.robot_id);
+				return App.Robot.find(urlParams.robot_id);
 			}
 		})
 	})
