@@ -1,7 +1,7 @@
 App = Em.Application.create({});
 App.Store = DS.Store.extend({
     adapter:  DS.RESTAdapter.create({namespace:'static/test'}),
-    revision: 4
+    revision: 6
 });
 App.store = App.Store.create({});
 

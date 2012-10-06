@@ -20,11 +20,12 @@ var App = Ember.Application.create();
 
 DS.DjangoRESTAdapter = DS.RESTAdapter.extend({
     findMany: function( store, type, ids) {
+        ids = this.get('serializer').serializeIds(ids);
         var root = this.rootForType(type), plural = this.pluralize(root);
         this.ajax( this.buildURL(root), "GET", {
             data: { ids: ids },
             success: function( djson) {
-                json = {}; json[plural] = djson;
+                var json = {}; json[plural] = djson;
                 this.sideload(store, type, json, plural);
                 store.loadMany(type, json[plural]);
             }
@@ -34,28 +35,29 @@ DS.DjangoRESTAdapter = DS.RESTAdapter.extend({
         var root = this.rootForType(type), plural = this.pluralize(root);
         this.ajax( this.buildURL(root), "GET", {
             success: function( djson) {
-                json = {}; json[plural] = djson;
+                var json = {}; json[plural] = djson;
                 this.sideload(store, type, json, plural);
                 store.loadMany(type, json[plural]);
             }
         });
     },
-    findQuery: function( store, type) {
+    findQuery: function( store, type, query, recordArray) {
         var root = this.rootForType(type), plural = this.pluralize(root);
         this.ajax( this.buildURL(root), "GET", {
+            data: query,
             success: function( djson) {
-                json = {}; json[plural] = djson;
+                var json = {}; json[plural] = djson;
                 this.sideload(store, type, json, plural);
-                store.loadMany(type, json[plural]);
+                recordArray.load(json[plural]);
             }
         });
     }
 });
 
 App.store = DS.Store.create({ 
-    revision: 4, 
-    //adapter: DS.DjangoRESTAdapter.create({ namespace: 'world/api' })
-    adapter: DS.RESTAdapter.create({ namespace: 'static/test' })
+    revision: 6, 
+    adapter: DS.DjangoRESTAdapter.create({ namespace: 'world/api' })
+    //adapter: DS.RESTAdapter.create({ namespace: 'static/test' })
 });
 
 /* ---------------------------------------------------------------------- */
@@ -137,13 +139,9 @@ App.Robot = DS.Model.extend({
 /* ---------------------------------------------------------------------- */
 /* Main application controller */
 
+App.ApplicationController = Ember.Controller.extend({});
 App.ApplicationView = Ember.View.extend({
-	templateName: 'application',
-    postBinding: 'App.ApplicationController'
-});
-
-App.ApplicationController = Ember.Controller.extend({
-    robt: App.store.findAll( App.Robot)
+	templateName: 'application'
 });
 
 /* ---------------------------------------------------------------------- */
@@ -157,23 +155,20 @@ App.AllPlacesView = Ember.View.extend({
 /* ---------------------------------------------------------------------- */
 /* Place class */
 
-App.Place = Ember.Object.extend();
-App.Place.reopenClass({
-	allPlaces : [],
-	find : function() {
-		$.ajax({
-			url: PLACE_API,
-			dataType: 'jsonp',
-			context: this,
-			success: function(response) {
-				console.log(response);
-				response.forEach(function(place) {
-					this.allPlaces.addObject(App.Place.create(place))
-				}, this)
-			}
-		})
-		return this.allPlaces;
-	}
+App.Place = DS.Model.extend({
+    /* Field mappings */
+    // TODO: See if this can be done automatically
+    name: DS.attr('string'),
+    description: DS.attr('string'),
+    tags: DS.attr('string'),
+    image: DS.attr('string'),
+    pose_x: DS.attr('number'),
+    pose_y: DS.attr('number'),
+    pose_angle: DS.attr('number'),
+    map_x: DS.attr('number'),
+    map_y: DS.attr('number'),
+    map_width: DS.attr('number'),
+    map_height: DS.attr('number')
 });
 
 /* ---------------------------------------------------------------------- */
@@ -182,9 +177,8 @@ App.Router = Ember.Router.extend({
 	root : Ember.Route.extend({
 		index: Ember.Route.extend({
 			route: '/',
-			// redirectsTo: 'robots'
 
-			start: Ember.Route.transitionTo('robots')
+			redirectsTo: 'robots'
 		}),
 
 		robots: Ember.Route.extend({
