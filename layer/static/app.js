@@ -126,7 +126,7 @@ App.OneRobotView = Ember.View.extend({
 				d3.select("#placename").text("");
 				})
 			  .on("click", function(d) {
-                App.router.transitionTo("navigating",{
+                App.get('router').send("navigateTo",{
                         robot_id: robot_id,
                         place_id: d[5]
                     });
@@ -161,7 +161,20 @@ App.Robot = DS.Model.extend({
             });
             console.log("Done suscribing to battery capacity for robot = [" + obj.get('name') + "]");
         }
-    }, 'service_url')
+    }, 'service_url'),
+
+    navigateTo: function( aPlace) {
+        var action = new Action({
+            ros: this.ROS,
+            name: 'NavigateToPose'
+        });
+        action.inputs.x = aPlace.get('pose_x');
+        action.inputs.y = aPlace.get('pose_y');
+        action.inputs.theta = aPlace.get('pose_angle');
+        action.inputs.frame_id = '/map';
+        action.execute();
+        console.log("Calling NavigateTo action");
+    }
 });
 
 /* ---------------------------------------------------------------------- */
@@ -174,7 +187,8 @@ App.ApplicationView = Ember.View.extend({
 
 /* ---------------------------------------------------------------------- */
 /* Place controller */
-App.NavigatingController = Ember.ObjectController.extend();
+App.NavigatingController = Ember.ObjectController.extend({
+});
 App.NavigatingView = Ember.View.extend({
 	templateName: 'navigating'
 });
@@ -225,7 +239,7 @@ App.Router = Ember.Router.extend({
 
 			showAllRobots: Ember.Route.transitionTo('robots'),
 
-			navigate: Ember.Route.transitionTo('navigating'),
+			navigateTo: Ember.Route.transitionTo('navigating'),
 
 			connectOutlets: function(router, context) {
 				router.get('applicationController').
@@ -245,6 +259,10 @@ App.Router = Ember.Router.extend({
                     connectOutlet('navigating', Ember.Object.create({
                         robot: r, place: p
                     }));
+                //  Not sure this is the right place for this to go
+                //  but I can't find anything better:
+                //  Make the robot actually navigate to the selected place
+                r.navigateTo(p);
             }
         })
 	})

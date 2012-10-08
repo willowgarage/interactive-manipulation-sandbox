@@ -7,9 +7,8 @@
 <script type="text/javascript" src="/static/libs/ember-data-9e2d2b4ee33ee0ea8f1f81078803fef9556aa303.js"></script>
 <script type="text/javascript" src="https://raw.github.com/hij1nx/EventEmitter2/master/lib/eventemitter2.js"></script>
 <script type="text/javascript" src="https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/ros.js"></script>
-
-<!-- script type="text/javascript" src="https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js"></script -->
-<!-- script type="text/javascript" src="http://babylon1.willowgarage.com/actionsjs/action.js"></script -->
+<script type="text/javascript" src="https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js"></script>
+<script type="text/javascript" src="http://babylon1.willowgarage.com/actionsjs/action.js"></script>
 <script type="text/javascript" src="http://d3js.org/d3.v2.js"></script>
 
 <script type="text/javascript" src="/static/app.js"></script>
@@ -49,7 +48,6 @@
 	{{/each}}
 
 	</table>
-
 {% endhandlebars %}
 
 <!-- ********************************************************************** -->
@@ -95,6 +93,23 @@
 <!-- Template for showing a robot navigating to a chosen location -->
 {% handlebars "navigating" %}
 <h1>Robot {{robot.name}} is navigating towards {{place.name}}</h1>
+
+<table>
+<tr>
+  <th> Destination </th>
+  <th> Camera view </th>
+</tr>
+<tr>
+<td>
+<img {{bindAttr src="place.image"}} width="300">
+</td>
+<td>
+<img {{bindAttr src="robot.camera_url"}} width="300" height="225">
+</td>
+</tr>
+</table>
+
+
 <a {{action showAllRobots}}> Back to list of robots </a>
 {% endhandlebars %}
 
