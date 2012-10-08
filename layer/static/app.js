@@ -79,23 +79,9 @@ App.AllRobotsView = Ember.View.extend({
 
 App.OneRobotController = Ember.ObjectController.extend();
 App.OneRobotView = Ember.View.extend({
-	templateName: 'a-robot'
-});
-
-/* ---------------------------------------------------------------------- */
-/* Robot class */
-
-App.Robot = DS.Model.extend({
-    //  ember-data mapping variables (?)
-    name: DS.attr('string'),
-    description: DS.attr('string'),
-    tags: DS.attr('string'),
-    image: DS.attr('string'),
-    state: DS.attr('number'),
-    service_url: DS.attr('string'),
-    camera_url: DS.attr('string'),
-
-	drawMap : function() {
+	templateName: 'a-robot',
+	didInsertElement: function() {
+        console.log("Drawing map with d3");
 		var w = 480,
 		  h = 374,
 		  x = d3.scale.linear().domain([0, w])
@@ -144,6 +130,36 @@ App.Robot = DS.Model.extend({
 				window.location = url;
 				});
 	}
+});
+
+/* ---------------------------------------------------------------------- */
+/* Robot class */
+
+App.Robot = DS.Model.extend({
+    //  ember-data mapping variables (?)
+    name: DS.attr('string'),
+    description: DS.attr('string'),
+    tags: DS.attr('string'),
+    image: DS.attr('string'),
+    state: DS.attr('number'),
+    service_url: DS.attr('string'),
+    camera_url: DS.attr('string'),
+
+    battery: -1,
+
+    openRosConnection: Ember.observer(function( obj, keyName, value) {
+        if(!obj.ROS && obj.get(keyName)) {
+            obj.ROS = new ROS(obj.get('service_url'));
+            new obj.ROS.Topic({
+                name: '/dashboard_agg',
+                messageType: 'pr2_msgs/DashboardState'
+            }).subscribe(function(msg){
+                console.log("Got a battery status update from robot = [" + obj.get('name') + "]");
+                obj.set('battery',msg.power_state.relative_capacity);
+            });
+            console.log("Done suscribing to battery capacity for robot = [" + obj.get('name') + "]");
+        }
+    }, 'service_url')
 });
 
 /* ---------------------------------------------------------------------- */
