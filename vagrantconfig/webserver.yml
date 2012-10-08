@@ -19,7 +19,6 @@
         - build-essential
         - python-dev
         - python-setuptools
-        - python-imaging
 
     - name: install pip
       action: easy_install name=pip
