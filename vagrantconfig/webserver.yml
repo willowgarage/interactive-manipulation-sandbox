@@ -1,0 +1,83 @@
+---
+
+- hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - name: update apt
+      action: command /usr/bin/apt-get update
+
+    #-------------
+    # Python tools
+    #-------------
+
+    - name: install python-software-properties
+      action: apt pkg=$item state=present
+      with_items:
+        - python-software-properties
+        - build-essential
+        - python-dev
+        - python-setuptools
+        - python-imaging
+
+    - name: install pip
+      action: easy_install name=pip
+
+    - name: update easy_install packages
+      action: command /usr/bin/easy_install -U distribute
+
+    #-------------
+    # MongoDB
+    #-------------
+
+    # I tried installing MongoDB from 10gen's repos. Unfortunately, there's a
+    # bug with apt_repository where it includes deb-source automatically. Since
+    # 10gen doesn't have a deb-source, installing throws an error.
+    #
+    # - name: add 10gen mongodb repository key
+    #   action: command /usr/bin/apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+    #
+    # - name: add 10gen mongodb repository
+    #   action: apt_repository repo='deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' state=present
+    #
+    # - name: install mongodb from 10gen repository
+    #   action: apt pkg=mongodb-10gen state=present
+
+    - name: install mongodb packages
+      action: apt pkg=$item state=present
+      with_items:
+        - mongodb
+        - python-pymongo
+        - mongodb-clients
+
+    #-------------
+    # VCS
+    #-------------
+
+    - name: install mercurial
+      action: apt pkg=mercurial state=present
+
+    - name: install git
+      action: apt pkg=git state=present
+
+    #-------------
+    # Django
+    #-------------
+
+    - name: install libjpeg8
+      action: apt pkg=libjpeg8-dev state=present
+
+    - name: install django pip packages
+      action: pip name=$item state=present
+      with_items:
+        - hg+https://bitbucket.org/wkornewald/django-nonrel
+        - hg+https://bitbucket.org/wkornewald/djangotoolbox
+        - git+https://github.com/django-nonrel/mongodb-engine
+        - jinja2
+        - paramiko
+        - PyYAML
+        - pillow
+        - djangorestframework
+        - django-ember
+

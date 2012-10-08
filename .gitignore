@@ -4,3 +4,4 @@
 *.swp
 layer/local_settings.py
 layer/static/images/
+.vagrant
