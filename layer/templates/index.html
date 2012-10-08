@@ -85,8 +85,16 @@
 </div>
 </td></tr>
 </div>
+</table>
 
 <hr>
+<a {{action showAllRobots}}> Back to list of robots </a>
+{% endhandlebars %}
+
+<!-- ********************************************************************** -->
+<!-- Template for showing a robot navigating to a chosen location -->
+{% handlebars "navigating" %}
+<h1>Robot {{robot.name}} is navigating towards {{place.name}}</h1>
 <a {{action showAllRobots}}> Back to list of robots </a>
 {% endhandlebars %}
 

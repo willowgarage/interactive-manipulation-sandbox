@@ -81,7 +81,7 @@ App.OneRobotController = Ember.ObjectController.extend();
 App.OneRobotView = Ember.View.extend({
 	templateName: 'a-robot',
 	didInsertElement: function() {
-        console.log("Drawing map with d3");
+        var robot_id = this.get('controller').get('content').get('id');
 		var w = 480,
 		  h = 374,
 		  x = d3.scale.linear().domain([0, w])
@@ -89,14 +89,14 @@ App.OneRobotView = Ember.View.extend({
 
 		// x, y, width, height, name, place-id
 		var rooms = [
-		  [310, 338, 29, 34, "Tessa's office", 1],
-		  [280, 348, 28, 23, "Chad's office", 2],
-		  [341, 339, 28, 33, "Brandon's office", 3],
-		  [259, 248, 50, 32, "The Cave", 4],
-		  [307, 149, 42, 97, "The Green Room", 5],
-		//  [279, 50, 181, 78, "The cafeteria", 6],
-		  [187, 235, 70, 75, "The pool room", 7],
-		  [72, 190, 102, 73, "The Cathedral", 8]
+		  [310, 338, 29, 34, "Tessa's office", "506dd79f52d6f70c3b8adfbd"],
+		  [280, 348, 28, 23, "Chad's office", "506dd9ca52d6f70c3b8adfbf"],
+		  [341, 339, 28, 33, "Brandon's office", "506ddb2252d6f70c3b8adfc1"],
+		  [259, 248, 50, 32, "The Cave", "506ddbed52d6f70c3b8adfc3"],
+		  [307, 149, 42, 97, "The Green Room", "506ddca152d6f70c3b8adfc5"],
+		//  [279, 50, 181, 78, "The cafeteria", "506dde9852d6f70c3b8adfc7"],
+		  [187, 235, 70, 75, "The pool room", "506ddee352d6f70c3b8adfc9"],
+		  [72, 190, 102, 73, "The Cathedral", "506ddf2452d6f70c3b8adfcb"]
 		];
 		/* TODO: get room data from an API
 		var rooms = d3.json("<%= url_for(:controller => :room, :action => :list) %>");
@@ -126,9 +126,11 @@ App.OneRobotView = Ember.View.extend({
 				d3.select("#placename").text("");
 				})
 			  .on("click", function(d) {
-				var url = "/change/me" + "/" + d[5];
-				window.location = url;
-				});
+                App.router.transitionTo("navigating",{
+                        robot_id: robot_id,
+                        place_id: d[5]
+                    });
+			    });
 	}
 });
 
@@ -172,9 +174,9 @@ App.ApplicationView = Ember.View.extend({
 
 /* ---------------------------------------------------------------------- */
 /* Place controller */
-App.AllPlacesController = Ember.ArrayController.extend();
-App.AllPlacesView = Ember.View.extend({
-	templateName: 'places'
+App.NavigatingController = Ember.ObjectController.extend();
+App.NavigatingView = Ember.View.extend({
+	templateName: 'navigating'
 });
 
 
@@ -219,21 +221,32 @@ App.Router = Ember.Router.extend({
 		}),
 
 		aRobot: Ember.Route.extend({
-			route : '/robots/:robot_id',
+			route: '/robots/:id',
 
 			showAllRobots: Ember.Route.transitionTo('robots'),
 
-			connectOutlets : function(router, context) {
+			navigate: Ember.Route.transitionTo('navigating'),
+
+			connectOutlets: function(router, context) {
 				router.get('applicationController').
-					connectOutlet('oneRobot', context);
-			},
-			serialize: function(router, context) {
-				return { robot_id : context.get('id') }
-			},
-			deserialize: function(router, urlParams) {
-				return App.Robot.find(urlParams.robot_id);
+					connectOutlet('oneRobot', App.Robot.find(context.id));
 			}
-		})
+		}),
+
+        navigating: Ember.Route.extend({
+            route: '/navigating/:robot_id/:place_id',
+
+			showAllRobots: Ember.Route.transitionTo('robots'),
+
+            connectOutlets: function(router, context) {
+                r = App.Robot.find(context.robot_id);
+                p = App.Place.find(context.place_id);
+                router.get('applicationController').
+                    connectOutlet('navigating', Ember.Object.create({
+                        robot: r, place: p
+                    }));
+            }
+        })
 	})
 });
 
