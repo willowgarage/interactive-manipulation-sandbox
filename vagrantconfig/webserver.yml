@@ -9,6 +9,16 @@
       action: command /usr/bin/apt-get update
 
     #-------------
+    # Dev tools
+    #-------------
+
+    - name: install developer tools
+      action: apt pkg=$item state=present
+      with_items:
+        - vim
+        - tmux
+
+    #-------------
     # Python tools
     #-------------
 
@@ -59,6 +69,16 @@
 
     - name: install git
       action: apt pkg=git state=present
+
+    #-------------
+    # Ansible
+    #-------------
+
+    - name: download ansible
+      action: command /usr/bin/git clone https://github.com/ansible/ansible.git chdir='/tmp' creates='/tmp/ansible'
+
+    - name: install ansible
+      action: command make install chdir='/tmp/ansible'
 
     #-------------
     # Django
