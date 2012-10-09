@@ -5,6 +5,7 @@
 <script type="text/javascript" src="/static/js/libs/handlebars.js"></script>
 <script type="text/javascript" src="/static/libs/ember.js"></script>
 <script type="text/javascript" src="/static/libs/ember-data-9e2d2b4ee33ee0ea8f1f81078803fef9556aa303.js"></script>
+
 <script type="text/javascript" src="https://raw.github.com/hij1nx/EventEmitter2/master/lib/eventemitter2.js"></script>
 <script type="text/javascript" src="https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/ros.js"></script>
 <script type="text/javascript" src="https://raw.github.com/RobotWebTools/actionlibjs/master/actionclient.js"></script>
@@ -72,6 +73,18 @@
 <br clear="both">
 
 <p>or select it from this map:</p>
+{{outlet}}
+
+<hr>
+<a {{action showAllRobots}}> Back to list of robots </a>
+
+{% endhandlebars %}
+
+
+<!-- ********************************************************************** -->
+<!-- Template for building and displaying a map where the user can choose -->
+<!-- a navigation target -->
+{% handlebars "map" %}
 <table>
 <tr><td>
 <div class="chart" id="floorplan-div"></div>
@@ -84,9 +97,6 @@
 </td></tr>
 </div>
 </table>
-
-<hr>
-<a {{action showAllRobots}}> Back to list of robots </a>
 {% endhandlebars %}
 
 <!-- ********************************************************************** -->

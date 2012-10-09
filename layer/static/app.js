@@ -1,7 +1,3 @@
-/* Configuration variables */
-var ROBOT_API = '/world/api/robots?format=json-p'
-var PLACE_API = '/world/api/places?format=json-p'
-
 /* Starting point for our Ember application */
 var App = Ember.Application.create();
 
@@ -67,75 +63,29 @@ DS.DjangoRESTAdapter = DS.RESTAdapter.extend({
 App.store = DS.Store.create({ 
     revision: 6, 
     adapter: DS.DjangoRESTAdapter.create({ namespace: 'world/api' })
-    //adapter: DS.RESTAdapter.create({ namespace: 'static/test' })
 });
 
 /* ---------------------------------------------------------------------- */
-/* Robot controller */
-App.AllRobotsController = Ember.ArrayController.extend();
-App.AllRobotsView = Ember.View.extend({
-	templateName: 'robots'
-});
+/* Place model */
 
-App.OneRobotController = Ember.ObjectController.extend();
-App.OneRobotView = Ember.View.extend({
-	templateName: 'a-robot',
-	didInsertElement: function() {
-        var robot_id = this.get('controller').get('content').get('id');
-		var w = 480,
-		  h = 374,
-		  x = d3.scale.linear().domain([0, w])
-		  y = d3.scale.ordinal().domain([0, h]);
-
-		// x, y, width, height, name, place-id
-		var rooms = [
-		  [310, 338, 29, 34, "Tessa's office", "506dd79f52d6f70c3b8adfbd"],
-		  [280, 348, 28, 23, "Chad's office", "506dd9ca52d6f70c3b8adfbf"],
-		  [341, 339, 28, 33, "Brandon's office", "506ddb2252d6f70c3b8adfc1"],
-		  [259, 248, 50, 32, "The Cave", "506ddbed52d6f70c3b8adfc3"],
-		  [307, 149, 42, 97, "The Green Room", "506ddca152d6f70c3b8adfc5"],
-		//  [279, 50, 181, 78, "The cafeteria", "506dde9852d6f70c3b8adfc7"],
-		  [187, 235, 70, 75, "The pool room", "506ddee352d6f70c3b8adfc9"],
-		  [72, 190, 102, 73, "The Cathedral", "506ddf2452d6f70c3b8adfcb"]
-		];
-		/* TODO: get room data from an API
-		var rooms = d3.json("<%= url_for(:controller => :room, :action => :list) %>");
-		alert(rooms);
-		*/
-		  var svg = d3.select("#floorplan-div").append("svg")
-			.attr("width", w)
-			.attr("height", h);
-
-		  svg.append("svg:image")
-			.attr("xlink:href", "/static/willow-floorplan.png")
-			.attr("width", w)
-			.attr("height", h);
-
-		  svg.selectAll(".room")
-			.data(rooms)
-			.enter().append("svg:rect")
-			  .attr("class", "room")
-			  .attr("x", function(d) { return d[0]; })
-			  .attr("y", function(d) { return d[1]; })
-			  .attr("width", function(d) { return d[2]; })
-			  .attr("height", function(d) { return d[3]; })
-			  .on("mouseover", function(d) {
-				d3.select("#placename").text(d[4]);
-				})
-			  .on("mouseout", function() {
-				d3.select("#placename").text("");
-				})
-			  .on("click", function(d) {
-                App.get('router').send("navigateTo",{
-                        robot_id: robot_id,
-                        place_id: d[5]
-                    });
-			    });
-	}
+App.Place = DS.Model.extend({
+    /* Field mappings */
+    // TODO: See if this can be done automatically
+    name: DS.attr('string'),
+    description: DS.attr('string'),
+    tags: DS.attr('string'),
+    image: DS.attr('string'),
+    pose_x: DS.attr('number'),
+    pose_y: DS.attr('number'),
+    pose_angle: DS.attr('number'),
+    map_x: DS.attr('number'),
+    map_y: DS.attr('number'),
+    map_width: DS.attr('number'),
+    map_height: DS.attr('number')
 });
 
 /* ---------------------------------------------------------------------- */
-/* Robot class */
+/* Robot model */
 
 App.Robot = DS.Model.extend({
     //  ember-data mapping variables (?)
@@ -178,6 +128,73 @@ App.Robot = DS.Model.extend({
 });
 
 /* ---------------------------------------------------------------------- */
+/* Robot views and controllers */
+App.AllRobotsController = Ember.ArrayController.extend();
+App.AllRobotsView = Ember.View.extend({
+	templateName: 'robots'
+});
+
+App.OneRobotController = Ember.ObjectController.extend();
+App.OneRobotView = Ember.View.extend({
+	templateName: 'a-robot'
+});
+
+/* ---------------------------------------------------------------------- */
+/* Map controller (child of OneRobot) */
+App.MapController = Ember.ArrayController.extend({});
+App.MapView = Ember.View.extend({
+	templateName: 'map',
+	didInsertElement: function() {
+		var w = 480,
+		  h = 374,
+		  x = d3.scale.linear().domain([0, w])
+		  y = d3.scale.ordinal().domain([0, h]);
+
+		  var svg = d3.select("#floorplan-div").append("svg")
+			.attr("width", w)
+			.attr("height", h)
+            .attr("id","damap");
+
+		  svg.append("svg:image")
+			.attr("xlink:href", "/static/willow-floorplan.png")
+			.attr("width", w)
+			.attr("height", h);
+
+        this.get('controller').get('content').addArrayObserver( this);
+    },
+    arrayWillChange: function() {},
+    arrayDidChange: function() {
+        this.drawRooms();
+    },
+    drawRooms: function() {
+        var rooms = this.get('controller').get('content');
+        if(!rooms) {
+            return;
+        }
+		var svg = d3.select("#damap").selectAll(".room")
+			.data(rooms.toArray())
+			.enter().append("svg:rect")
+			  .attr("class", "room")
+			  .attr("x", function(d) { return d.get('map_x'); })
+			  .attr("y", function(d) { return d.get('map_y'); })
+			  .attr("width", function(d) { return d.get('map_width'); })
+			  .attr("height", function(d) { return d.get('map_height'); })
+			  .on("mouseover", function(d) {
+				d3.select("#placename").text(d.get('name'));
+				})
+			  .on("mouseout", function() {
+				d3.select("#placename").text("");
+				})
+			  .on("click", function(d) {
+                App.get('router').send("navigateTo",{
+                        robot_id: App.router.get('oneRobotController').get('content').get('id'),
+                        place_id: d.get('id')
+                    });
+			    });
+    }
+});
+
+/* ---------------------------------------------------------------------- */
 /* Main application controller */
 
 App.ApplicationController = Ember.Controller.extend({});
@@ -186,7 +203,7 @@ App.ApplicationView = Ember.View.extend({
 });
 
 /* ---------------------------------------------------------------------- */
-/* Place controller */
+/* Navigating controller and view */
 App.NavigatingController = Ember.ObjectController.extend({
 });
 App.NavigatingView = Ember.View.extend({
@@ -194,24 +211,6 @@ App.NavigatingView = Ember.View.extend({
 });
 
 
-/* ---------------------------------------------------------------------- */
-/* Place class */
-
-App.Place = DS.Model.extend({
-    /* Field mappings */
-    // TODO: See if this can be done automatically
-    name: DS.attr('string'),
-    description: DS.attr('string'),
-    tags: DS.attr('string'),
-    image: DS.attr('string'),
-    pose_x: DS.attr('number'),
-    pose_y: DS.attr('number'),
-    pose_angle: DS.attr('number'),
-    map_x: DS.attr('number'),
-    map_y: DS.attr('number'),
-    map_width: DS.attr('number'),
-    map_height: DS.attr('number')
-});
 
 /* ---------------------------------------------------------------------- */
 /* URL routing */
@@ -244,6 +243,8 @@ App.Router = Ember.Router.extend({
 			connectOutlets: function(router, context) {
 				router.get('applicationController').
 					connectOutlet('oneRobot', App.Robot.find(context.id));
+				router.get('oneRobotController').
+					connectOutlet('map', App.Place.find({format:'json'}));
 			}
 		}),
 
@@ -260,7 +261,7 @@ App.Router = Ember.Router.extend({
                         robot: r, place: p
                     }));
                 //  Not sure this is the right place for this to go
-                //  but I can't find anything better:
+                //  but I can't find any place better.
                 //  Make the robot actually navigate to the selected place
                 r.navigateTo(p);
             }
