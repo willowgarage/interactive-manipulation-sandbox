@@ -100,3 +100,16 @@
         - djangorestframework
         - django-ember
 
+    #-------------
+    # Application
+    #-------------
+
+    - name: set up local_settings.py for vagrant
+      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer'
+
+    - name: sync up database
+      action: command /usr/bin/python2.7 ./manage.py syncdb chdir='~/layer'
+
+    - name: run django
+      action: command /usr/bin/python2.7./manage.py runserver 0.0.0.0:8000 chdir='~/layer'
+

@@ -7,6 +7,9 @@ Vagrant::Config.run do |config|
   # Forward guest port 8000 to host port 8000
   config.vm.forward_port 8000, 8000
 
+  # Share the host folder (3rd argument) with the guest (2nd argument)
+  config.vm.share_folder "layer", "~/layer", "../layer"
+
   config.vm.provision :ansible do |ansible|
     # Point Vagrant at the location of your playbook you want to run
     ansible.playbook = "webserver.yml"
