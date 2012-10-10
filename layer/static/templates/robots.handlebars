@@ -1,0 +1,23 @@
+<h1>Robot lobby</h1>
+
+<table>
+<tr>
+  <th> Robot name </th>
+  <th> Picture </th>
+  <th> Status </th>
+  <th> Battery </th>
+  <th> Actions </th>
+</tr>
+
+{{#each robot in content}}
+  <tr>
+  <td> <b> {{robot.name}} </b></td>
+  <td> <img {{bindAttr src="robot.image"}} width="100"> </td>
+  <td> Available </td>
+  <td> {{robot.battery}} % </td>
+  <td> <a {{action showRobot robot}} class="button"> Use this one </a>
+  </tr>
+{{/each}}
+
+</table>
+
