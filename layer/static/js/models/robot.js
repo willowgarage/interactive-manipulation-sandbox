@@ -1,12 +1,14 @@
 define([
   'ember',
   'emberdata',
-  'app'
+  'app',
+  'ros'
 ],
 function(
   Ember,
   DS,
-  App
+  App,
+  ROS
 ) {
 
   App.Robot = DS.Model.extend({

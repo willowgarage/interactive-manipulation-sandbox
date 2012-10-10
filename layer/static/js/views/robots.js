@@ -10,7 +10,7 @@ function(
 ) {
 
   App.RobotsView = Ember.View.extend({
-    template: Ember.Handlebars.compile(applicationHtml)
+    template: Ember.Handlebars.compile(robotsHtml)
   });
 
 });

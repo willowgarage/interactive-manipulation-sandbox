@@ -1,11 +1,13 @@
 define([
   'ember',
   'app',
+  'd3',
   'text!templates/robot.handlebars'
 ],
 function(
   Ember,
   App,
+  d3,
   robotHtml
 ) {
 

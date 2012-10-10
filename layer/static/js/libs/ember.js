@@ -11064,13 +11064,13 @@ Ember.Application = Ember.Namespace.extend(
 
     this.waitForDOMContentLoaded();
 
-    if (this.autoinit) {
-      var self = this;
-      this.$().ready(function() {
-        if (self.isDestroyed || self.isInitialized) return;
-        self.initialize();
-      });
-    }
+    // if (this.autoinit) {
+    //   var self = this;
+    //   this.$().ready(function() {
+    //     if (self.isDestroyed || self.isInitialized) return;
+    //     self.initialize();
+    //   });
+    // }
   },
 
   /** @private */
