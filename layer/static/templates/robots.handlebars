@@ -1,23 +1,23 @@
-<h1>Robot lobby</h1>
+<div class="heading"><img src="static/img/wg-logo.png" class="headingimg"> Robot Lobby</div>
 
-<table>
-<tr>
-  <th> Robot name </th>
-  <th> Picture </th>
-  <th> Status </th>
-  <th> Battery </th>
-  <th> Actions </th>
-</tr>
+<div class="content_heading">Nearby robots</div>
 
-{{#each robot in content}}
-  <tr>
-  <td> <b> {{robot.name}} </b></td>
-  <td> <img {{bindAttr src="robot.image"}} width="100"> </td>
-  <td> Available </td>
-  <td> {{robot.battery}} % </td>
-  <td> <a {{action showRobot robot}} class="button"> Use this one </a>
-  </tr>
-{{/each}}
+<div class="robot_list">
+{{#if content.isLoaded}}
+	{{#each robot in content}}
 
-</table>
+		<div class="robot" {{action showRobot robot}}> 
+			<img {{bindAttr src="robot.image"}} width="100"><br>
+			<span class="name">{{robot.name}}</span><br>
+			<span class="status">Idle</span><br>
+		</div>
+
+	{{/each}}
+{{else}}
+	<div class="loading">
+		<img src="static/img/spinnerLarge.gif"><br>
+		Loading...
+	</div>
+{{/if}}
+</div>
 
