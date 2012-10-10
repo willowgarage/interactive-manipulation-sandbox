@@ -4,11 +4,15 @@ define([
   'controllers/application',
   'controllers/navigating',
   'controllers/robots',
+  'controllers/map',
   'controllers/robot',
   'views/application',
   'views/navigating',
   'views/robots',
-  'views/robot'
+  'views/map',
+  'views/robot',
+  'models/robot',
+  'models/place'
 ],
 function(
   Ember,
@@ -52,6 +56,8 @@ function(
         connectOutlets: function(router, context) {
           router.get('applicationController')
             .connectOutlet('robot', App.Robot.find(context.id));
+          router.get('robotController')
+            .connectOutlet('map', App.Place.find({format:'json'}));
         }
       }),
 
