@@ -1,0 +1,36 @@
+<h1>{{name}}</h1>
+
+<img {{bindAttr src="image"}} width="200">
+<div>
+  <b>Battery:</b> <span id="battery">{{battery}}</span>%
+</div>
+
+<hr>
+<p>Enter the name of a place:</p>
+
+<form>
+  <input name="q" type="text" size="100">
+  <input type="submit" text="Go">
+</form>
+
+<br clear="both">
+
+<p>or select it from this map:</p>
+
+<table>
+  <tr>
+    <td>
+      <div class="chart" id="floorplan-div"></div>
+    </td>
+    <td valign="top">
+      <div class="placeinfo" style="margin-left: 50px;">
+        <div><b>Place name:</b> <span id="placename"></span></div>
+        <div><b>Distance:</b> <span id="distance"></span></div>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<hr>
+<a {{action showAllRobots}}> Back to list of robots </a>
+

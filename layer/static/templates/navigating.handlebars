@@ -1,0 +1,19 @@
+<h1>Robot {{robot.name}} is navigating towards {{place.name}}</h1>
+
+<table>
+  <tr>
+    <th> Destination </th>
+    <th> Camera view </th>
+  </tr>
+  <tr>
+    <td>
+      <img {{bindAttr src="place.image"}} width="300">
+    </td>
+    <td>
+      <img {{bindAttr src="robot.camera_url"}} width="300" height="225">
+    </td>
+  </tr>
+</table>
+
+<a {{action showAllRobots}}> Back to list of robots </a>
+
