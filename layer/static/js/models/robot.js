@@ -4,12 +4,7 @@ define([
   'app',
   'ros'
 ],
-function(
-  Ember,
-  DS,
-  App,
-  ROS
-) {
+function( Ember, DS, App, ROS) {
 
   App.Robot = DS.Model.extend({
     name: DS.attr('string'),
@@ -20,6 +15,10 @@ function(
     service_url: DS.attr('string'),
     camera_url: DS.attr('string'),
     battery: -1,
+    plugged_in_value: -1,
+    plugged_in: function() {
+      return (this.get('plugged_in_value') > 0);
+    }.property('plugged_in_value'),
 
     openRosConnection: Ember.observer(function(obj, keyName, value) {
       if (!obj.ROS && obj.get(keyName)) {
@@ -31,6 +30,7 @@ function(
         topic.subscribe(function(msg){
           console.log("Got a battery status update from robot = [" + obj.get('name') + "]");
           obj.set('battery',msg.power_state.relative_capacity);
+          obj.set('plugged_in_value',msg.power_state.AC_present);
         });
         console.log("Done suscribing to battery capacity for robot = [" + obj.get('name') + "]");
       }
@@ -49,6 +49,5 @@ function(
       console.log("Calling NavigateTo action");
     }
   });
-
 });
 
