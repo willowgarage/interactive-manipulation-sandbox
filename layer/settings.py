@@ -118,6 +118,20 @@ TEMPLATE_DIRS = (
     '/home/rwt/layer/templates'
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django_openid_auth.auth.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
+#OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=willowgarage.com'
+OPENID_UPDATE_DETAILS_FROM_SREG = True
+OPENID_CREATE_USERS = True
+#OPENID_STRICT_USERNAMES = True
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,11 +146,12 @@ INSTALLED_APPS = (
 
     # Other dependencies
     'djangorestframework',
+    'django_openid_auth',
+    'ember',
 
     # Layer applications
     'layer.world',
     'layer.robotman',
-    'ember',
 )
 
 # A sample logging configuration. The only tangible logging

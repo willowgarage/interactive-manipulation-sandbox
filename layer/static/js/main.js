@@ -41,10 +41,9 @@ define([
   'app',
   'router'
 ],
-function(
-  App,
-  Router
-) {
+function( App, Router) {
+
   App.initialize();
+
 });
 
