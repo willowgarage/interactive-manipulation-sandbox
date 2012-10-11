@@ -1,43 +1,20 @@
-<!DOCTYPE HTML>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-{% ember_full_js %}
-<script type="text/javascript" src="/static/app.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/stylesheet.css">
-<title>Robots robots robots</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="/static/css/stylesheet.css">
+  <script src="/static/js/libs/require.js" type="text/javascript" data-main="/static/js/main"></script>
+  <title>Robots robots robots</title>
 </head>
 <body>
-
-<!-- Main application template -->
-{% handlebars "application" %}
-<h1>Robots</h1>
-{{outlet}}
-{% endhandlebars %}
-
-<!-- Template for displaying list of robots -->
-{% handlebars "robots" %}
-<ul>
-{{#each robot in controller}}
-<li> <a {{action showRobot robot}}> {{robot.name}} </a>
-{{/each}}
-</ul>
-{% endhandlebars %}
-
-<!-- Template for displaying list of places -->
-{% handlebars "places" %}
-{{#each place in controller}}
-<div><b>{{place.name}}</b> ({{place.tags}})</div>
-{{/each}}
-{% endhandlebars %}
-
-<!-- Template for displaying one robot -->
-{% handlebars "a-robot" %}
-<div> Robot: {{name}} ({{service_url}}) </div>
-
-<a {{action showAllRobots}}> Back to list of robots </a>
-{% endhandlebars %}
+<p>
+{% if user.is_authenticated %}
+  Welcome {{ user.first_name }} {{ user.last_name }}, <a href="/accounts/logout/">Logout</a>
+{% else %}
+  <a href="/accounts/login/">Login</a></li>
+{% endif %}                                      
+</p>
 
 </body>
 </html>
-
 
