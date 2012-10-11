@@ -19,7 +19,7 @@ define([
           .attr("id","mapsvg");
 
         svg.append("svg:image")
-          .attr("xlink:href", "/static/willow-floorplan.png")
+          .attr("xlink:href", "/static/images/willow-floorplan.png")
           .attr("width", w)
           .attr("height", h);
 
