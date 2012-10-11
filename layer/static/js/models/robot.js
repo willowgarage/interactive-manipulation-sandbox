@@ -4,12 +4,7 @@ define([
   'app',
   'ros'
 ],
-function(
-  Ember,
-  DS,
-  App,
-  ROS
-) {
+function( Ember, DS, App, ROS) {
 
   App.Robot = DS.Model.extend({
     name: DS.attr('string'),
