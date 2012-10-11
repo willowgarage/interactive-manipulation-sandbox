@@ -53,9 +53,14 @@ function(
 
         navigateTo: Ember.Route.transitionTo('navigating'),
 
+        unplug: function() {
+          this.robot.unplug();
+        },
+
         connectOutlets: function(router, context) {
+          this.robot = App.Robot.find(context.id);
           router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+            .connectOutlet('robot', this.robot);
           router.get('robotController')
             .connectOutlet('map', App.Place.find({format:'json'}));
         }
@@ -66,18 +71,21 @@ function(
 
         showAllRobots: Ember.Route.transitionTo('robots'),
 
+        plugIn: function() {
+          this.robot.plugIn();
+        },
+
         connectOutlets: function(router, context) {
-          robot = App.Robot.find(context.robot_id);
-          place = App.Place.find(context.place_id);
+          this.robot = App.Robot.find(context.robot_id);
+          this.place = App.Place.find(context.place_id);
           router.get('applicationController')
             .connectOutlet('navigating', Ember.Object.create({
-              robot: robot,
-              place: place
+              robot: this.robot,
+              place: this.place
             }));
-          robot.navigateTo(place);
+          this.robot.navigateTo(this.place);
         }
       })
     })
   });
-
 });
