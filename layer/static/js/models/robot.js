@@ -47,6 +47,24 @@ function(
       action.inputs.frame_id = '/map';
       action.execute();
       console.log("Calling NavigateTo action");
+    },
+
+    unplug: function() {
+      var action = new Action({
+        ros: this.ROS,
+        name: 'Unplug'
+      });
+      action.execute();
+      console.log("Calling Unplug action");
+    },
+
+    plugIn: function() {
+      var action = new Action({
+        ros: this.ROS,
+        name: 'PlugIn'
+      });
+      action.execute();
+      console.log("Calling PlugIn action");
     }
   });
 

@@ -5,17 +5,9 @@
   <b>Battery:</b> <span id="battery">{{battery}}</span>%
 </div>
 
-<hr>
-<p>Enter the name of a place:</p>
+<a {{action unplug}}>Unplug from power outlet</a>
 
-<form>
-  <input name="q" type="text" size="100">
-  <input type="submit" text="Go">
-</form>
-
-<br clear="both">
-
-<p>or select it from this map:</p>
+<p>Select a place in the map to navigate:</p>
 {{outlet}}
 
 <hr>
