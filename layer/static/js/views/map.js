@@ -10,13 +10,13 @@ define([
         didInsertElement: function() {
             var w = 480,
               h = 374,
-              x = d3.scale.linear().domain([0, w])
+              x = d3.scale.linear().domain([0, w]),
               y = d3.scale.ordinal().domain([0, h]);
 
               var svg = d3.select("#floorplan-div").append("svg")
                 .attr("width", w)
                 .attr("height", h)
-                .attr("id","damap");
+                .attr("id","mapsvg");
 
               svg.append("svg:image")
                 .attr("xlink:href", "/static/willow-floorplan.png")
@@ -30,11 +30,17 @@ define([
             this.drawRooms();
         },
         drawRooms: function() {
-            var rooms = this.get('controller').get('content');
-            if(!rooms) {
+            var places = this.get('controller').get('content');
+            if(!places) {
                 return;
             }
-            var svg = d3.select("#damap").selectAll(".room")
+            function isOutlet(place) {  return (place.get('tags') == 'outlet'); }
+            var rooms = places.filter( function(p) { return !isOutlet(p); });
+            var outlets = places.filter( isOutlet);
+            var map = d3.select("#mapsvg");
+
+            /* Draw Rooms */
+            map.selectAll(".room")
                 .data(rooms.toArray())
                 .enter().append("svg:rect")
                   .attr("class", "room")
@@ -54,6 +60,39 @@ define([
                             place_id: d.get('id')
                         });
                     });
+
+            /* Draw Outlets */
+            map.selectAll(".outlet")
+                .data(outlets.toArray())
+                .enter().append("svg:image")
+                  .attr("class", "outlet")
+                  .attr("xlink:href", "/static/outlet.jpg")
+                  .attr("x", function(d) { return d.get('map_x'); })
+                  .attr("y", function(d) { return d.get('map_y'); })
+                  .attr("width", 20)
+                  .attr("height", 20)
+                  .on("mouseover", function(d) {
+                    d3.select("#placename").text(d.get('name'));
+                    })
+                  .on("mouseout", function() {
+                    d3.select("#placename").text("");
+                    })
+                  .on("click", function(d) {
+                    App.get('router').send("navigateTo",{
+                            robot_id: App.router.get('robotController').get('content').get('id'),
+                            place_id: d.get('id')
+                        });
+                    });
+
+/*
+            map.append("svg:image")
+                .attr("class","outlet")
+                .attr("xlink:href", "/static/outlet.jpg")
+                .attr("x", 300)
+                .attr("y", 305)
+                .attr("width", 20)
+                .attr("height", 20);
+*/
         }
     });
 
