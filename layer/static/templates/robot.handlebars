@@ -1,23 +1,26 @@
-<h1>{{name}}</h1>
+<div class="header">
+    <img src="static/img/wg-logo.png" class="headingimg" {{action showAllRobots}}>
+    <span class="heading" {{action showAllRobots}}>{{name}}</span>
 
-<img {{bindAttr src="image"}} width="200">
-<div>
-  <b>Battery:</b> <span id="battery">{{battery}}</span>%
+    <div class="robot_info">
+	<table>
+	<tr>
+	    <th> Battery </th>
+	    <th> Location </th>
+	    <th> Motors </th>
+	    <th> Status </th>
+	</tr>
+	<tr>
+	    <td><span id="battery">{{battery}}</span>%,
+		<span class="tbd">unplugged</span></td>
+	    <td><span class="tbd">unknown</span></td>
+	    <td><span class="tbd">unknown</span></td>
+	    <td><span class="tbd">unknown</span></td>
+	</tr>
+	</table>
+    </div>
 </div>
 
-<hr>
-<p>Enter the name of a place:</p>
-
-<form>
-  <input name="q" type="text" size="100">
-  <input type="submit" text="Go">
-</form>
-
-<br clear="both">
-
-<p>or select it from this map:</p>
 {{outlet}}
 
-<hr>
-<a {{action showAllRobots}}> Back to list of robots </a>
 

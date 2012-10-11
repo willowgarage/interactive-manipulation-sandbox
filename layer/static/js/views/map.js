@@ -29,6 +29,7 @@ define([
         arrayDidChange: function() {
             this.drawRooms();
         },
+        foo:"bar",
         drawRooms: function() {
             var rooms = this.get('controller').get('content');
             if(!rooms) {
@@ -42,17 +43,22 @@ define([
                   .attr("y", function(d) { return d.get('map_y'); })
                   .attr("width", function(d) { return d.get('map_width'); })
                   .attr("height", function(d) { return d.get('map_height'); })
+				  /*
                   .on("mouseover", function(d) {
                     d3.select("#placename").text(d.get('name'));
                     })
                   .on("mouseout", function() {
                     d3.select("#placename").text("");
                     })
+				  */
                   .on("click", function(d) {
+                    d3.select("#placename").text(d.get('name'));
+                      /*
                     App.get('router').send("navigateTo",{
                             robot_id: App.router.get('robotController').get('content').get('id'),
                             place_id: d.get('id')
                         });
+					*/
                     });
         }
     });
