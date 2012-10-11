@@ -119,7 +119,7 @@ TEMPLATE_DIRS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'django_openid_auth.auth.OpenIDBackend',
+    'layer.auth.HackedOpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
