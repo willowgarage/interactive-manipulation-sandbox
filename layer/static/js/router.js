@@ -67,6 +67,7 @@ function(
 
       navigate : Ember.Route.extend({
         route: '/robots/:id/navigate',
+        showAllRobots: Ember.Route.transitionTo('robots'),
 
         plug: Ember.Route.transitionTo('plug'),
 
@@ -78,8 +79,6 @@ function(
           };
           Ember.Route.transitionTo('navigating')(router,navigatingContext);
         },
-
-        showAllRobots: Ember.Route.transitionTo('robots'),
 
         /* Initialize the "navigate" state */
         connectOutlets: function(router, context) {
@@ -101,9 +100,9 @@ function(
 
       plug : Ember.Route.extend({
         route: '/robots/:id/plug',
+        showAllRobots: Ember.Route.transitionTo('robots'),
 
         navigate: Ember.Route.transitionTo('navigate'),
-        showAllRobots: Ember.Route.transitionTo('robots'),
 
         plugIn: function( router, context) {
           var robot = context.context;
@@ -124,17 +123,21 @@ function(
 
       navigating: Ember.Route.extend({
         route: '/navigating/:robot_id/:place_id',
-
         showAllRobots: Ember.Route.transitionTo('robots'),
+        plug: Ember.Route.transitionTo('plug'),
+        navigate: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
           router.get('applicationController')
-            .connectOutlet('navigating', Ember.Object.create({
+            .connectOutlet('robot', this.robot);
+          router.get('robotController').
+            connectOutlet('navigating', Ember.Object.create({
               robot: this.robot,
               place: this.place
             }));
+          // Send the robot the actual navigateTo command via ROS
           this.robot.navigateTo(this.place);
         }
       })

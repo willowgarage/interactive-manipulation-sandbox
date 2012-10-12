@@ -38,7 +38,8 @@ define([
       var outlets = places.filter( function(p) { return p.get('isOutlet'); });
       var map = d3.select("#mapsvg");
 
-
+      /* When the user clicks on a room, update "Selected location" and
+       * store this place name in our controller */
       function nodeSelected(d) {
         d3.select("#placename")
           .text(d.get('name'));

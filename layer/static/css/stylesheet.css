@@ -68,9 +68,13 @@ a {
 	font-size: 30pt;
 	text-align: center;
 	margin-bottom: 30px;
+	margin-top: 8px;
 }
 
 .headingimg {
+	/* The willow garage logo in the page header */
+	margin-top: 8px;
+	margin-left: 8px;
 	margin-right: 10px;
 	vertical-align: middle;
 }
@@ -122,16 +126,6 @@ a {
 .robot_info table td {
 	padding-left: 20px;
 	padding-right: 20px;
-}
-
-.heading {
-	margin-top: 8px;
-}
-
-.headingimg {
-	/* The willow garage logo in the page header */
-	margin-top: 8px;
-	margin-left: 8px;
 }
 
 .tbd {
