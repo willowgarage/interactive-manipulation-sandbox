@@ -49,7 +49,10 @@ a {
     opacity: 0.2;
 }
 .room:hover {
-    fill: #ff0000;
+    fill: #0000ff;
+}
+.room.selected {
+	fill: #ff0000;
 }
 
 /* To draw outlets in the map */
@@ -184,8 +187,8 @@ a {
 }
 
 .mybutton {
-	margin: 5em 5em 5em 5em;
-	padding: 10px 10px 10px 10px;
+	margin: 100px;
+	padding: 10px;
 	background: blue;
 	color: white;
 	border-radius: 25px;
