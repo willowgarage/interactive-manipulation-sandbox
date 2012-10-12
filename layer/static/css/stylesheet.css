@@ -1,3 +1,9 @@
+body {
+   font-family: Helvetica, Arial, Sans-Serif;
+   margin-top: 0;
+   margin-left: 0;
+}
+
 a {
 	color: #0000ff;
 	text-decoration: underline;
@@ -51,7 +57,137 @@ a {
     opacity: 1;
 }
 .outlet:hover {
-    opacity: 1;
     outline: gray solid;
+}
+.outlet.selected {
+    outline: gray solid;
+}
+
+/* Robot Lobby styles */
+.heading {
+	font-size: 30pt;
+	text-align: center;
+	margin-bottom: 30px;
+	margin-top: 8px;
+}
+
+.headingimg {
+	/* The willow garage logo in the page header */
+	margin-top: 8px;
+	margin-left: 8px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+.content_heading {
+	font-size: 20pt;
+}
+
+.robot_list {
+	width: 100%;
+}
+
+.robot {
+	text-align: center;
+	margin: 20px 20px 20px 20px;
+	padding: 10px 10px 10px 10px;
+	background: #b3ddf2;
+	border-radius: 15px;
+	width: 120px;
+	float: left;
+}
+
+.robot .name {
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.robot .status {
+	font-size: 10pt;
+}
+
+.loading {
+	margin: 20px 20px 20px 20px;
+}
+
+/* Single robot view */
+.robot_map {
+	margin: 0px 50px 0px 50px;
+}
+
+.robot_info {
+	background: #ebdc9d;
+	border-radius: 0px 0px 10px 10px;
+	float: right;
+}
+.robot_info table {
+	margin: 0px 20px 10px 20px;
+}
+.robot_info table td {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.tbd {
+	font-style: italic;
+	color: red;
+}
+
+.placeinfo {
+	margin-top: 50px;
+}
+
+.chart {
+	margin: 20px 20px 20px 20px;
+}
+
+.chart_column {
+	vertical-align: top;
+}
+
+.navigation_button {
+	float: right;
+	width: 40px;
+}
+
+.left_navbar {
+	background: white;
+	float: left;
+	margin-right: 20px;
+	margin-top: 0px;
+}
+.navtab {
+	margin: 0px 10px 10px 0px;
+	padding: 150px 10px 150px 10px;
+	background: #cae1ff;
+	border-radius: 0px 10px 10px 0px;
+}
+
+.navtab_selected {
+	background: #368DFF ;
+}
+
+.content {
+	margin-top: 50px;
+}
+
+.plugcontent {
+	text-align: center;
+	font-size: 52pt;
+}
+
+.navigate_button {
+	margin-top: 200px;
+	height: 60px;
+	padding-top: 50px;
+	text-align: center;
+}
+
+.mybutton {
+	margin: 5em 5em 5em 5em;
+	padding: 10px 10px 10px 10px;
+	background: blue;
+	color: white;
+	border-radius: 25px;
 }
 

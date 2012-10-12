@@ -16,6 +16,10 @@ function( Ember, DS, App, ros, Action) {
     service_url: DS.attr('string'),
     camera_url: DS.attr('string'),
     battery: -1,
+    plugged_in_value: -1,
+    plugged_in: function() {
+      return (this.get('plugged_in_value') > 0);
+    }.property('plugged_in_value'),
 
     serviceUrlChanged: function() {
       if(this.get('service_url')) {
@@ -27,6 +31,7 @@ function( Ember, DS, App, ros, Action) {
         var _this = this;
         topic.subscribe(function(message) {
           _this.set('battery', message.power_state.relative_capacity);
+          _this.set('plugged_in_value', message.power_state.AC_present);
         });
       }
     }.observes('service_url'),
@@ -62,6 +67,5 @@ function( Ember, DS, App, ros, Action) {
       console.log("Calling PlugIn action");
     }
   });
-
 });
 

@@ -1,15 +1,29 @@
-<h1>{{name}}</h1>
+<div class="header">
+    <img src="static/img/wg-logo.png" class="headingimg" {{action showAllRobots}}>
+    <span class="heading" {{action showAllRobots}}>{{name}}</span>
 
-<img {{bindAttr src="image"}} width="200">
-<div>
-  <b>Battery:</b> <span id="battery">{{battery}}</span>%
+    <div class="robot_info">
+	<table>
+	<tr>
+	    <th> Battery </th>
+	    <th> Location </th>
+	    <th> Motors </th>
+	    <th> Status </th>
+	</tr>
+	<tr>
+	    <td><span id="battery">{{battery}}</span>%
+                {{#if plugged_in}}
+		<span>, charging</span>
+                {{/if}}
+            </td>
+	    <td><span class="tbd">unknown</span></td>
+	    <td><span class="tbd">unknown</span></td>
+	    <td><span class="tbd">unknown</span></td>
+	</tr>
+	</table>
+    </div>
 </div>
 
-<a {{action unplug}}>Unplug from power outlet</a>
-
-<p>Select a place in the map to navigate:</p>
 {{outlet}}
 
-<hr>
-<a {{action showAllRobots}}> Back to list of robots </a>
 

@@ -7,6 +7,8 @@
   <title>Robots robots robots</title>
 </head>
 <body>
+
+<div id="login-logout-link">
 <p>
 {% if user.is_authenticated %}
   Welcome {{ user.first_name }} {{ user.last_name }}, <a href="/accounts/logout/">Logout</a>
@@ -14,6 +16,7 @@
   <a href="/accounts/login/">Login</a></li>
 {% endif %}                                      
 </p>
+</div>
 
 </body>
 </html>
