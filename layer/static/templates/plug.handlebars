@@ -9,11 +9,25 @@
 {{#if plugged_in}}
 <div>Currently plugged in</div>
 
+<table border=1>
+  <tr>
+    <td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
+    <td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
+  </tr>
+</table>
+
 <div class="mybutton" {{action unplug content}}>Unplug</div>
 
 {{else}}
 
 <div>Not plugged in</div>
+
+<table border=1>
+  <tr>
+    <td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
+    <td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
+  </tr>
+</table>
 
 <div class="mybutton" {{action plugIn content}}>Plug in</div>
 {{/if}}

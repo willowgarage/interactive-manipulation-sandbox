@@ -8,7 +8,6 @@ define([
   'controllers/robot',
   'controllers/plug',
   'controllers/navigate',
-  'controllers/plugging',
   'views/application',
   'views/navigating',
   'views/robots',
@@ -16,7 +15,6 @@ define([
   'views/robot',
   'views/plug',
   'views/navigate',
-  'views/plugging',
   'models/robot',
   'models/place'
 ],
@@ -30,14 +28,12 @@ function(
   RobotController,
   PlugController,
   NavigateController,
-  PluggingController,
   ApplicationView,
   NavigatingView,
   RobotsView,
   RobotView,
   PlugView,
   NavigateView,
-  PluggingView,
   Robot,
   Place
 ) {
@@ -111,12 +107,10 @@ function(
         plugIn: function( router, context) {
           var robot = context.context;
           robot.plugIn();
-          Ember.Route.transitionTo('plugging')(router,robot);
         },
         unplug: function( router, context) {
           var robot = context.context;
           robot.unplug();
-          Ember.Route.transitionTo('plugging')(router,robot);
         },
 
         connectOutlets: function(router, context) {
@@ -124,22 +118,6 @@ function(
             .connectOutlet('robot', App.Robot.find(context.id));
           router.get('robotController')
             .connectOutlet('plug', App.Robot.find(context.id));
-        }
-      }),
-
-      /* View for displaying cameras during a plug/unplug behavior */
-      plugging: Ember.Route.extend({
-        route: '/robots/:id/plugging',
-        showAllRobots: Ember.Route.transitionTo('robots'),
-
-        navigate: Ember.Route.transitionTo('navigate'),
-
-        connectOutlets: function(router, context) {
-          var robot = App.Robot.find(context.id);
-          router.get('applicationController')
-            .connectOutlet('robot', robot);
-          router.get('robotController')
-            .connectOutlet('plugging', robot);
         }
       }),
 

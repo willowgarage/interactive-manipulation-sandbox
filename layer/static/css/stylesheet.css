@@ -187,8 +187,8 @@ a {
 }
 
 .mybutton {
-	margin: 5em 5em 5em 5em;
-	padding: 10px 10px 10px 10px;
+	margin: 100px;
+	padding: 10px;
 	background: blue;
 	color: white;
 	border-radius: 25px;
