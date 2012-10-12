@@ -9,13 +9,11 @@
 <body>
 
 <div id="login-logout-link">
-<p>
 {% if user.is_authenticated %}
   Welcome {{ user.first_name }} {{ user.last_name }}, <a href="/accounts/logout/">Logout</a>
 {% else %}
   <a href="/accounts/login/">Login</a></li>
 {% endif %}                                      
-</p>
 </div>
 
 </body>
