@@ -46,3 +46,12 @@ a {
     fill: #ff0000;
 }
 
+/* To draw outlets in the map */
+.outlet {
+    opacity: 1;
+}
+.outlet:hover {
+    opacity: 1;
+    outline: gray solid;
+}
+
