@@ -41,8 +41,14 @@ define([
       /* When the user clicks on a room, update "Selected location" and
        * store this place name in our controller */
       function nodeSelected(d) {
-        d3.select("#placename")
-          .text(d.get('name'));
+        // Remove old selection
+        d3.select(".selected").classed("selected", false);
+        // Add new selection
+        d3.select(d3.event.target).classed("selected", true);
+
+        // Populate the "Selected location" text field
+        d3.select("#placename").text(d.get('name'));
+        // Store this place id in our controller
         _this.get('controller').set('placeId', d.get('id'));
       }
 
