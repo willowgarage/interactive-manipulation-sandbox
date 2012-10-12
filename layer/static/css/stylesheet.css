@@ -57,7 +57,9 @@ a {
     opacity: 1;
 }
 .outlet:hover {
-    opacity: 1;
+    outline: gray solid;
+}
+.outlet.selected {
     outline: gray solid;
 }
 
