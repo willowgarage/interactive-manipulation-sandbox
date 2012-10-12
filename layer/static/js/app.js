@@ -7,10 +7,7 @@ function(
   DS
 ) {
   var App = Ember.Application.create();
-
-  /* Configuration variables */
-  var ROBOT_API = '/world/api/robots?format=json-p';
-  var PLACE_API = '/world/api/places?format=json-p';
+  window.TheApp = App;
 
   /* Overriding behavior in RESTAdapter to handle responses of the type
       [{ object },{ object }, ...]
