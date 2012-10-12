@@ -3,7 +3,8 @@ define([
     'app'
 ], function( Ember, App) {
 
-    App.RobotController = Ember.ObjectController.extend();
+    App.RobotController = Ember.ObjectController.extend({
+    });
 
 });
 

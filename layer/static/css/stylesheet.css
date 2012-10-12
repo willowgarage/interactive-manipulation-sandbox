@@ -193,4 +193,6 @@ a {
 	color: white;
 	border-radius: 25px;
 }
-
+.mybutton.disabled {
+	background: gray;
+}
