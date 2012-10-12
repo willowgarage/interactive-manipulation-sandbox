@@ -125,6 +125,7 @@ function(
         route: '/navigating/:robot_id/:place_id',
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
+        navigate: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);

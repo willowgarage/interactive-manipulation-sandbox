@@ -1,7 +1,7 @@
 <div class="left_navbar">
     <!-- The "content" parameter here is the robot object -->
     <div class="navtab navtab_selected"> Navigate </div>
-    <div class="navtab" {{action plug content}}> Plug </div>
+    <div class="navtab" {{action plug robot}}> Plug </div>
 </div>
 
 <div>
@@ -20,6 +20,6 @@
   </tr>
 </table>
 
-<div class="button"> STOP (unimplemented) </div>
+<div class="button" {{action navigate robot}}> STOP (unimplemented) </div>
 
 </div></div>
