@@ -6,11 +6,15 @@ define([
   'controllers/robots',
   'controllers/map',
   'controllers/robot',
+  'controllers/plug',
+  'controllers/navigate',
   'views/application',
   'views/navigating',
   'views/robots',
   'views/map',
   'views/robot',
+  'views/plug',
+  'views/navigate',
   'models/robot',
   'models/place'
 ],
@@ -20,11 +24,18 @@ function(
   ApplicationController,
   NavigatingController,
   RobotsController,
+  MapController,
   RobotController,
+  PlugController,
+  NavigateController,
   ApplicationView,
   NavigatingView,
   RobotsView,
-  RobotView
+  RobotView,
+  PlugView,
+  NavigateView,
+  Robot,
+  Place
 ) {
 
   App.Router = Ember.Router.extend({
@@ -38,7 +49,7 @@ function(
       robots: Ember.Route.extend({
         route: '/robots',
 
-        showRobot: Ember.Route.transitionTo('robot'),
+        showRobot: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router) {
           router.get('applicationController')
@@ -49,40 +60,84 @@ function(
       robot: Ember.Route.extend({
         route: '/robots/:id',
 
+        redirectsTo: 'navigate',
+
+        showAllRobots: Ember.Route.transitionTo('robots')
+      }),
+
+      navigate : Ember.Route.extend({
+        route: '/robots/:id/navigate',
         showAllRobots: Ember.Route.transitionTo('robots'),
 
-        navigateTo: Ember.Route.transitionTo('navigating'),
+        plug: Ember.Route.transitionTo('plug'),
 
-        unplug: function() {
-          this.robot.unplug();
+        // TODO: Clean-up
+        navigateTo: function( router, context) {
+          var navigatingContext = {
+            place_id: router.get('mapController').get('placeId'),
+            robot_id: router.get('robotController').get('content').get('id')
+          };
+          Ember.Route.transitionTo('navigating')(router,navigatingContext);
+        },
+
+        /* Initialize the "navigate" state */
+        connectOutlets: function(router, context) {
+          this.robot = App.Robot.find(context.id);
+          /* Set the ApplicationView's {{outlet}} to be a RobotView with
+           * a RobotController which has a Robot model as context */
+          router.get('applicationController')
+            .connectOutlet('robot', this.robot);
+          /* Set the RobotView's {{outlet}} to be a NavigateView with
+           * a NagivateController which has a Robot model as context */
+          router.get('robotController')
+            .connectOutlet('navigate', this.robot);
+          /* Set the NagivateView's {{outlet}} to be a MapView with a
+             MapController using a Place model as context */
+          router.get('navigateController')
+            .connectOutlet('map', App.Place.find({format:'json'}));
+        }
+      }),
+
+      plug : Ember.Route.extend({
+        route: '/robots/:id/plug',
+        showAllRobots: Ember.Route.transitionTo('robots'),
+
+        navigate: Ember.Route.transitionTo('navigate'),
+
+        plugIn: function( router, context) {
+          var robot = context.context;
+          robot.plugIn();
+        },
+        unplug: function( router, context) {
+          var robot = context.context;
+          robot.unplug();
         },
 
         connectOutlets: function(router, context) {
-          this.robot = App.Robot.find(context.id);
           router.get('applicationController')
-            .connectOutlet('robot', this.robot);
+            .connectOutlet('robot', App.Robot.find(context.id));
           router.get('robotController')
-            .connectOutlet('map', App.Place.find({format:'json'}));
+            .connectOutlet('plug', App.Robot.find(context.id));
         }
       }),
 
       navigating: Ember.Route.extend({
         route: '/navigating/:robot_id/:place_id',
-
         showAllRobots: Ember.Route.transitionTo('robots'),
-
-        plugIn: function() {
-          this.robot.plugIn();
-        },
+        plug: Ember.Route.transitionTo('plug'),
+        navigate: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
           router.get('applicationController')
-            .connectOutlet('navigating', Ember.Object.create({
+            .connectOutlet('robot', this.robot);
+          router.get('robotController').
+            connectOutlet('navigating', Ember.Object.create({
               robot: this.robot,
               place: this.place
             }));
+          // Send the robot the actual navigateTo command via ROS
           this.robot.navigateTo(this.place);
         }
       })

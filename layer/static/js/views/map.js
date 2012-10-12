@@ -38,7 +38,16 @@ define([
       var outlets = places.filter( function(p) { return p.get('isOutlet'); });
       var map = d3.select("#mapsvg");
 
+      /* When the user clicks on a room, update "Selected location" and
+       * store this place name in our controller */
+      function nodeSelected(d) {
+        d3.select("#placename")
+          .text(d.get('name'));
+        _this.get('controller').set('placeId', d.get('id'));
+      }
+
       /* Draw Rooms */
+      var _this = this;
       map.selectAll(".room")
         .data(rooms.toArray())
         .enter().append("svg:rect")
@@ -47,18 +56,7 @@ define([
           .attr("y", function(d) { return d.get('map_y'); })
           .attr("width", function(d) { return d.get('map_width'); })
           .attr("height", function(d) { return d.get('map_height'); })
-          .on("mouseover", function(d) {
-            d3.select("#placename").text(d.get('name'));
-          })
-          .on("mouseout", function() {
-            d3.select("#placename").text("");
-          })
-          .on("click", function(d) {
-            App.get('router').send("navigateTo",{
-              robot_id: App.router.get('robotController').get('content').get('id'),
-              place_id: d.get('id')
-            });
-          });
+          .on("click", nodeSelected);
 
       /* Draw Outlets */
       map.selectAll(".outlet")
@@ -70,18 +68,7 @@ define([
           .attr("y", function(d) { return d.get('map_y'); })
           .attr("width", 20)
           .attr("height", 20)
-          .on("mouseover", function(d) {
-            d3.select("#placename").text(d.get('name'));
-          })
-          .on("mouseout", function() {
-            d3.select("#placename").text("");
-          })
-          .on("click", function(d) {
-            App.get('router').send("navigateTo",{
-              robot_id: App.router.get('robotController').get('content').get('id'),
-              place_id: d.get('id')
-            });
-          });
+          .on("click", nodeSelected);
     }
   });
 

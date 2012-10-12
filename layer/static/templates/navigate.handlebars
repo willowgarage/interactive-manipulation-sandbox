@@ -1,0 +1,21 @@
+<div class="left_navbar">
+    <!-- The "content" parameter here is the robot object -->
+    <div class="navtab navtab_selected"> Navigate </div>
+    <div class="navtab" {{action plug content}}> Plug </div>
+</div>
+
+<div>
+	<div class="content">
+
+{{#if plugged_in}}
+<div class="notice">Warning: plugged in. Please unplug before navigating.</div>
+{{/if}}
+
+<div class="robot_map">
+Tap on the map where you would like to go:
+
+{{outlet}}
+</div>
+
+	</div>
+</div>
