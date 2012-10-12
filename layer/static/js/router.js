@@ -81,10 +81,6 @@ function(
 
         showAllRobots: Ember.Route.transitionTo('robots'),
 
-        unplug: function() {
-          this.robot.unplug();
-        },
-
         /* Initialize the "navigate" state */
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.id);
@@ -109,6 +105,15 @@ function(
         navigate: Ember.Route.transitionTo('navigate'),
         showAllRobots: Ember.Route.transitionTo('robots'),
 
+        plugIn: function( router, context) {
+          var robot = context.context;
+          robot.plugIn();
+        },
+        unplug: function( router, context) {
+          var robot = context.context;
+          robot.unplug();
+        },
+
         connectOutlets: function(router, context) {
           router.get('applicationController')
             .connectOutlet('robot', App.Robot.find(context.id));
@@ -121,10 +126,6 @@ function(
         route: '/navigating/:robot_id/:place_id',
 
         showAllRobots: Ember.Route.transitionTo('robots'),
-
-        plugIn: function() {
-          this.robot.plugIn();
-        },
 
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);
