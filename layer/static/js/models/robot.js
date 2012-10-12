@@ -18,16 +18,17 @@ function( Ember, DS, App, ros, Action) {
     battery: -1,
 
     serviceUrlChanged: function() {
-      var that = this;
-      var serviceUrl = that.get('service_url');
-      ros.connect(serviceUrl);
-      var topic = new ros.Topic({
-        name: '/dashboard_agg',
-        messageType: 'pr2_msgs/DashboardState'
-      });
-      topic.subscribe(function(message) {
-        that.set('battery', message.power_state.relative_capacity);
-      });
+      if(this.get('service_url')) {
+        ros.connect(this.get('service_url'));
+        var topic = new ros.Topic({
+          name: '/dashboard_agg',
+          messageType: 'pr2_msgs/DashboardState'
+        });
+        var _this = this;
+        topic.subscribe(function(message) {
+          _this.set('battery', message.power_state.relative_capacity);
+        });
+      }
     }.observes('service_url'),
 
     navigateTo: function(place) {
