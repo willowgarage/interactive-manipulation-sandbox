@@ -35,11 +35,20 @@
 		
 		<div id="container"></div>
 
-        <script src="https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/ros.js"></script>
-        <script src="https://raw.github.com/mrdoob/three.js/master/build/three.js"></script>
+    <!--
+    <script src="https://raw.github.com/RobotWebTools/rosjs/fuerte-devel/dist/ros_bundle.js"></script>
+    <script src="https://raw.github.com/mrdoob/three.js/master/build/three.js"></script>
+    /-->
+    
+    <script src="ros_bundle.js"></script>
+    <script src="three.js/build/three.js"></script>
 	
-		<script src="objects/Axes.js"></script>
-		<script src="interactive_markers.js"></script>
+    <script src="helpers/RosAxisHelper.js"></script>
+    <script src="helpers/MarkerHelper.js"></script>
+    <script src="helpers/RosOrbitControls.js"></script>
+    <script src="helpers/InteractiveMarkerHelper.js"></script>
+    <script src="InteractiveMarkerClient.js"></script>
+		<script src="interactive_marker_demo.js"></script>
 
 	</body>
 </html>
