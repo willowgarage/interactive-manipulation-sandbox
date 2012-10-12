@@ -1,13 +1,18 @@
-<h1>Robot {{robot.name}} is navigating towards {{place.name}}</h1>
+<div class="left_navbar">
+    <!-- The "content" parameter here is the robot object -->
+    <div class="navtab navtab_selected"> Navigate </div>
+    <div class="navtab" {{action plug content}}> Plug </div>
+</div>
+
+<div>
+	<div class="content">
+
+<div class="heading">Navigating to the {{place.name}}</div>
 
 <table>
   <tr>
-    <th> Destination </th>
-    <th> Camera view </th>
-  </tr>
-  <tr>
     <td>
-      <img {{bindAttr src="place.image"}} width="300">
+      <img src="static/images/willow-floorplan.png" width="400">
     </td>
     <td>
       <img {{bindAttr src="robot.camera_url"}} width="300" height="225">
@@ -15,11 +20,6 @@
   </tr>
 </table>
 
-{{#if place.isOutlet}}
-<a {{action plugIn}}> Plug robot in </a>
-{{/if}}
+<div class="button"> STOP (unimplemented) </div>
 
-<br/>
-
-<a {{action showAllRobots}}> Back to list of robots </a>
-
+</div></div>
