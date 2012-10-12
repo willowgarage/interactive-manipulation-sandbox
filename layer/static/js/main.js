@@ -12,7 +12,7 @@ requirejs.config({
     text         : 'libs/text',
     // ROS
     eventemitter2 : 'libs/eventemitter2',
-    ros           : 'libs/ros',
+    ROS           : 'libs/ros',
     actionclient  : 'libs/actionclient',
     action        : 'libs/action',
     // Templates
