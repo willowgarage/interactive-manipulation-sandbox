@@ -11,11 +11,7 @@ define([
         },
         willDestroyElement: function() {
           $('#login-logout-link').appendTo("body");
-        },
-        pluggedInStatusChanged: function() {
-          console.log("plugged-in status changed");
-          $('.mybutton').removeClass('disabled');
-        }.observes('controller.content.plugged_in')
+        }
     });
 
 });
