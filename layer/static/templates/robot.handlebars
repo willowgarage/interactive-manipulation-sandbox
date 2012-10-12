@@ -2,26 +2,26 @@
     <img src="static/img/wg-logo.png" class="headingimg" {{action showAllRobots}}>
     <span class="heading" {{action showAllRobots}}>{{name}}</span>
 
-    <div class="robot_info">
-	<table>
-	<tr>
-	    <th> Battery </th>
-	    <th> Location </th>
-	    <th> Motors </th>
-	    <th> Status </th>
-	</tr>
-	<tr>
-	    <td><span id="battery">{{battery}}</span>%
-                {{#if plugged_in}}
-		<span>, charging</span>
-                {{/if}}
-            </td>
-	    <td><span class="tbd">unknown</span></td>
-	    <td><span class="tbd">unknown</span></td>
-	    <td><span class="tbd">unknown</span></td>
-	</tr>
-	</table>
-    </div>
+	<!-- The brown box containing robot information at the top of the screen -->
+	<div class="robot_info_container">
+		<div class="robot_info">
+			<table>
+				<tr>
+					<th> Battery </th>
+					<th> Location </th>
+					<th> Motors </th>
+					<th> Status </th>
+				</tr>
+				<tr>
+					<td><span id="battery">{{battery}}</span>%{{#if plugged_in}}<span>, charging</span>{{/if}}
+						</td>
+					<td><span class="tbd">unknown</span></td>
+					<td><span class="tbd">unknown</span></td>
+					<td><span class="tbd">unknown</span></td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </div>
 
 {{outlet}}

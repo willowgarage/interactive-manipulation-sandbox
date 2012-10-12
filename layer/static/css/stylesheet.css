@@ -1,7 +1,5 @@
 body {
    font-family: Helvetica, Arial, Sans-Serif;
-   margin-top: 0;
-   margin-left: 0;
 }
 
 a {
@@ -118,10 +116,15 @@ a {
 	margin: 0px 50px 0px 50px;
 }
 
+/* The brown robot info box at the top right of the screen */
+.robot_info_container {
+	position: absolute;
+	top: 0px;
+	right: 20px;
+}
 .robot_info {
 	background: #ebdc9d;
 	border-radius: 0px 0px 10px 10px;
-	float: right;
 }
 .robot_info table {
 	margin: 0px 20px 10px 20px;
@@ -129,6 +132,12 @@ a {
 .robot_info table td {
 	padding-left: 20px;
 	padding-right: 20px;
+}
+
+/* The login panel */
+#login-logout-link {
+	float: right;
+	margin: 0px;
 }
 
 .tbd {
