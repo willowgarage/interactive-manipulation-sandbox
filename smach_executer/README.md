@@ -13,21 +13,13 @@ using your own forks of any repos):
 
 Build everything:
 
-    rosmake pr2_interactive_manipulation pr2_plugs_actions smach_executer
-
+    rosmake pr2_executer_launch
 
 
 Running the Executer Server
 ==========================
 
-First launch interactive manipulation with the plugs, wg, and nav arguments:
-
-    roslaunch pr2_interactive_manipulation pr2_interactive_manipulation_robot.launch plugs:=true wg:=true nav:=true
-
-Then run the executer server:
-
-    rosrun smach_executer executer
-
+roslaunch pr2_executer_launch executer.launch
 
 
 Executing Actions
