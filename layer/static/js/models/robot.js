@@ -46,7 +46,7 @@ function( Ember, DS, App, ros, Action) {
 
     unplug: function() {
       var action = new Action({
-        ros: this.ROS,
+        ros: ros,
         name: 'Unplug'
       });
       action.execute();
@@ -55,7 +55,7 @@ function( Ember, DS, App, ros, Action) {
 
     plugIn: function() {
       var action = new Action({
-        ros: this.ROS,
+        ros: ros,
         name: 'PlugIn'
       });
       action.execute();
