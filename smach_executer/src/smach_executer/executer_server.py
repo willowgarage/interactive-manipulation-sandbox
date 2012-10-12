@@ -11,6 +11,7 @@ from smach_executer.actions.dummy import Dummy
 from smach_executer.actions.navigate_to_pose import NavigateToPose
 from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
+from smach_executer.actions.tuck_arms import TuckArms
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -20,7 +21,13 @@ class ExecuterServer:
             'executer/execute', ExecuteAction, self.execute, False)
 
         # set of actions should eventually be found dynamically, instead of defined explicitly here
-        self.actions = {'Dummy': Dummy, 'NavigateToPose': NavigateToPose, 'PlugIn': PlugIn, 'Unplug': Unplug}
+        self.actions = {
+            'Dummy': Dummy,
+            'NavigateToPose': NavigateToPose,
+            'PlugIn': PlugIn,
+            'Unplug': Unplug,
+            'TuckArms': TuckArms
+            }
 
     def start(self):
         rospy.loginfo('Starting Executer server')

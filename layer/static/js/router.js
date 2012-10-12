@@ -73,18 +73,25 @@ function(
         navigateTo: Ember.Route.transitionTo('navigating'),
         showAllRobots: Ember.Route.transitionTo('robots'),
 
+        unplug: function() {
+          this.robot.unplug();
+        },
+
         /* Initialize the "navigate" state */
         connectOutlets: function(router, context) {
+          this.robot = App.Robot.find(context.id);
           /* Set the ApplicationView's {{outlet}} to be a RobotView with
            * a RobotController which has a Robot model as context */
           router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
-          /* Set the RobotView's {{outlet}} to be a MapView with a
+            .connectOutlet('robot', this.robot);
+          /* Set the RobotView's {{outlet}} to be a NavigateView with
+           * a NagivateController which has a Robot model as context */
+          router.get('robotController')
+            .connectOutlet('navigate', this.robot);
+          /* Set the NagivateView's {{outlet}} to be a MapView with a
              MapController using a Place model as context */
           router.get('navigateController')
             .connectOutlet('map', App.Place.find({format:'json'}));
-          router.get('robotController')
-            .connectOutlet('navigate', App.Robot.find(context.id));
         }
       }),
 
@@ -107,18 +114,21 @@ function(
 
         showAllRobots: Ember.Route.transitionTo('robots'),
 
+        plugIn: function() {
+          this.robot.plugIn();
+        },
+
         connectOutlets: function(router, context) {
-          robot = App.Robot.find(context.robot_id);
-          place = App.Place.find(context.place_id);
+          this.robot = App.Robot.find(context.robot_id);
+          this.place = App.Place.find(context.place_id);
           router.get('applicationController')
             .connectOutlet('navigating', Ember.Object.create({
-              robot: robot,
-              place: place
+              robot: this.robot,
+              place: this.place
             }));
-          robot.navigateTo(place);
+          this.robot.navigateTo(this.place);
         }
       })
     })
   });
-
 });
