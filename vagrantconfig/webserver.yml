@@ -99,6 +99,8 @@
         - pillow
         - djangorestframework
         - django-ember
+        - python-openid
+        - django-openid-auth
 
     #-------------
     # ROS
