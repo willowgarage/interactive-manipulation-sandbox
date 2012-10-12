@@ -41,3 +41,4 @@ class Robot(models.Model):
     #camera_url = models.URLField(verify_exists=False)      # URL to mjpeg output for Robot's camera
     service_url = models.CharField(max_length=512)     # URL to robot's rosbridge instance
     camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's camera
+    forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera

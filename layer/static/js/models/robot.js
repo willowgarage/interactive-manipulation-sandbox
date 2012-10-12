@@ -15,6 +15,7 @@ function( Ember, DS, App, ros, Action) {
     state: DS.attr('number'),
     service_url: DS.attr('string'),
     camera_url: DS.attr('string'),
+    forearm_camera_url: DS.attr('string'),
     battery: -1,
     plugged_in_value: -1,
     plugged_in: function() {
