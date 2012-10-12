@@ -1,21 +1,25 @@
-<div class="left_navbar">
-    <!-- The "content" parameter here is the robot object -->
-    <div class="navtab navtab_selected"> Navigate </div>
-    <div class="navtab" {{action plug content}}> Plug </div>
-</div>
+<div id="content">
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li class="tabselected"><a> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+      </ul>
+  </div>
 
-<div>
-	<div class="content">
+  <div id="main-container">
+    <div class="content">
 
-{{#if plugged_in}}
-<div class="notice">Warning: plugged in. Please unplug before navigating.</div>
-{{/if}}
+      {{#if plugged_in}}
+      <div class="notice">Warning: plugged in. Please unplug before navigating.</div>
+      {{/if}}
 
-<div class="robot_map">
-Tap on the map where you would like to go:
+      <div class="robot_map">
+      Tap on the map where you would like to go:
 
-{{outlet}}
-</div>
+      {{outlet}}
+      </div>
 
-	</div>
+    </div>
+  </div>
 </div>

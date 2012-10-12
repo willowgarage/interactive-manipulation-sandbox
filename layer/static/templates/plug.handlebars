@@ -1,35 +1,43 @@
-<div class="left_navbar">
-    <!-- The "content" parameter here is the robot object -->
-    <div class="navtab" {{action navigate content}}> Navigate </div>
-    <div class="navtab navtab_selected"> Plug </div>
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li><a {{action navigate content}}> Navigate </a></li>
+        <li class="tabselected"><a> Plug </a></li>
+      </ul>
+  </div>
+
+
+	<div id="main-container">
+		<div class="content plugcontent">
+			{{#if plugged_in}}
+			<div>Currently plugged in</div>
+
+			<table border=1>
+			  <tr>
+				<td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
+				<td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
+			  </tr>
+			</table>
+
+			<div class="mybutton" {{action unplug content}}>Unplug</div>
+
+			{{else}}
+
+			<div>Not plugged in</div>
+
+			<table border=1>
+			  <tr>
+				<td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
+				<td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
+			  </tr>
+			</table>
+
+			<div class="mybutton" {{action plugIn content}}>Plug in</div>
+			{{/if}}
+
+		</div>
+	</div>
+
 </div>
-
-<div>
-<div class="content plugcontent">
-{{#if plugged_in}}
-<div>Currently plugged in</div>
-
-<table border=1>
-  <tr>
-    <td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
-    <td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
-  </tr>
-</table>
-
-<div class="mybutton" {{action unplug content}}>Unplug</div>
-
-{{else}}
-
-<div>Not plugged in</div>
-
-<table border=1>
-  <tr>
-    <td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
-    <td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
-  </tr>
-</table>
-
-<div class="mybutton" {{action plugIn content}}>Plug in</div>
-{{/if}}
-
-</div></div>

@@ -1,25 +1,32 @@
-<div class="left_navbar">
-    <!-- The "content" parameter here is the robot object -->
-    <div class="navtab navtab_selected"> Navigate </div>
-    <div class="navtab" {{action plug robot}}> Plug </div>
-</div>
+<div id="content">
 
-<div>
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li class="tabselected"><a> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
 	<div class="content">
 
-<div class="heading">Navigating to the {{place.name}}</div>
+	  <div class="heading">Navigating to the {{place.name}}</div>
 
-<table>
-  <tr>
-    <td>
-      <img src="static/images/willow-floorplan.png" width="400">
-    </td>
-    <td>
-      <img {{bindAttr src="robot.camera_url"}} width="300" height="225">
-    </td>
-  </tr>
-</table>
+	  <table>
+		<tr>
+		  <td>
+			<img src="static/images/willow-floorplan.png" width="400">
+		  </td>
+		  <td>
+			<img {{bindAttr src="robot.camera_url"}} width="300" height="225">
+		  </td>
+		</tr>
+	  </table>
 
-<div class="button" {{action navigate robot}}> STOP (unimplemented) </div>
+  	  <div class="button" {{action navigate robot}}> STOP (unimplemented) </div>
 
-</div></div>
+    </div>
+  </div>
+
+</div>
