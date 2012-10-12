@@ -104,15 +104,6 @@ function(
 
         navigate: Ember.Route.transitionTo('navigate'),
 
-        plugIn: function( router, context) {
-          var robot = context.context;
-          robot.plugIn();
-        },
-        unplug: function( router, context) {
-          var robot = context.context;
-          robot.unplug();
-        },
-
         connectOutlets: function(router, context) {
           router.get('applicationController')
             .connectOutlet('robot', App.Robot.find(context.id));
