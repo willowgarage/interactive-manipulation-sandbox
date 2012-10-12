@@ -223,24 +223,20 @@ a {
 
 /* Old left navbar */
 
-.content {
-	margin-top: 50px;
-}
-
 .plugcontent {
 	text-align: center;
-	font-size: 52pt;
+	font-size: 36pt;
 }
 
 .navigate_button {
-	margin-top: 200px;
+	margin-top: 50px;
 	height: 60px;
 	padding-top: 50px;
 	text-align: center;
 }
 
 .mybutton {
-	margin: 100px;
+	margin: 20px;
 	padding: 10px;
 	background: blue;
 	color: white;
