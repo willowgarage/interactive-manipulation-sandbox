@@ -70,7 +70,15 @@ function(
 
         plug: Ember.Route.transitionTo('plug'),
 
-        navigateTo: Ember.Route.transitionTo('navigating'),
+        // TODO: Clean-up
+        navigateTo: function( router, context) {
+          var navigatingContext = {
+            place_id: router.get('mapController').get('placeId'),
+            robot_id: router.get('robotController').get('content').get('id')
+          };
+          Ember.Route.transitionTo('navigating')(router,navigatingContext);
+        },
+
         showAllRobots: Ember.Route.transitionTo('robots'),
 
         unplug: function() {

@@ -39,6 +39,7 @@ define([
       var map = d3.select("#mapsvg");
 
       /* Draw Rooms */
+      var _this = this;
       map.selectAll(".room")
         .data(rooms.toArray())
         .enter().append("svg:rect")
@@ -49,6 +50,7 @@ define([
           .attr("height", function(d) { return d.get('map_height'); })
           .on("click", function(d) {
             d3.select("#placename").text(d.get('name'));
+            _this.get('controller').set('placeId', d.get('id'));
             /*
             App.get('router').send("navigateTo",{
               robot_id: App.router.get('robotController').get('content').get('id'),
