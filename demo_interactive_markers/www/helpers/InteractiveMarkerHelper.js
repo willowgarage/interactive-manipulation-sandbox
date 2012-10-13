@@ -4,7 +4,9 @@
 
 THREE.InteractiveMarkerHelper = function ( intMarkerMsg ) 
 {
-	THREE.Object3D.call( this );
+  THREE.Object3D.call( this );
+  
+  this.name = intMarkerMsg.name;
 
   intMarkerObj = new THREE.Object3D;
 
@@ -24,6 +26,7 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
     control.markers.forEach(function(markerMsg)
     {
       var markerHelper = new THREE.MarkerHelper(markerMsg);
+      //console.log("adding ",markerHelper);
       intMarkerObj.add(markerHelper);
     });
   });

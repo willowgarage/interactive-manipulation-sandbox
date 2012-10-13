@@ -13,13 +13,6 @@ function makeColorMaterial(r, g, b) {
 
 THREE.MarkerHelper = function ( markerMsg ) 
 {
-  THREE.Object3D.call( this );
-
-  var colorMaterial = makeColorMaterial(
-    markerMsg.color.r, 
-    markerMsg.color.b, 
-    markerMsg.color.b);
-    
   var geom;
 
   /*
@@ -40,8 +33,19 @@ THREE.MarkerHelper = function ( markerMsg )
   switch( markerMsg.type ) {
     case 1:
       geom = new THREE.CubeGeometry(markerMsg.scale.x, markerMsg.scale.y, markerMsg.scale.z);
+      break;
+    default:
+      geom = new THREE.CubeGeometry(0.01,0.01,0.01);
+    //geom = new THREE.CubeGeometry(1,1,1);
   }
 
+  THREE.Object3D.call( this );
+  
+  var colorMaterial = makeColorMaterial(
+      markerMsg.color.r, 
+      markerMsg.color.b, 
+      markerMsg.color.b);
+      
   this.markerMesh = new THREE.Mesh(geom, colorMaterial);
   
   this.markerMesh.position.x = markerMsg.pose.position.x;

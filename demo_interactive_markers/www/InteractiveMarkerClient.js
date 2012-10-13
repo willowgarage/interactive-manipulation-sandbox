@@ -15,26 +15,38 @@ THREE.InteractiveMarkerClient = function( rosbridgeURL, topicNS )
 
   var that = this;
   topic.subscribe( function(message){ return( that.processInit( message ) ); } );
-
-  this.rootNode = new THREE.Object3D;
-  this.add(this.rootNode);
 };
 
 THREE.InteractiveMarkerClient.prototype = Object.create( THREE.Object3D.prototype );
 
-
 THREE.InteractiveMarkerClient.prototype.processInit = function(message) 
 { 
-  console.log(this);
-  this.remove(this.rootNode);
-  this.rootNode = new THREE.Object3D;
-  this.add(this.rootNode);
-  
+  console.log(message);
   var that=this;
-  
+
+  message.erases.forEach(function(erase) 
+  {
+    console.log("erasing ",erase);
+    that.remove( that.getChildByName(erase) );
+  });
+
+  message.poses.forEach(function(poseMsg) 
+  {
+    intMarkerObj = that.getChildByName( poseMsg.name );
+    console.log("moving ",poseMsg.name);
+    intMarkerObj.setPose(  );
+  });
+
   message.markers.forEach(function(intMarkerMsg) 
   {
+    var oldIntMarkerObj = that.getChildByName( intMarkerMsg.name );
+    if ( oldIntMarkerObj != undefined )
+    {
+      console.log(that.add);
+      that.remove( oldIntMarkerObj );
+    }
     intMarkerObj = new THREE.InteractiveMarkerHelper( intMarkerMsg );
-    that.rootNode.add(intMarkerObj);
+    //console.log("adding ",intMarkerObj);
+    that.add(intMarkerObj);
   });
 };

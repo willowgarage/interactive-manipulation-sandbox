@@ -58,7 +58,9 @@ public:
     client_.setResetCb( boost::bind(&ImTunnel::resetCb, this, _1 ) );
     client_.setStatusCb( boost::bind(&ImTunnel::statusCb, this, _1, _2, _3 ) );
 
-    pub_ = node_handle_.advertise<visualization_msgs::InteractiveMarkerUpdate>( topic_ns+"/tunneled", 1000 );
+    pub_ = node_handle_.advertise<visualization_msgs::InteractiveMarkerUpdate>(
+        topic_ns+"/tunneled", 1000,
+        boost::bind(&ImTunnel::connectCallback, this, _1) );
 
     timer_ = node_handle_.createTimer(ros::Duration(0.05), boost::bind(&ImTunnel::timerCb, this, _1 ) );
   }
@@ -66,19 +68,16 @@ public:
   typedef visualization_msgs::InteractiveMarkerInitConstPtr InitConstPtr;
   typedef visualization_msgs::InteractiveMarkerUpdateConstPtr UpdateConstPtr;
 
+  void connectCallback(const ros::SingleSubscriberPublisher& pub)
+  {
+    ROS_INFO_STREAM( "New subsriber: " << pub.getSubscriberName() );
+    client_.shutdown();
+    client_.subscribe( topic_ns_ );
+    usleep(100000);
+  }
+
   void timerCb( const ros::TimerEvent& )
   {
-    if ( subscribers_ != pub_.getNumSubscribers() )
-    {
-      ROS_INFO("Resetting connection.");
-      client_.shutdown();
-      subscribers_ = pub_.getNumSubscribers();
-      if ( subscribers_ != 0 )
-      {
-        client_.subscribe( topic_ns_ );
-      }
-      ROS_INFO_STREAM(subscribers_);
-    }
     client_.update();
   }
 
