@@ -9,8 +9,8 @@ THREE.InteractiveMarkerClient = function( rosbridgeURL, topicNS )
   var ros = new ROS( rosbridgeURL );
 
   var topic = new ros.Topic({
-    name : topicNS+'/update_full',
-    messageType : 'visualization_msgs/InteractiveMarkerInit'
+    name : topicNS+'/tunneled',
+    messageType : 'visualization_msgs/InteractiveMarkerUpdate'
   });
 
   var that = this;

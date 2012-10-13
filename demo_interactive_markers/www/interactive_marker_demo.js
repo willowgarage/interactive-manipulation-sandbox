@@ -1,10 +1,12 @@
-(function () {
+(function (THREE) {
 
 var container;
-var camera, controls, scene, renderer;
+var camera, controls, scene0, scene1, renderer;
 var pickingData = [], pickingTexture, pickingScene;
 var objects = [];
 var highlightBox;
+
+var directionalLight;
 
 var mouse = new THREE.Vector2(), offset = new THREE.Vector3(10, 10, 10);
 
@@ -18,65 +20,59 @@ function init() {
   container = document.getElementById("container");
 
   // setup camera
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
-  camera.position.x = 2;
-  camera.position.y = 2;
-  camera.position.z = 2;
+  camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
+  camera.position.x = 3;
+  camera.position.y = 3;
+  camera.position.z = 3;
 
   // setup camera mouse control
   controls = new THREE.RosOrbitControls(camera);
 
-  // setup scene & picking render texture
-  scene = new THREE.Scene();
+  // setup scene
+  scene0 = new THREE.Scene();
+  scene1 = new THREE.Scene();
 
-  //scene.eulerOrder = 'YXZ';
+  //scene0.eulerOrder = 'YXZ';
 
-  //scene.scale.x=-1;
-  //scene.scale.y=-1;
+  //scene0.scale.x=-1;
+  //scene0.scale.y=-1;
   
-  scene.add( directionalLight );
+  scene0.add( directionalLight );
 
   // add lights
-  scene.add(new THREE.AmbientLight(0x555555));
+  scene0.add(new THREE.AmbientLight(0x555555));
+  directionalLight = new THREE.DirectionalLight( 0xffffff );
+  
+  // attach light to camera
+  scene0.add( directionalLight );
 
-  var directionalLight = new THREE.PointLight( 0xffffff );
-  directionalLight.position.x = 50;
-  directionalLight.position.y = 50;
-  directionalLight.position.z = 50;
-  directionalLight.position.normalize();
-  scene.add( directionalLight );
-
-  var directionalLight = new THREE.PointLight( 0xffffff );
-  directionalLight.position.x = 50;
-  directionalLight.position.y = -50;
-  directionalLight.position.z = -50;
-  directionalLight.position.normalize();
-  scene.add( directionalLight );
-
-  var gridGeom = new THREE.PlaneGeometry( 10, 10, 10, 10 );
+  var numCells=50;
+  var gridGeom = new THREE.PlaneGeometry( numCells, numCells, numCells, numCells );
   var gridMaterial = new THREE.MeshBasicMaterial({ color: 0x999999 });
   gridMaterial.wireframe=true;
-  gridMaterial.wireframeLinewidth=1.5;
+  gridMaterial.wireframeLinewidth=1;
   var gridObj = new THREE.Mesh( gridGeom, gridMaterial );
-  scene.add( gridObj );
+  scene0.add( gridObj );
   
   // add coordinate frame visualization
   //axes = new THREE.AxisHelper();
   //axes.scale.x=axes.scale.y=axes.scale.z=0.01;
+  //scene1.add(axes);
   axes = new THREE.Axes();
-  scene.add(axes);
+  scene0.add(axes);
 
   imc = new THREE.InteractiveMarkerClient( 'ws://localhost:9090', '/basic_controls' );
-  scene.add(imc);
+  scene0.add(imc);
 
   renderer = new THREE.WebGLRenderer({
-    antialias : true
+    antialias : false
   });
 
   renderer.setClearColorHex( 0x333333, 1.0 );  
   renderer.sortObjects = true;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMapEnabled = false;
+  renderer.autoClear = false;
 
   container.appendChild(renderer.domElement);
 
@@ -97,7 +93,17 @@ function animate() {
 
 function render() {
   controls.update();
-  renderer.render(scene, camera);
+
+  // put light to the top-left of the camera
+  directionalLight.position = camera.localToWorld(new THREE.Vector3(-1,1,0));
+  directionalLight.position.normalize();
+
+  // clear & render regular scene
+  renderer.clear( true, true, true );
+  renderer.render(scene0, camera);
+  // clear depth & stencil & render overlay scene
+  renderer.clear( false, true, true );
+  renderer.render(scene1, camera);
 }
 
-})();
+})(THREE);

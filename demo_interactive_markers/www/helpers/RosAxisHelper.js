@@ -8,8 +8,8 @@ THREE.Axes = function ()
 	
 	var that = this;
 
-  this.line_geom = new THREE.CylinderGeometry( 0.005, 0.005, 0.9 );
-  this.head_geom = new THREE.CylinderGeometry( 0, 0.02, 0.1 );
+  this.line_geom = new THREE.CylinderGeometry( 0.008, 0.008, 0.9 );
+  this.head_geom = new THREE.CylinderGeometry( 0, 0.023, 0.1 );
 
   function addAxis( axis )
   {

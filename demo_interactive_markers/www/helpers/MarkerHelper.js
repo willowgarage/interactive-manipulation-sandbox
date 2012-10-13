@@ -5,7 +5,8 @@
 function makeColorMaterial(r, g, b) {
   var color = new THREE.Color;
   color.setRGB(r, g, b);
-  return new THREE.MeshPhongMaterial({
+  return new THREE.MeshLambertMaterial({
+  //return new THREE.MeshPhongMaterial({
     color : color.getHex()
   });
 }
