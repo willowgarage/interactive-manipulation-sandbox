@@ -24,19 +24,22 @@ THREE.InteractiveMarkerClient.prototype.processInit = function(message)
   console.log(message);
   var that=this;
 
+  // delete markers
   message.erases.forEach(function(erase) 
   {
     console.log("erasing ",erase);
     that.remove( that.getChildByName(erase) );
   });
 
+  // update poses
   message.poses.forEach(function(poseMsg) 
   {
     intMarkerObj = that.getChildByName( poseMsg.name );
     console.log("moving ",poseMsg.name);
-    intMarkerObj.setPose(  );
+    intMarkerObj.setPose( poseMsg.pose );
   });
 
+  // add new markers
   message.markers.forEach(function(intMarkerMsg) 
   {
     var oldIntMarkerObj = that.getChildByName( intMarkerMsg.name );

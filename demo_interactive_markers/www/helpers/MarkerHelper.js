@@ -2,19 +2,17 @@
  * @author dgossow@willowgarage.com
  */
 
-function makeColorMaterial(r, g, b) {
-  var color = new THREE.Color;
-  color.setRGB(r, g, b);
-  return new THREE.MeshLambertMaterial({
-  //return new THREE.MeshPhongMaterial({
-    color : color.getHex()
-  });
-}
-
 THREE.MarkerHelper = function ( markerMsg ) 
 {
-  var geom;
-
+  function makeColorMaterial(r, g, b) {
+    var color = new THREE.Color;
+    color.setRGB(r, g, b);
+    return new THREE.MeshLambertMaterial({
+    //return new THREE.MeshPhongMaterial({
+      color : color.getHex()
+    });
+  }
+  
   /*
    uint8 ARROW=0
    uint8 CUBE=1
@@ -29,6 +27,8 @@ THREE.MarkerHelper = function ( markerMsg )
    uint8 MESH_RESOURCE=10
    uint8 TRIANGLE_LIST=11
   */
+
+  var geom;
 
   switch( markerMsg.type ) {
     case 1:
@@ -65,3 +65,4 @@ THREE.MarkerHelper = function ( markerMsg )
 };
 
 THREE.MarkerHelper.prototype = Object.create( THREE.Object3D.prototype );
+
