@@ -18,7 +18,8 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
   this.quaternion = new THREE.Quaternion(
     intMarkerMsg.pose.orientation.x,
     intMarkerMsg.pose.orientation.y,
-    intMarkerMsg.pose.orientation.z
+    intMarkerMsg.pose.orientation.z,
+    intMarkerMsg.pose.orientation.w
   );
   
   this.updateMatrixWorld();

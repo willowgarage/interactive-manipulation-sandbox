@@ -40,7 +40,7 @@ function init() {
   scene0.add( directionalLight );
 
   // add lights
-  scene0.add(new THREE.AmbientLight(0x555555));
+  //scene0.add(new THREE.AmbientLight(0x555555));
   directionalLight = new THREE.DirectionalLight( 0xffffff );
   
   // attach light to camera

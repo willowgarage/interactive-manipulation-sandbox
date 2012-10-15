@@ -4,13 +4,26 @@
 
 THREE.MarkerHelper = function ( markerMsg ) 
 {
-  function makeColorMaterial(r, g, b) {
-    var color = new THREE.Color;
+  THREE.Object3D.call( this );
+  var that = this;
+
+  function makeColorMaterial(r, g, b, a) {
+    var color = new THREE.Color();
     color.setRGB(r, g, b);
+    var color2 = new THREE.Color();
+    color2.setRGB(r*0.3, g*0.3, b*0.3);
     return new THREE.MeshLambertMaterial({
     //return new THREE.MeshPhongMaterial({
-      color : color.getHex()
+      color : color.getHex(),
+      emissive: color2.getHex(),
+      opacity: a,
+      transparent: a < 0.999
     });
+  }
+  
+  function addMesh( geom, mat )
+  {
+    that.add( new THREE.Mesh(geom, mat) );
   }
   
   /*
@@ -28,41 +41,75 @@ THREE.MarkerHelper = function ( markerMsg )
    uint8 TRIANGLE_LIST=11
   */
 
-  var geom;
-
-  switch( markerMsg.type ) {
-    case 1:
-      geom = new THREE.CubeGeometry(markerMsg.scale.x, markerMsg.scale.y, markerMsg.scale.z);
-      break;
-    default:
-      geom = new THREE.CubeGeometry(0.01,0.01,0.01);
-    //geom = new THREE.CubeGeometry(1,1,1);
-  }
-
-  THREE.Object3D.call( this );
+  this.position.x = markerMsg.pose.position.x;
+  this.position.y = markerMsg.pose.position.y;
+  this.position.z = markerMsg.pose.position.z;
   
-  var colorMaterial = makeColorMaterial(
-      markerMsg.color.r, 
-      markerMsg.color.b, 
-      markerMsg.color.b);
-      
-  this.markerMesh = new THREE.Mesh(geom, colorMaterial);
-  
-  this.markerMesh.position.x = markerMsg.pose.position.x;
-  this.markerMesh.position.y = markerMsg.pose.position.y;
-  this.markerMesh.position.z = markerMsg.pose.position.z;
-  
-  this.markerMesh.useQuaternion = true;
-  this.markerMesh.quaternion = new THREE.Quaternion(
+  this.useQuaternion = true;
+  this.quaternion = new THREE.Quaternion(
     markerMsg.pose.orientation.x,
     markerMsg.pose.orientation.y,
     markerMsg.pose.orientation.z,
     markerMsg.pose.orientation.w
   );
-  
-  this.add( this.markerMesh );
-	
+  this.quaternion.normalize();
+
+  var colorMaterial = makeColorMaterial( markerMsg.color.r, markerMsg.color.g,
+      markerMsg.color.b, markerMsg.color.a );
+
+  switch( markerMsg.type ) {
+  case 0:
+    
+    console.log(markerMsg);
+    
+    var len = markerMsg.scale.x;
+    var headLen = len * 0.23;
+    var headR = markerMsg.scale.y;
+    var shaftR = headR * 0.5;
+    if ( markerMsg.points.length == 2 )
+    {
+      var p1 = new THREE.Vector3( markerMsg.points[0].x, markerMsg.points[0].y, markerMsg.points[0].z );
+      var p2 = new THREE.Vector3( markerMsg.points[1].x, markerMsg.points[1].y, markerMsg.points[1].z );
+      var dir = p1.clone().negate().addSelf( p2 ); // dir = p2 - p1;
+      len = dir.length();
+      headR = markerMsg.scale.y;
+      shaftR = markerMsg.scale.x;
+
+      if ( markerMsg.scale.z != 0.0 )
+      {
+        headLen = markerMsg.scale.z;
+      }
+    }
+
+    var arrow = new THREE.ArrowMarkerHelper( dir, p1, len, headLen, shaftR, headR, colorMaterial );
+    this.add(arrow);
+
+    /*
+    console.log(len, headR, shaftR);
+
+    var shaftGeom = new THREE.CylinderGeometry( shaftR, shaftR, len, 16, 1, false);
+    var shaftMesh = new THREE.Mesh(shaftGeom, colorMaterial);
+    shaftMesh.position = p1;
+    shaftMesh.setDirection(dir);
+    shaftMesh.setLength(len);
+    this.add(shaftMesh);
+        */
+    break;
+  case 1:
+    var geom = new THREE.CubeGeometry(markerMsg.scale.x, markerMsg.scale.y, markerMsg.scale.z);
+    addMesh(geom, colorMaterial);
+    break;
+  default:
+    geom = new THREE.CubeGeometry(0.1,0.1,0.1);
+    addMesh(geom, colorMaterial);
+    break;
+  }
+
+  geom = new THREE.CubeGeometry(0.1,0.1,0.1);
+  addMesh(geom, colorMaterial);
+
 };
+
 
 THREE.MarkerHelper.prototype = Object.create( THREE.Object3D.prototype );
 
