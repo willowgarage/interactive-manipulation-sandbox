@@ -1,5 +1,5 @@
 /**
- * @author dgossow
+ * @author dgossow http://github.com/dgossow
  * @author WestLangley / http://github.com/WestLangley
  * @author zz85 / https://github.com/zz85
  *
@@ -12,8 +12,8 @@
  *  hex - color in hex value
  */
 
-THREE.ArrowMarkerHelper = function ( dir, origin, length, headLength, shaftRadius, headRadius, material ) {
-
+THREE.ArrowMarkerHelper = function ( dir, origin, length, headLength, shaftDiameter, headDiameter, material ) 
+{
         THREE.Object3D.call( this );
 
         if ( material === undefined ) material = new THREE.MeshBasicMaterial();
@@ -21,14 +21,14 @@ THREE.ArrowMarkerHelper = function ( dir, origin, length, headLength, shaftRadiu
 
         var shaftLength = length-headLength;
 
-        var shaftGeometry = new THREE.CylinderGeometry( shaftRadius, shaftRadius, shaftLength, 12, 1);
+        var shaftGeometry = new THREE.CylinderGeometry( shaftDiameter*0.5, shaftDiameter*0.5, shaftLength, 12, 1);
 
         this.shaft = new THREE.Mesh( shaftGeometry, material );
         this.shaft.position.set( 0, shaftLength*0.5, 0 );
         this.add( this.shaft );
 
         //function ( radiusTop, radiusBottom, height, segmentsRadius, segmentsHeight, openEnded ) {
-        var coneGeometry = new THREE.CylinderGeometry( 0, headRadius, headLength, 12, 1 );
+        var coneGeometry = new THREE.CylinderGeometry( 0, headDiameter*0.5, headLength, 12, 1 );
 
         this.cone = new THREE.Mesh( coneGeometry, material );
         this.cone.position.set( 0, shaftLength+(headLength * 0.5), 0 );

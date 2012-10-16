@@ -10,15 +10,17 @@ THREE.MarkerHelper = function ( markerMsg )
   function makeColorMaterial(r, g, b, a) {
     var color = new THREE.Color();
     color.setRGB(r, g, b);
-    var color2 = new THREE.Color();
-    color2.setRGB(r*0.3, g*0.3, b*0.3);
-    return new THREE.MeshLambertMaterial({
+    //var color2 = new THREE.Color();
+    //color2.setRGB(r*0.3, g*0.3, b*0.3);
+    var mat = new THREE.MeshLambertMaterial({
     //return new THREE.MeshPhongMaterial({
       color : color.getHex(),
-      emissive: color2.getHex(),
+      emissive: color.getHex(),
       opacity: a,
-      transparent: a < 0.999
+      transparent: a <= 0.99,
+      depthWrite: a > 0.99,
     });
+    return mat;
   }
   
   function addMesh( geom, mat )
@@ -58,10 +60,7 @@ THREE.MarkerHelper = function ( markerMsg )
       markerMsg.color.b, markerMsg.color.a );
 
   switch( markerMsg.type ) {
-  case 0:
-    
-    console.log(markerMsg);
-    
+  case 0: // ARROW
     var len = markerMsg.scale.x;
     var headLen = len * 0.23;
     var headR = markerMsg.scale.y;
@@ -84,20 +83,13 @@ THREE.MarkerHelper = function ( markerMsg )
     var arrow = new THREE.ArrowMarkerHelper( dir, p1, len, headLen, shaftR, headR, colorMaterial );
     this.add(arrow);
 
-    /*
-    console.log(len, headR, shaftR);
-
-    var shaftGeom = new THREE.CylinderGeometry( shaftR, shaftR, len, 16, 1, false);
-    var shaftMesh = new THREE.Mesh(shaftGeom, colorMaterial);
-    shaftMesh.position = p1;
-    shaftMesh.setDirection(dir);
-    shaftMesh.setLength(len);
-    this.add(shaftMesh);
-        */
     break;
-  case 1:
+  case 1: // CUBE
     var geom = new THREE.CubeGeometry(markerMsg.scale.x, markerMsg.scale.y, markerMsg.scale.z);
     addMesh(geom, colorMaterial);
+    break;
+  case 11: // TRIANGLE_LIST
+    this.add( new THREE.TriangleListMarkerHelper( colorMaterial, markerMsg.points ) );
     break;
   default:
     geom = new THREE.CubeGeometry(0.1,0.1,0.1);

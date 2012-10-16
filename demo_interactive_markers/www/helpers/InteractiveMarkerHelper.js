@@ -30,13 +30,9 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
     {
       var markerHelper = new THREE.MarkerHelper(markerMsg);
 
-      //var m_inv = that.matrixWorld.clone();
-      //m_inv.getInverse();
-      
       // convert position into my own local coordinate frame
       markerHelper.position = that.worldToLocal( markerHelper.position );
-      //?? markerHelper.quaternion = that.worldToLocal( markerHelper.position );
-      //console.log("adding ",markerHelper);
+      
       that.add(markerHelper);
     });
   });

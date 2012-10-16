@@ -14,20 +14,19 @@ THREE.InteractiveMarkerClient = function( rosbridgeURL, topicNS )
   });
 
   var that = this;
-  topic.subscribe( function(message){ return( that.processInit( message ) ); } );
+  topic.subscribe( function(message){ return( that.processUpdate( message ) ); } );
 };
 
 THREE.InteractiveMarkerClient.prototype = Object.create( THREE.Object3D.prototype );
 
-THREE.InteractiveMarkerClient.prototype.processInit = function(message) 
+THREE.InteractiveMarkerClient.prototype.processUpdate = function(message) 
 { 
-  console.log(message);
+  //console.log(message);
   var that=this;
 
   // delete markers
   message.erases.forEach(function(erase) 
   {
-    console.log("erasing ",erase);
     that.remove( that.getChildByName(erase) );
   });
 

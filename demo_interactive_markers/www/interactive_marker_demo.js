@@ -69,11 +69,12 @@ function init() {
   });
 
   renderer.setClearColorHex( 0x333333, 1.0 );  
-  renderer.sortObjects = true;
+  //renderer.sortObjects = true;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMapEnabled = false;
   renderer.autoClear = false;
-
+  renderer.setFaceCulling( 0 );
+  
   container.appendChild(renderer.domElement);
 
   renderer.domElement.addEventListener('mousemove', onMouseMove);
@@ -102,8 +103,8 @@ function render() {
   renderer.clear( true, true, true );
   renderer.render(scene0, camera);
   // clear depth & stencil & render overlay scene
-  renderer.clear( false, true, true );
-  renderer.render(scene1, camera);
+  //renderer.clear( false, true, true );
+  //renderer.render(scene1, camera);
 }
 
 })(THREE);
