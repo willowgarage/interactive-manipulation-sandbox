@@ -11,14 +11,16 @@ THREE.MarkerHelper = function ( markerMsg )
     var color = new THREE.Color();
     color.setRGB(r, g, b);
     var color2 = new THREE.Color();
+    var transparent = (a <= 0.99);
     color2.setRGB(r*0.3, g*0.3, b*0.3);
     return new THREE.MeshLambertMaterial({
     //return new THREE.MeshPhongMaterial({
       color : color.getHex(),
       emissive: color.getHex(),
       opacity: a,
-      transparent: a <= 0.99,
-      depthWrite: a > 0.99
+      transparent: transparent,
+      depthWrite: !transparent,
+      blending: transparent ? THREE.AdditiveBlending : THREE.NormalBlending,
     });
   }
   
@@ -26,13 +28,13 @@ THREE.MarkerHelper = function ( markerMsg )
   {
     var mesh = new THREE.Mesh(geom, mat);
     //console.log(markerHelper);
-    mesh.on('mousedown', function(arguments){ 
+    mesh.on('mouseover', function(arguments){ 
       console.log( "intersect: ", arguments.intersect.point );
       that.scale.x = 1.2;
       that.scale.y = 1.2;
       that.scale.z = 1.2;
     });
-    mesh.on('mouseup', function(arguments){ 
+    mesh.on('mouseout', function(arguments){
       that.scale.x = 1.0;
       that.scale.y = 1.0;
       that.scale.z = 1.0;

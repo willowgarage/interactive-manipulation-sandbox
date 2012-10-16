@@ -69,7 +69,7 @@ function init() {
   });
 
   renderer.setClearColorHex( 0x333333, 1.0 );  
-  renderer.sortObjects = true;
+  renderer.sortObjects = false;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMapEnabled = false;
   renderer.autoClear = false;
