@@ -3,13 +3,16 @@
     <arg name="kinect_frame_prefix" default="/head_mount_kinect" />  
     <arg name="kinect_camera_name" default="head_mount_kinect" />
     <arg name="stereo" default="false"/>
+    <arg name="run_sim" default="0" />
 
     <!-- executer server -->
     <node pkg="smach_executer" type="executer" name="executer"/>
 
     <!-- PR2 plugs -->
     <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
-    <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch"/>
+    <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
+        <arg name="run_sim" value="$(arg run_sim)" />
+    </include>
 
     <group>
         <!-- navigation with a map -->
