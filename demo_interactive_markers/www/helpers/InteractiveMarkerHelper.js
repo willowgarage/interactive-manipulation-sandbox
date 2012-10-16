@@ -32,10 +32,11 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
 
       // convert position into my own local coordinate frame
       markerHelper.position = that.worldToLocal( markerHelper.position );
-      
       that.add(markerHelper);
+      
     });
   });
+  
 };
 
 THREE.InteractiveMarkerHelper.prototype = Object.create( THREE.Object3D.prototype );
@@ -43,6 +44,11 @@ THREE.InteractiveMarkerHelper.prototype = Object.create( THREE.Object3D.prototyp
 //THREE.Camera.prototype.lookAt = function ( vector ) {
 //  this.matrix.lookAt( this.position, vector, this.up );
 
+
+THREE.InteractiveMarkerHelper.prototype.startDragging = function (  ) 
+{
+  
+}
 
 THREE.InteractiveMarkerHelper.prototype.setPose = function ( pose ) 
 {

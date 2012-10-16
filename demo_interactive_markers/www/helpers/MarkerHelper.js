@@ -10,22 +10,34 @@ THREE.MarkerHelper = function ( markerMsg )
   function makeColorMaterial(r, g, b, a) {
     var color = new THREE.Color();
     color.setRGB(r, g, b);
-    //var color2 = new THREE.Color();
-    //color2.setRGB(r*0.3, g*0.3, b*0.3);
-    var mat = new THREE.MeshLambertMaterial({
+    var color2 = new THREE.Color();
+    color2.setRGB(r*0.3, g*0.3, b*0.3);
+    return new THREE.MeshLambertMaterial({
     //return new THREE.MeshPhongMaterial({
       color : color.getHex(),
       emissive: color.getHex(),
       opacity: a,
       transparent: a <= 0.99,
-      depthWrite: a > 0.99,
+      depthWrite: a > 0.99
     });
-    return mat;
   }
   
   function addMesh( geom, mat )
   {
-    that.add( new THREE.Mesh(geom, mat) );
+    var mesh = new THREE.Mesh(geom, mat);
+    //console.log(markerHelper);
+    mesh.on('mousedown', function(arguments){ 
+      console.log( "intersect: ", arguments.intersect.point );
+      that.scale.x = 1.2;
+      that.scale.y = 1.2;
+      that.scale.z = 1.2;
+    });
+    mesh.on('mouseup', function(arguments){ 
+      that.scale.x = 1.0;
+      that.scale.y = 1.0;
+      that.scale.z = 1.0;
+    });
+    that.add( mesh );
   }
   
   /*
@@ -98,7 +110,7 @@ THREE.MarkerHelper = function ( markerMsg )
   }
 
   geom = new THREE.CubeGeometry(0.1,0.1,0.1);
-  addMesh(geom, colorMaterial);
+  addMesh(geom, new THREE.MeshBasicMaterial);
 
 };
 
