@@ -1,6 +1,6 @@
 This demo app runs the Interactive Markers basic_controls tuturial in the browser.
 
-To compile, add to your ROS_PACKAGE_PATH and run
+To compile, add the interactive-manipulation-sandbox repo to your ROS_PACKAGE_PATH and run
 
 `rosmake demo_interactive_markers`
 
