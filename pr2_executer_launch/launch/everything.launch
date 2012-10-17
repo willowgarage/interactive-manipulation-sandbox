@@ -1,0 +1,46 @@
+<launch>
+  <arg name="throttle_cameras" default="true" />
+  <arg name="run_sim" default="false" />
+
+  <include file="$(find pr2_executer_launch)/launch/executer.launch">
+    <arg name="run_sim" value="$(arg run_sim)" />
+  </include>
+
+  <!-- rosbridge and mjpeg_server -->
+  <node name="rosbridge" pkg="rosbridge_server" type="rosbridge.py" >
+    <param name="port" value="9099"/>
+  </node>
+  <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
+
+ <!-- run image_rotate for both forearm camera images -->
+  <node type="image_rotate" name="l_forearm_image_rotate" pkg="image_rotate" args="image:=l_forearm_cam/image_color rotated/image:=l_forearm_cam/image_color_rotated"/>
+  <node type="image_rotate" name="r_forearm_image_rotate" pkg="image_rotate" args="image:=r_forearm_cam/image_color rotated/image:=r_forearm_cam/image_color_rotated"/>
+
+  <!-- camera throttling -->
+  <group if="$(arg throttle_cameras)">
+    <!-- the main camera -->
+    <include file="$(find pr2_interactive_manipulation)/launch/camera_throttle.launch">
+      <arg name="in_camera_namespace" value="/wide_stereo/left"/>
+      <arg name="in_camera_name" value="image_rect_color"/>
+      <arg name="out_camera_namespace" value="/wide_stereo_throttled"/>
+      <arg name="out_camera_name" value="image"/>
+      <arg name="rate" value="3.0"/>
+    </include>
+    <!-- the forearm cameras -->
+    <include file="$(find pr2_interactive_manipulation)/launch/camera_throttle.launch">
+      <arg name="in_camera_namespace" value="/r_forearm_cam"/>
+      <arg name="in_camera_name" value="image_color_rotated"/>
+      <arg name="out_camera_namespace" value="/r_forearm_cam_throttled"/>
+      <arg name="out_camera_name" value="image"/>
+      <arg name="rate" value="3.0"/>
+    </include>
+    <include file="$(find pr2_interactive_manipulation)/launch/camera_throttle.launch">
+      <arg name="in_camera_namespace" value="/l_forearm_cam"/>
+      <arg name="in_camera_name" value="image_color_rotated"/>
+      <arg name="out_camera_namespace" value="/l_forearm_cam_throttled"/>
+      <arg name="out_camera_name" value="image"/>
+      <arg name="rate" value="3.0"/>
+    </include>
+  </group>
+
+</launch>
