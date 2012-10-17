@@ -12,7 +12,10 @@
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
- <!-- run image_rotate for both forearm camera images -->
+  <!-- robot pose in map saver -->
+  <node pkg="smach_executer" type="localization_saver.py" name="localization_saver"/>
+
+  <!-- run image_rotate for both forearm camera images -->
   <node type="image_rotate" name="l_forearm_image_rotate" pkg="image_rotate" args="image:=l_forearm_cam/image_color rotated/image:=l_forearm_cam/image_color_rotated"/>
   <node type="image_rotate" name="r_forearm_image_rotate" pkg="image_rotate" args="image:=r_forearm_cam/image_color rotated/image:=r_forearm_cam/image_color_rotated"/>
 
