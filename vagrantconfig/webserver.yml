@@ -93,7 +93,7 @@
         - hg+https://bitbucket.org/wkornewald/django-nonrel
         - hg+https://bitbucket.org/wkornewald/djangotoolbox
         - git+https://github.com/django-nonrel/mongodb-engine
-        - jinja2
+       - jinja2
         - paramiko
         - PyYAML
         - pillow
@@ -135,7 +135,7 @@
     #-------------
 
     - name: set up local_settings.py for vagrant
-      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer'
+      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer' creates=/home/vagrant/layer/local_settings.py
 
     # These python commands do not return.
     # - name: sync up database
