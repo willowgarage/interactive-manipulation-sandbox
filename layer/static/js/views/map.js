@@ -31,10 +31,11 @@ define([
     arrayDidChange: function() {
       this.drawRooms();
     },
+
     drawRooms: function() {
       var content = this.get('controller').get('content');
       var robot = content.robot;
-      var places = content.places;
+      var places = content.places.toArray();
 
       // Draw each room and outlet on the map
       this.drawPlaces(places);
@@ -42,6 +43,53 @@ define([
       // Plot the robot on the map last, so that it comes out on top
       this.drawRobot(robot);
 
+      // Figure out which room the robot is closest to
+      var nearest = -1;
+      var closest_place = null;
+      for (var i=0; i<places.length; i++) {
+        var place = places[i];
+        if (place.get('map_x') === null || place.get('map_y') === null) continue;
+        var robot_coords = robot.get('map_coords');
+
+        // First check if the robot is inside
+        var map_x = place.get('map_x');
+        var map_y = place.get('map_y');
+        var height = place.get('map_height');
+        var width = place.get('map_width');
+        var rx = robot_coords.x;
+        var ry = robot_coords.y;
+        if ((map_x - 1 <= rx) &&
+          (rx <= (map_x + width + 1)) &&
+          (map_y - 1 <= ry) &&
+          (ry <= (map_y + height + 1))) {
+            closest_place = place;
+            break;
+        }
+
+        // Otherwise, find its distance to the nearest corner of the room
+        var distance = this.getDistance(robot_coords, place);
+        if ((nearest == -1) || distance < nearest) {
+          nearest = distance;
+          closest_place = place;
+        }
+      }
+      if (closest_place != null) {
+        d3.select("#closest").text(closest_place.get('name'));
+      }
+    },
+
+    getDistance : function(robot, place) {
+      var rx = robot.x;
+      var ry = robot.y;
+      var px = place.get('map_x');
+      var py = place.get('map_y');
+      var h = place.get('map_height');
+      var w = place.get('map_width');
+      return Math.sqrt(Math.min(
+        Math.pow(rx - px, 2) + Math.pow(ry - py, 2),
+        Math.pow(rx - (px+h), 2) + Math.pow(ry - py, 2),
+        Math.pow(rx - (px), 2) + Math.pow(ry - py+h, 2),
+        Math.pow(rx - (px+h), 2) + Math.pow(ry - py+h, 2)));
     },
 
     drawRobot: function(robot) {

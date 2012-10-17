@@ -18,7 +18,7 @@ function( Ember, DS, App, ros, Action) {
     forearm_camera_url: DS.attr('string'),
     battery: -1,
     plugged_in_value: -1,
-    pose: { 'x': 9.424, 'y': 29.524 },
+    pose: { 'x': 9.424 , 'y': 29.524 },
     plugged_in: function() {
       return (this.get('plugged_in_value') > 0);
     }.property('plugged_in_value'),
