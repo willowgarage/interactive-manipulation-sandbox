@@ -18,9 +18,17 @@ function( Ember, DS, App, ros, Action) {
     forearm_camera_url: DS.attr('string'),
     battery: -1,
     plugged_in_value: -1,
+    pose: { 'x': 9.424, 'y': 29.524 },
     plugged_in: function() {
       return (this.get('plugged_in_value') > 0);
     }.property('plugged_in_value'),
+
+    map_coords: function() {
+      var pose = this.get('pose');
+      var map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
+      var map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+      return {'x': map_x, 'y': map_y};
+    }.property('pose'),
 
     serviceUrlChanged: function() {
       if(this.get('service_url')) {
@@ -34,6 +42,23 @@ function( Ember, DS, App, ros, Action) {
           _this.set('battery', message.power_state.relative_capacity);
           _this.set('plugged_in_value', message.power_state.AC_present);
         });
+
+        // Also subscribe to robot location changes
+        /*
+        var loc_topic = new ros.Topic({
+          name: '/tf_XXXX',
+          messageType: 'XXXX'
+        });
+        var _this = this;
+        topic.subscribe(function(message) {
+          _this.set('pose_x', message.xxx.yyy);
+          _this.set('pose_y', message.xxx.yyy);
+          _this.set('pose', {
+            'x' : message.xxx,
+            'y' : message.yyy
+            };
+        });
+        */
       }
     }.observes('service_url'),
 

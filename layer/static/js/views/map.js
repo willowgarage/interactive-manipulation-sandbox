@@ -23,17 +23,54 @@ define([
           .attr("width", w)
           .attr("height", h);
 
-      this.get('controller').get('content').addArrayObserver( this);
+      var content = this.get('controller').get('content');
+      var places = content.places;
+      places.addArrayObserver( this);
     },
     arrayWillChange: function() {},
     arrayDidChange: function() {
       this.drawRooms();
     },
     drawRooms: function() {
-      var places = this.get('controller').get('content');
-      if(!places) {
-          return;
+      var content = this.get('controller').get('content');
+      var robot = content.robot;
+      var places = content.places;
+
+      // Draw each room and outlet on the map
+      this.drawPlaces(places);
+
+      // Plot the robot on the map last, so that it comes out on top
+      this.drawRobot(robot);
+
+    },
+
+    drawRobot: function(robot) {
+      var map = d3.select("#mapsvg");
+      var _this = this;
+
+      if ((robot.pose_x == -1) || (robot.pose_y == -1)) {
+        return;
       }
+
+      /* Draw our robet on the map */
+      map.selectAll(".robot")
+        .data([robot])
+        .enter().append("svg:circle")
+          .attr("class", "robot")
+          .attr("cx", function(d) {
+              return d.get('map_coords').x;
+            })
+          .attr("cy", function(d) {
+              return d.get('map_coords').y;
+            })
+          .attr("r", 5);
+    },
+
+    drawPlaces: function(places) {
+      if (!places) {
+        return;
+      }
+
       var rooms = places.filter( function(p) { return !p.get('isOutlet'); });
       var outlets = places.filter( function(p) { return p.get('isOutlet'); });
       var map = d3.select("#mapsvg");
