@@ -8,7 +8,7 @@
 
   <!-- rosbridge and mjpeg_server -->
   <node name="rosbridge" pkg="rosbridge_server" type="rosbridge.py" >
-    <param name="port" value="9091"/>
+    <param name="port" value="9099"/>
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
