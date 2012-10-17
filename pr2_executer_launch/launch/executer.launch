@@ -3,7 +3,7 @@
     <arg name="kinect_frame_prefix" default="/head_mount_kinect" />  
     <arg name="kinect_camera_name" default="head_mount_kinect" />
     <arg name="stereo" default="false"/>
-    <arg name="run_sim" default="0" />
+    <arg name="run_sim" default="false" />
 
     <!-- executer server -->
     <node pkg="smach_executer" type="executer" name="executer"/>
