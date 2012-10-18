@@ -21,29 +21,23 @@
 
   <!-- camera throttling -->
   <group if="$(arg throttle_cameras)">
+
     <!-- the main camera -->
-    <include file="$(find pr2_interactive_manipulation)/launch/camera_throttle.launch">
-      <arg name="in_camera_namespace" value="/wide_stereo/left"/>
-      <arg name="in_camera_name" value="image_rect_color"/>
-      <arg name="out_camera_namespace" value="/wide_stereo_throttled"/>
-      <arg name="out_camera_name" value="image"/>
-      <arg name="rate" value="3.0"/>
-    </include>
+    <node name="throttle_wide_stereo" pkg="topic_tools" type="throttle" 
+	args="messages /wide_stereo/left/image_rect_color 3.0 /wide_stereo_throttled/image"> 
+      <param name="lazy" value="true"/>
+    </node>
+
     <!-- the forearm cameras -->
-    <include file="$(find pr2_interactive_manipulation)/launch/camera_throttle.launch">
-      <arg name="in_camera_namespace" value="/r_forearm_cam"/>
-      <arg name="in_camera_name" value="image_color_rotated"/>
-      <arg name="out_camera_namespace" value="/r_forearm_cam_throttled"/>
-      <arg name="out_camera_name" value="image"/>
-      <arg name="rate" value="3.0"/>
-    </include>
-    <include file="$(find pr2_interactive_manipulation)/launch/camera_throttle.launch">
-      <arg name="in_camera_namespace" value="/l_forearm_cam"/>
-      <arg name="in_camera_name" value="image_color_rotated"/>
-      <arg name="out_camera_namespace" value="/l_forearm_cam_throttled"/>
-      <arg name="out_camera_name" value="image"/>
-      <arg name="rate" value="3.0"/>
-    </include>
+    <node name="throttle_r_forearm_cam" pkg="topic_tools" type="throttle" 
+	args="messages /r_forearm_cam/image_color_rotated 3.0 /r_forearm_cam_throttled/image"> 
+      <param name="lazy" value="true"/>
+    </node>
+    <node name="throttle_l_forearm_cam" pkg="topic_tools" type="throttle" 
+	args="messages /l_forearm_cam/image_color_rotated 3.0 /l_forearm_cam_throttled/image"> 
+      <param name="lazy" value="true"/>
+    </node>
+
   </group>
 
 </launch>
