@@ -144,8 +144,7 @@ function(
               places: App.Place.find({format:'json'})
             }));
           // Send the robot the actual navigateTo command via ROS
-          // TL: don't actually navigate
-          //this.robot.navigateTo(this.place);
+          this.robot.navigateTo(this.place);
         }
       })
     })
