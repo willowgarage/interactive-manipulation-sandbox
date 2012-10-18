@@ -90,7 +90,7 @@ function( Ember, DS, App, ROS, Action) {
         });
 
         // Also subscribe to robot location changes
-        var loc_topic = new ros.Topic({
+        var loc_topic = new this.ros.Topic({
           name: '/robot_pose',
           messageType: 'geometry_msgs/PoseWithCovarianceStamped'
         });
