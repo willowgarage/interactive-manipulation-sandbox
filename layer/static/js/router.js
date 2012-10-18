@@ -94,10 +94,14 @@ function(
           /* Set the NagivateView's {{outlet}} to be a MapView with a
              MapController using a Place model as context */
           router.get('navigateController')
-            .connectOutlet('map', {
+            .connectOutlet('map', Ember.Object.create(
+              {
+              'enablePlaces': true,
+              'enableRobot': true,
               'robot': this.robot,
               'places': App.Place.find({format:'json'})
-          });
+              }
+            ));
         }
       }),
 
@@ -131,8 +135,17 @@ function(
               robot: this.robot,
               place: this.place
             }));
+          router.get('navigatingController').
+            connectOutlet('map', Ember.Object.create({
+              enablePlaces: false,
+              enableRobot: true,
+              robot: this.robot,
+              place: this.place,
+              places: App.Place.find({format:'json'})
+            }));
           // Send the robot the actual navigateTo command via ROS
-          this.robot.navigateTo(this.place);
+          // TL: don't actually navigate
+          //this.robot.navigateTo(this.place);
         }
       })
     })
