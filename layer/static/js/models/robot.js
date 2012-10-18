@@ -38,6 +38,7 @@ function( Ember, DS, App, ROS, Action) {
 
     battery: -1,
     plugged_in_value: -1,
+    pose: { 'x': -1 , 'y': -1 },
     plugged_in: function() {
       return (this.get('plugged_in_value') > 0);
     }.property('plugged_in_value'),
@@ -45,6 +46,22 @@ function( Ember, DS, App, ROS, Action) {
     log: function( msg) {
       console.log("["+ this.get('name') + "]: " + msg);
     },
+
+    map_coords: function() {
+      var pose = this.get('pose');
+      var map_x, map_y;
+      if (pose.x == -1) {
+        map_x = -1;
+      } else {
+        map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
+      }
+      if (pose.y == -1) {
+        map_y = -1;
+      } else {
+        map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+      }
+      return {'x': map_x, 'y': map_y};
+    }.property('pose'),
 
     serviceUrlChanged: function() {
       if(this.get('service_url')) {
@@ -70,6 +87,19 @@ function( Ember, DS, App, ROS, Action) {
             _this.set('status_code',2);
             _this.topic_dashboard.unsubscribe();
           });
+        });
+
+        // Also subscribe to robot location changes
+        var loc_topic = new ros.Topic({
+          name: '/robot_pose',
+          messageType: 'geometry_msgs/PoseWithCovarianceStamped'
+        });
+        var _this = this;
+        loc_topic.subscribe(function(message) {
+          _this.set('pose', {
+            'x' : message.pose.pose.position.x,
+            'y' : message.pose.pose.position.y
+            });
         });
       }
     }.observes('service_url'),

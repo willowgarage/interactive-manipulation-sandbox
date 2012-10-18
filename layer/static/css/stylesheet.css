@@ -64,6 +64,12 @@ a {
     outline: gray solid;
 }
 
+/* To draw robots in the map */
+.chart .robot {
+	fill: #0000ff;
+	stroke: black;
+}
+
 /* Robot Lobby styles */
 .heading {
 	font-size: 30pt;
