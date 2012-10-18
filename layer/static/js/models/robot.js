@@ -47,7 +47,7 @@ function( Ember, DS, App, ROS, Action) {
       if(this.get('service_url')) {
         this.ros = new ROS();
 
-        myDebugEvents( this.ros, this.get('name'), ['connection','close','error']);
+        //myDebugEvents( this.ros, this.get('name'), ['connection','close','error']);
 
         this.ros.connect(this.get('service_url'));
 
@@ -78,7 +78,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
 
-      myDebugEvents( action, this.get('name') + " navigateTo action", ['result','status','feedback']);
+      //myDebugEvents( action, this.get('name') + " navigateTo action", ['result','status','feedback']);
   
       action.inputs.x        = place.get('pose_x');
       action.inputs.y        = place.get('pose_y');
@@ -93,7 +93,7 @@ function( Ember, DS, App, ROS, Action) {
         ros: this.ros,
         name: 'Unplug'
       });
-      myDebugEvents( action, this.get('name') + " unplug action", ['result','status','feedback']);
+      //myDebugEvents( action, this.get('name') + " unplug action", ['result','status','feedback']);
       action.execute();
       console.log("Calling Unplug action");
     },
@@ -103,7 +103,7 @@ function( Ember, DS, App, ROS, Action) {
         ros: this.ros,
         name: 'PlugIn'
       });
-      myDebugEvents( action, this.get('name') + " plugIn action", ['result','status','feedback']);
+      //myDebugEvents( action, this.get('name') + " plugIn action", ['result','status','feedback']);
       action.execute();
       console.log("Calling PlugIn action");
     }
@@ -111,10 +111,8 @@ function( Ember, DS, App, ROS, Action) {
 });
 function myDebugEvents( source, id, events) {
   for(var i=0;i<events.length;i++) {
-    source.on(events[i], function( e) {
-      console.log("["+id+"."+e.type+"] received");
-      console.dir(arguments);
-    });
+    eval('var f = function(e){ console.log("["+id+".'+events[i]+'] received"); console.dir(arguments); };');
+    source.on(events[i], f);
   }
 };
 
