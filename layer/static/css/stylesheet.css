@@ -145,6 +145,20 @@ a {
 	color: red;
 }
 
+.robot .disabled,
+.robot_info .disbled {
+	color: gray;
+}
+.robot .ready,
+.robot_info .ready {
+	color: green;
+}
+.robot .disabled,
+.robot_info .disbled {
+	font-style: italic;
+	color: red;
+}
+
 .placeinfo {
 	margin-top: 50px;
 }

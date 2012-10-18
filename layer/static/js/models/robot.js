@@ -19,7 +19,19 @@ function( Ember, DS, App, ROS, Action) {
     camera_url: DS.attr('string'),
     forearm_camera_url: DS.attr('string'),
 
-    status: "Unknown",            //  Calculated in the client
+    status_code: 0,            //  Calculated in the client
+    status: function() {
+      switch(this.get('status_code')) {
+        case 0:
+          return { value: "unreachable", class: "disabled" }
+        case 1:
+          return { value: "connected", class: "ready" }
+        case 2:
+          return { value: "disconnected", class: "error" }
+        default:
+          return { value: "N/A", class: "error" }
+      }
+    }.property('status_code'),
 
     battery: -1,
     plugged_in_value: -1,
@@ -41,7 +53,7 @@ function( Ember, DS, App, ROS, Action) {
 
         var _this = this;
         this.ros.on('connection',function() {
-          _this.set('status','Connected');
+          _this.set('status_code', 1);
 
           _this.topic_dashboard = new _this.ros.Topic({
             name: '/dashboard_agg',
@@ -53,7 +65,7 @@ function( Ember, DS, App, ROS, Action) {
           });
           _this.ros.on('close',function() {
             alert("WARNING: Connection to robot " + _this.get('name') + " lost");
-            _this.set('status','Disconnected');
+            _this.set('status_code',2);
             _this.topic_dashboard.unsubscribe();
           });
         });
