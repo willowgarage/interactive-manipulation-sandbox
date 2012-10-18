@@ -133,6 +133,11 @@ a {
 	padding-left: 20px;
 	padding-right: 20px;
 }
+.robot_info .warning {
+	background-color: red;
+	padding: 20px;
+	display: block;
+}
 
 /* The login panel */
 #login-logout-link {

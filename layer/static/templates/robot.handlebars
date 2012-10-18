@@ -2,9 +2,11 @@
   <img src="static/img/wg-logo.png" class="headingimg" {{action showAllRobots}}>
   <span class="heading" {{action showAllRobots}}>{{name}}</span>
 
+
   <!-- The brown box containing robot information at the top of the screen -->
   <div class="robot_info_container">
     <div class="robot_info">
+  {{#if isConnected}}
       <table>
         <tr>
           <th> Battery </th>
@@ -20,6 +22,9 @@
           <td><span {{bindAttr class="status.class"}}>{{status.value}}</span></td>
         </tr>
       </table>
+  {{else}}
+    <span class="warning">WARNING: Connection to robot unavailable</span>
+  {{/if}}
     </div>
   </div>
 </div>

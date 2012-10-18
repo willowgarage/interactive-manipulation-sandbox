@@ -32,6 +32,9 @@ function( Ember, DS, App, ROS, Action) {
           return { value: "N/A", class: "error" }
       }
     }.property('status_code'),
+    isConnected: function() {
+      return (this.get('status_code') == 1);
+    }.property('status_code'),
 
     battery: -1,
     plugged_in_value: -1,
@@ -64,7 +67,6 @@ function( Ember, DS, App, ROS, Action) {
             _this.set('plugged_in_value', message.power_state.AC_present);
           });
           _this.ros.on('close',function() {
-            alert("WARNING: Connection to robot " + _this.get('name') + " lost");
             _this.set('status_code',2);
             _this.topic_dashboard.unsubscribe();
           });
