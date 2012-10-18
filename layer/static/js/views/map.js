@@ -7,32 +7,49 @@ define([
 
   App.MapView = Ember.View.extend({
     template: Ember.Handlebars.compile(mapHtml),
+
+    enablePlaces: true,
+    enableRobot: true,
+
     didInsertElement: function() {
       var w = 480,
         h = 374,
         x = d3.scale.linear().domain([0, w]),
         y = d3.scale.ordinal().domain([0, h]);
 
-        var svg = d3.select("#floorplan-div").append("svg")
-          .attr("width", w)
-          .attr("height", h)
-          .attr("id","mapsvg");
+      var svg = d3.select("#floorplan-div").append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("id","mapsvg");
 
-        svg.append("svg:image")
-          .attr("xlink:href", "/static/images/willow-floorplan.png")
-          .attr("width", w)
-          .attr("height", h);
+      svg.append("svg:image")
+        .attr("xlink:href", "/static/images/willow-floorplan.png")
+        .attr("width", w)
+        .attr("height", h);
+
+      var content = this.get('controller').get('content');
+      this.enablePlaces = content.get('enablePlaces');
+      this.enableRobot = content.get('enableRobot');
+
+      console.log("In map in didInsertElement");
 
       // Observer so that when the places in the database change, we update
       // the map
-      var content = this.get('controller').get('content');
-      var places = content.places;
-      places.addArrayObserver(this);
+      if (this.enablePlaces) {
+        var places = content.places;
+        places.addArrayObserver(this);
+      } else {
+        // If we are not enabling Places, then hide the nav panel
+        console.log("In map without Places, hiding nav panel");
+        $("#navigation_panel").hide();
+      }
 
       // Add an observer so that whenever the robot's position changes, we
       // update the map
-      var robot = content.robot;
-      robot.addObserver('map_coords', this, 'drawRooms');
+      if (this.enableRobot) {
+        var robot = content.robot;
+        robot.addObserver('map_coords', this, 'drawRobot');
+      }
     },
 
     arrayWillChange: function() {},
@@ -49,7 +66,8 @@ define([
       this.drawPlaces(places);
 
       // Plot the robot on the map last, so that it comes out on top
-      this.drawRobot(robot);
+      // TODO: signal that the robot's location has changed so that it will
+      // be drawn on top of the rooms
 
       // Figure out which room the robot is closest to
       var nearest = -1;
@@ -101,6 +119,12 @@ define([
     },
 
     drawRobot: function(robot) {
+      if (null === this.get("controller")) {
+        return;
+      }
+      var content = this.get('controller').get('content');
+      var robot = content.robot;
+
       var map = d3.select("#mapsvg");
       var _this = this;
 
@@ -108,7 +132,7 @@ define([
         return;
       }
 
-      /* Draw our robet on the map */
+      /* Draw our robot on the map */
       map.selectAll(".robot")
         .data([robot])
         .enter().append("svg:circle")

@@ -87,19 +87,21 @@ function( Ember, DS, App, ROS, Action) {
             _this.set('status_code',2);
             _this.topic_dashboard.unsubscribe();
           });
-        });
 
-        // Also subscribe to robot location changes
-        var loc_topic = new this.ros.Topic({
-          name: '/robot_pose',
-          messageType: 'geometry_msgs/PoseWithCovarianceStamped'
-        });
-        var _this = this;
-        loc_topic.subscribe(function(message) {
-          _this.set('pose', {
-            'x' : message.pose.pose.position.x,
-            'y' : message.pose.pose.position.y
-            });
+          // Subscribe to pose messages
+          _this.topic_pose = new _this.ros.Topic({
+            name: '/robot_pose',
+            messageType: 'geometry_msgs/PoseWithCovarianceStamped'
+          });
+          _this.topic_pose.subscribe(function(message) {
+            _this.set('pose', {
+              'x' : message.pose.pose.position.x,
+              'y' : message.pose.pose.position.y
+              });
+          });
+          _this.ros.on('close',function() {
+            _this.topic_pose.unsubscribe();
+          });
         });
       }
     }.observes('service_url'),
