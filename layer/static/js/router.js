@@ -94,7 +94,10 @@ function(
           /* Set the NagivateView's {{outlet}} to be a MapView with a
              MapController using a Place model as context */
           router.get('navigateController')
-            .connectOutlet('map', App.Place.find({format:'json'}));
+            .connectOutlet('map', {
+              'robot': this.robot,
+              'places': App.Place.find({format:'json'})
+          });
         }
       }),
 

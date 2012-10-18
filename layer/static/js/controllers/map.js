@@ -3,6 +3,6 @@ define([
     'app'
 ],function( Ember, App) {
 
-    App.MapController = Ember.ArrayController.extend();
+    App.MapController = Ember.ObjectController.extend();
 
 });
