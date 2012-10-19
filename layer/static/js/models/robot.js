@@ -1,3 +1,4 @@
+var myApp;
 define([
   'ember',
   'emberdata',
@@ -6,6 +7,7 @@ define([
   'action',
 ],
 function( Ember, DS, App, ROS, Action) {
+  myApp = App;
   App.Robot = DS.Model.extend({
     name: DS.attr('string'),
     description: DS.attr('string'),

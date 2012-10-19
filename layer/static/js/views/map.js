@@ -31,8 +31,6 @@ define([
       this.enablePlaces = content.get('enablePlaces');
       this.enableRobot = content.get('enableRobot');
 
-      console.log("In map in didInsertElement");
-
       // Observer so that when the places in the database change, we update
       // the map
       if (this.enablePlaces) {
@@ -40,7 +38,6 @@ define([
         places.addArrayObserver(this);
       } else {
         // If we are not enabling Places, then hide the nav panel
-        console.log("In map without Places, hiding nav panel");
         $("#navigation_panel").hide();
       }
 
@@ -50,6 +47,24 @@ define([
         var robot = content.robot;
         robot.addObserver('map_coords', this, 'drawRobot');
       }
+    },
+
+    willDestroyElement: function() {
+      var content = this.get('controller').get('content');
+      
+      // Remove listeners on places and this robot
+      if (this.enablePlaces) {
+        var places = content.places;
+        places.removeArrayObserver(this);
+      }
+
+      if (this.enableRobot) {
+        var robot = content.robot;
+        robot.removeObserver('map_coords', this, 'drawRobot');
+      }
+
+      // Remove the map so it gets redrawn next time
+      d3.select("#mapsvg").remove();
     },
 
     arrayWillChange: function() {},
@@ -119,18 +134,15 @@ define([
     },
 
     drawRobot: function(robot) {
-      if (null === this.get("controller")) {
-        return;
-      }
-      var content = this.get('controller').get('content');
-      var robot = content.robot;
-
       var map = d3.select("#mapsvg");
       var _this = this;
 
       if ((robot.get('map_coords').x == -1) || (robot.get('map_coords').y == -1)) {
         return;
       }
+
+      // Remove old robot
+      map.selectAll(".robot").remove();
 
       /* Draw our robot on the map */
       map.selectAll(".robot")
@@ -143,6 +155,7 @@ define([
           .attr("cy", function(d) {
               return d.get('map_coords').y;
             })
+          .attr("id", "TLrobot")
           .attr("r", 5);
     },
 
