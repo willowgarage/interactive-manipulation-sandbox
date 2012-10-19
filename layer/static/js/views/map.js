@@ -155,7 +155,6 @@ define([
           .attr("cy", function(d) {
               return d.get('map_coords').y;
             })
-          .attr("id", "TLrobot")
           .attr("r", 5);
     },
 
