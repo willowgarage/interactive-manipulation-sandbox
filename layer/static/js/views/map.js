@@ -47,6 +47,10 @@ define([
         var robot = content.robot;
         robot.addObserver('map_coords', this, 'drawRobot');
       }
+
+      // Draw the robot now, because it'll be a couple seconds before the
+      // location updates
+      this.drawRobot(content.robot);
     },
 
     willDestroyElement: function() {

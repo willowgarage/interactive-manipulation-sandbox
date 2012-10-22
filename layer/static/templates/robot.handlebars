@@ -7,21 +7,39 @@
   <div class="robot_info_container">
     <div class="robot_info">
   {{#if isConnected}}
-      <table>
+      <table id="table1">
         <tr>
-          <th> Battery </th>
-          <th> Location </th>
-          <th> Motors </th>
-          <th> Status </th>
-        </tr>
-        <tr>
-          <td><span id="battery">{{battery}}</span>%{{#if plugged_in}}<span>, charging</span>{{/if}}
-            </td>
-          <td><span>{{pose.x}}, {{pose.y}}</span></td>
-          <td><span class="tbd">unknown</span></td>
-          <td><span {{bindAttr class="status.class"}}>{{status.value}}</span></td>
+          <td>
+            <table id="table2">
+              <tr>
+                <th> Battery </th>
+                <th> Location </th>
+              </tr>
+              <tr>
+                <td><span id="battery">{{battery}}</span>%{{#if plugged_in}}<span>, charging</span>{{/if}}
+                  </td>
+                <td><span>{{pose.x}}, {{pose.y}}</span></td>
+              </tr>
+            </table>
+          </td>
+
+          <td>
+            <!-- Enabled/disabled switch -->
+            <div class="onoffswitch">
+                {{view Ember.Checkbox checkedBinding="enabled" class="onoffswitch-checkbox"
+                  id="myonoffswitch"}}
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <div class="onoffswitch-inner">
+                        <div class="onoffswitch-active">Enabled</div>
+                        <div class="onoffswitch-inactive">Disabled</div>
+                    </div>
+                    <div class="onoffswitch-switch"></div>
+                </label>
+            </div>
+          </td>
         </tr>
       </table>
+
   {{else}}
     <span class="warning">WARNING: Connection to robot unavailable. Please reload browser to retry</span>
   {{/if}}

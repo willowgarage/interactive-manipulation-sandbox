@@ -37,7 +37,11 @@ function( Ember, DS, App, ROS, Action) {
 
     battery: -1,
     plugged_in_value: -1,
+    // Whether the robot is ready to act. Enabled is false if the runstop
+    // is pressed.
+    enabled: false,
     pose: { 'x': -1 , 'y': -1 },
+
     plugged_in: function() {
       return (this.get('plugged_in_value') > 0);
     }.property('plugged_in_value'),
@@ -81,6 +85,15 @@ function( Ember, DS, App, ROS, Action) {
           _this.topic_dashboard.subscribe(function(message) {
             _this.set('battery', message.power_state.relative_capacity);
             _this.set('plugged_in_value', message.power_state.AC_present);
+            if (message.power_board_state) {
+              if (message.power_board_state.wireless_stop && message.power_board_state.run_stop) {
+                _this.set('enabled', true);
+              } else {
+                _this.set('enabled', false);
+              }
+            } else {
+              _this.set('enabled', false);
+            }
           });
           _this.ros.on('close',function() {
             _this.set('status_code',2);
@@ -121,14 +134,52 @@ function( Ember, DS, App, ROS, Action) {
       console.log('Calling NavigateTo action');
     },
 
+    /* Unplugging has three steps: remove the plug from the wall, tuck your
+     * arms, and point the head forward. We call them in sequence, checking
+     * for a successful result after each step. */
     unplug: function() {
       var action = new Action({
         ros: this.ros,
         name: 'Unplug'
+      })
+      myDebugEvents( action, this.get('name') + " unplug action", ['result', 'feedback']);
+
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("unplug result: " + result.outcome);
+        if (result.outcome == "succeeded") {
+          // Unplug worked, now tuck arms
+          _this._tuckArms();
+        } else {
+          // TODO: notify the user that unplugging failed
+        }
       });
-      //myDebugEvents( action, this.get('name') + " unplug action", ['result','status','feedback']);
       action.execute();
       console.log("Calling Unplug action");
+    },
+
+    _tuckArms: function() {
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      })
+
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("tuckarms result: " + result.outcome);
+        if (result.outcome == "succeeded") {
+          // Tuckarms worked, now move head forward
+          _this._pointHeadForward();
+        } else {
+          // TODO: Notify user that unplugging failed
+        }
+      });
+      action.execute();
+      console.log("Calling TuckArms action");
+    },
+
+    _pointHeadForward: function() {
+      console.log("Point head forward is not implemented");
     },
 
     plugIn: function() {
@@ -137,6 +188,10 @@ function( Ember, DS, App, ROS, Action) {
         name: 'PlugIn'
       });
       //myDebugEvents( action, this.get('name') + " plugIn action", ['result','status','feedback']);
+      myDebugEvents( action, this.get('name') + " plugIn action", ['result', 'feedback']);
+      action.on("result", function(result) {
+        console.log("plugIn result: " + result.outcome);
+      });
       action.execute();
       console.log("Calling PlugIn action");
     }
