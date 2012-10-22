@@ -1,4 +1,3 @@
-var aROS;
 var myApp;
 define([
   'ember',
@@ -8,9 +7,7 @@ define([
   'action',
 ],
 function( Ember, DS, App, ROS, Action) {
-  aROS = ROS;
   myApp = App;
-  console.log("aROS ready");
   App.Robot = DS.Model.extend({
     name: DS.attr('string'),
     description: DS.attr('string'),
