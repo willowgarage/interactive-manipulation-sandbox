@@ -16,7 +16,8 @@ define([
   'views/plug',
   'views/navigate',
   'models/robot',
-  'models/place'
+  'models/place',
+  'helpers/all'
 ],
 function(
   Ember,
@@ -35,7 +36,8 @@ function(
   PlugView,
   NavigateView,
   Robot,
-  Place
+  Place,
+  Helpers
 ) {
 
   App.Router = Ember.Router.extend({

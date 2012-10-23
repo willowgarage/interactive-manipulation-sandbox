@@ -41,6 +41,8 @@ function( Ember, DS, App, ROS, Action) {
     // is pressed.
     enabled: false,
     pose: { 'x': -1 , 'y': -1 },
+    // TL: hack because I can't get Handlebars expressions to work
+    pose_display: "",
 
     plugged_in: function() {
       return (this.get('plugged_in_value') > 0);
@@ -64,6 +66,19 @@ function( Ember, DS, App, ROS, Action) {
         map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
       }
       return {'x': map_x, 'y': map_y};
+    }.property('pose'),
+
+    // TL: Define a derived property that will be used to display the
+    // robot's current pose in the robot view. This is a hack! Ideally it
+    // would be done using a Handlebars expression. But I wasn't able to
+    // get that to work after several hours of trying.
+    pose_display: function() {
+      var pose = this.get('pose');
+      if (pose.x == -1 && pose.y == -1) {
+        return "unknown";
+      } else {
+        return pose.x.toFixed(2) + ', ' + pose.y.toFixed(2);
+      }
     }.property('pose'),
 
     serviceUrlChanged: function() {
@@ -125,6 +140,20 @@ function( Ember, DS, App, ROS, Action) {
       });
 
       //myDebugEvents( action, this.get('name') + " navigateTo action", ['result','status','feedback']);
+      
+      // Get notified when navigation finishes
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("navigation result: " + result.outcome);
+        if (result.outcome == "succeeded") {
+          console.log("Finished navigating, returning to Navigate view");
+          App.get('router').send("navigate", _this);
+        } else {
+          // TODO: notify the user that unplugging failed
+        }
+      });
+      action.execute();
+      console.log("Calling Unplug action");
   
       action.inputs.x        = place.get('pose_x');
       action.inputs.y        = place.get('pose_y');
