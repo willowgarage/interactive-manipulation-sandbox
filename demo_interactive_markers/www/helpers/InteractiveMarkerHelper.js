@@ -9,20 +9,8 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
   this.name = intMarkerMsg.name;
 
   var that = this;
-
-  this.position.x = intMarkerMsg.pose.position.x;
-  this.position.y = intMarkerMsg.pose.position.y;
-  this.position.z = intMarkerMsg.pose.position.z;
   
-  this.useQuaternion = true;
-  this.quaternion = new THREE.Quaternion(
-    intMarkerMsg.pose.orientation.x,
-    intMarkerMsg.pose.orientation.y,
-    intMarkerMsg.pose.orientation.z,
-    intMarkerMsg.pose.orientation.w
-  );
-  
-  this.updateMatrixWorld();
+  this.setPose( intMarkerMsg.pose );
 
   intMarkerMsg.controls.forEach(function(control) 
   {
@@ -63,4 +51,6 @@ THREE.InteractiveMarkerHelper.prototype.setPose = function ( pose )
     pose.orientation.z,
     pose.orientation.w
   );
+
+  this.updateMatrixWorld();
 }

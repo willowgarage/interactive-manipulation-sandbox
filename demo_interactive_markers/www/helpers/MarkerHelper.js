@@ -27,6 +27,7 @@ THREE.MarkerHelper = function ( markerMsg )
   function addMesh( geom, mat )
   {
     var mesh = new THREE.Mesh(geom, mat);
+    /*
     //console.log(markerHelper);
     mesh.on('mouseover', function(arguments){ 
       console.log( "intersect: ", arguments.intersect.point );
@@ -39,6 +40,7 @@ THREE.MarkerHelper = function ( markerMsg )
       that.scale.y = 1.0;
       that.scale.z = 1.0;
     });
+    */
     that.add( mesh );
   }
   
@@ -57,18 +59,7 @@ THREE.MarkerHelper = function ( markerMsg )
    uint8 TRIANGLE_LIST=11
   */
 
-  this.position.x = markerMsg.pose.position.x;
-  this.position.y = markerMsg.pose.position.y;
-  this.position.z = markerMsg.pose.position.z;
-  
-  this.useQuaternion = true;
-  this.quaternion = new THREE.Quaternion(
-    markerMsg.pose.orientation.x,
-    markerMsg.pose.orientation.y,
-    markerMsg.pose.orientation.z,
-    markerMsg.pose.orientation.w
-  );
-  this.quaternion.normalize();
+  this.setPose( markerMsg.pose );
 
   var colorMaterial = makeColorMaterial( markerMsg.color.r, markerMsg.color.g,
       markerMsg.color.b, markerMsg.color.a );
@@ -94,7 +85,15 @@ THREE.MarkerHelper = function ( markerMsg )
       }
     }
 
-    var arrow = new THREE.ArrowMarkerHelper( dir, p1, len, headLen, shaftR, headR, colorMaterial );
+    var arrow = new THREE.ArrowMarkerHelper({
+      dir: dir,
+      origin: p1,
+      length: len,
+      headLength: headLen,
+      shaftDiameter: shaftR,
+      headDiameter: headR,
+      material: colorMaterial 
+      });
     this.add(arrow);
 
     break;
@@ -116,6 +115,22 @@ THREE.MarkerHelper = function ( markerMsg )
 
 };
 
-
 THREE.MarkerHelper.prototype = Object.create( THREE.Object3D.prototype );
 
+THREE.MarkerHelper.prototype.setPose = function ( pose ) 
+{
+  this.position.x = pose.position.x;
+  this.position.y = pose.position.y;
+  this.position.z = pose.position.z;
+
+  this.useQuaternion = true;
+  this.quaternion = new THREE.Quaternion(
+    pose.orientation.x,
+    pose.orientation.y,
+    pose.orientation.z,
+    pose.orientation.w
+  );
+  this.quaternion.normalize();
+  
+  this.updateMatrixWorld();
+}

@@ -14,7 +14,7 @@ THREE.InteractiveMarkerClient = function( rosbridgeURL, topicNS )
   });
 
   var that = this;
-  topic.subscribe( function(message){ return( that.processUpdate( message ) ); } );
+  topic.subscribe( that.processUpdate.bind( that ) );
 };
 
 THREE.InteractiveMarkerClient.prototype = Object.create( THREE.Object3D.prototype );
