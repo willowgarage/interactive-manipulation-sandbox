@@ -4,7 +4,7 @@
       <!-- The "content" parameter here is the robot object -->
       <ul>
         <li class="tabselected"><a> Navigate </a></li>
-        <li><a {{action plug content}}> Plug </a></li>
+        <li><a {{action plug robot}}> Plug </a></li>
       </ul>
   </div>
 
@@ -16,7 +16,7 @@
 	  <table width="100%">
 		<tr>
 		  <td>
-			<img src="static/images/willow-floorplan.png" width="400">
+			{{outlet}}
 		  </td>
 		  <td>
 			<img {{bindAttr src="robot.camera_url"}} width="300" height="225">
