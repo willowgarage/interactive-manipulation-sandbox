@@ -2,11 +2,13 @@
 Action for moving the base. Mostly copied from sushi/pr2_python/base.py
 '''
 import rospy
-from smach_ros import SimpleActionState
+import actionlib
+from smach import State
+
 
 from pr2_controllers_msgs.msg import PointHeadAction, PointHeadGoal
 
-class PointHead(SimpleActionState):
+class PointHead(State):
     """
     Points the head at a position in space.
 
@@ -15,11 +17,20 @@ class PointHead(SimpleActionState):
     * 'succeeded'  In this case, the robot is guaranteed to be at the goal pose.
     * 'failed' Robot not necessarily at the goal pose.
     """
+
+    HEAD_TIMEOUT_DEFAULT = 3.0  # default timeout in seconds
+
     def __init__(self, input_keys=['target_x', 'target_y', 'target_z', 'target_frame', 'pointing_frame']):
         action_uri = '/head_traj_controller/point_head_action'
-        SimpleActionState.__init__(self, action_uri, PointHeadAction, goal_cb=self.goal_cb, input_keys=input_keys)
-
-    def goal_cb(self, userdata, goal):
+        self.point_head_client = actionlib.SimpleActionClient(action_uri, PointHeadAction)
+        rospy.loginfo("waiting for %s"%action_uri)
+        self.point_head_client.wait_for_server()
+        rospy.loginfo("%s found"%action_uri)
+        State.__init__(self, outcomes=['succeeded', 'failed'], input_keys = input_keys)
+        
+        self.head_timeout = rospy.get_param('~head_timeout', PointHead.HEAD_TIMEOUT_DEFAULT)
+                       
+    def execute(self, userdata):
         goal = PointHeadGoal()
         goal.target.point.x = userdata['target_x']
         goal.target.point.y = userdata['target_y']
@@ -38,6 +49,17 @@ class PointHead(SimpleActionState):
         goal.pointing_axis.z = 1.0
         rospy.loginfo("Sending head pointing goal (%f, %f, %f) and waiting for result" % (
                 goal.target.point.x, goal.target.point.y, goal.target.point.z))
-        return goal
+
+        # send the goal
+        self.point_head_client.send_goal(goal)
+        finished_within_time = self.point_head_client.wait_for_result(rospy.Duration(self.head_timeout))
+        if not finished_within_time:
+            self.point_head_client.cancel_goal()
+            return 'failed'
+        return 'succeeded'
+        
+        
+        
+        
 
     
