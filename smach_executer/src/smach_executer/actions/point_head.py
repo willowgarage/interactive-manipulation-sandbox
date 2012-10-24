@@ -1,5 +1,5 @@
 '''
-Action for moving the base. Mostly copied from sushi/pr2_python/base.py
+Action for pointing the head.
 '''
 import rospy
 import actionlib
