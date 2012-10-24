@@ -12,6 +12,7 @@ from smach_executer.actions.navigate_to_pose import NavigateToPose
 from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
 from smach_executer.actions.tuck_arms import TuckArms
+from smach_executer.actions.point_head import PointHead
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -26,7 +27,8 @@ class ExecuterServer:
             'NavigateToPose': NavigateToPose,
             'PlugIn': PlugIn,
             'Unplug': Unplug,
-            'TuckArms': TuckArms
+            'TuckArms': TuckArms,
+            'PointHead': PointHead
             }
 
     def start(self):
