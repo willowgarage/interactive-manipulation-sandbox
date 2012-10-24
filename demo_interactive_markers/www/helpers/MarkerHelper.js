@@ -5,7 +5,9 @@
 THREE.MarkerHelper = function ( markerMsg ) 
 {
   THREE.Object3D.call( this );
+  
   var that = this;
+  var geom = null;
 
   function makeColorMaterial(r, g, b, a) {
     var color = new THREE.Color();
@@ -63,7 +65,7 @@ THREE.MarkerHelper = function ( markerMsg )
 
   var colorMaterial = makeColorMaterial( markerMsg.color.r, markerMsg.color.g,
       markerMsg.color.b, markerMsg.color.a );
-
+  
   switch( markerMsg.type ) {
   case 0: // ARROW
     var len = markerMsg.scale.x;
@@ -105,12 +107,12 @@ THREE.MarkerHelper = function ( markerMsg )
     this.add( new THREE.TriangleListMarkerHelper( colorMaterial, markerMsg.points ) );
     break;
   default:
-    geom = new THREE.CubeGeometry(0.1,0.1,0.1);
+    var geom = new THREE.CubeGeometry(0.1,0.1,0.1);
     addMesh(geom, colorMaterial);
     break;
   }
 
-  geom = new THREE.CubeGeometry(0.1,0.1,0.1);
+  var geom = new THREE.CubeGeometry(0.1,0.1,0.1);
   addMesh(geom, new THREE.MeshBasicMaterial);
 
 };
