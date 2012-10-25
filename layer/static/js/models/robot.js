@@ -137,6 +137,7 @@ function( Ember, DS, App, ROS, Action) {
     }.observes('service_url'),
 
     navigateTo: function(place) {
+      // Sanity checks to make sure we are navigating to a reasonable place
       if (!place.get('pose_x') || !place.get('pose_y')) {
         this.set('progress_update', 'Invalid navigation coordinates');
         console.dir(place.get('pose_x'));
@@ -144,23 +145,44 @@ function( Ember, DS, App, ROS, Action) {
         return;
       }
 
+      // Make sure we aren't plugged in first
+      if (this.get('plugged_in')) {
+        this.set('progress_update', 'Please unplug before navigating');
+        return;
+      }
+
+      this.set('progress_update', 'Tucking arms...');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      })
+
+      var _this = this;
+      action.on("result", function(result) {
+        _this.set('progress_update', 'Tucking arms ' + result.outcome);
+        if (result.outcome == "succeeded") {
+          // Tuckarms worked, now go
+          _this._navigateTo2(place);
+        } else {
+          _this.set('progress_update', 'Arms not tucked, navigating anyway');
+        }
+      });
+      action.execute();
+    },
+
+    _navigateTo2: function(place) {
+      this.set('progress_update', 'Navigating to ' + place.get('name'));
       var action = new Action({
         ros: this.ros,
         name: 'NavigateToPose'
       });
 
-      //myDebugEvents( action, this.get('name') + " navigateTo action", ['result','status','feedback']);
-      
       // Get notified when navigation finishes
       var _this = this;
       action.on("result", function(result) {
         console.log("navigation result: " + result.outcome);
         _this.set('progress_update', 'Navigation ' + result.outcome);
-        if (result.outcome == "succeeded") {
-          // TODO: also display notification that navigation finished
-        } else {
-          // TODO: notify the user that navigation failed
-        }
         // Return to navigation view
         App.get('router').send("navigate", _this);
       });
