@@ -9,29 +9,37 @@
       </ul>
   </div>
 
-	<div id="main-container">
-		<div class="content plugcontent">
-			{{#if plugged_in}}
-			<div>Currently plugged in</div>
-			{{else}}
-			<div>Not plugged in</div>
-			{{/if}}
+  <div id="main-container">
+    <div class="content plugcontent">
+      {{#if is_plugging_in}}
+        <div>Working, please wait...</div>
+      {{else}}
+        {{#if plugged_in}}
+        <div>Currently plugged in</div>
+        {{else}}
+        <div>Not plugged in</div>
+        {{/if}}
+      {{/if}}
 
-			<table border=1 width="100%">
-			  <tr>
-				<td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
-				<td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
-			  </tr>
-			</table>
+      <table border=1 width="100%">
+        <tr>
+              <td><img width=400 height=300 {{bindAttr src="camera_url"}}></td>
+              {{#if forearm_camera_url}}
+              <td><img width=400 height=300 {{bindAttr src="forearm_camera_url"}}></td>
+              {{/if}}
+        </tr>
+      </table>
 
-			{{#if plugged_in}}
-			<div class="mybutton" {{action unplug target="controller"}}>Unplug</div>
-			{{else}}
-			<div class="mybutton" {{action plugIn target="controller"}}>Plug in</div>
-			{{/if}}
+      {{#if is_plugging_in}}
+      {{else}}
+        {{#if plugged_in}}
+        <div class="mybutton" {{action unplug target="controller"}}>Unplug</div>
+        {{else}}
+        <div class="mybutton" {{action plugIn target="controller"}}>Plug in</div>
+        {{/if}}
+      {{/if}}
 
-			<div class="mybutton" {{action tuckArms target="controller"}}>Tuck arms</div>
-		</div>
-	</div>
+    </div>
+  </div>
 
 </div>

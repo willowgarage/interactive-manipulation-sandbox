@@ -42,10 +42,14 @@
       </table>
 
   {{else}}
-    <span class="warning">WARNING: Connection to robot unavailable. Please reload browser to retry</span>
+    <span class="warning">WARNING: Connection to robot unavailable. Press reload to retry.</span>
   {{/if}}
     </div>
   </div>
 </div>
 
 {{outlet}}
+
+<div class="progress_update">
+    {{progress_update}}
+</div>
