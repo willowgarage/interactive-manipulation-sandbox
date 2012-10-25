@@ -47,6 +47,10 @@ define([
         var robot = content.robot;
         robot.addObserver('map_coords', this, 'drawRobot');
       }
+
+      // Draw the robot now, because it'll be a couple seconds before the
+      // location updates
+      this.drawRobot(content.robot);
     },
 
     willDestroyElement: function() {
@@ -155,7 +159,6 @@ define([
           .attr("cy", function(d) {
               return d.get('map_coords').y;
             })
-          .attr("id", "TLrobot")
           .attr("r", 5);
     },
 
