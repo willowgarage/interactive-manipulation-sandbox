@@ -1,0 +1,18 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li><a {{action navigate content}}> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+        <li class="tabselected"><a> Look </a></li>
+      </ul>
+  </div>
+
+	<div id="main-container">
+	    Look around and tell me what you see...<br>
+	    <img width=400 height=300 {{bindAttr src="camera_url"}}><br>
+	    (camera controls will go here)
+	</div>
+
+</div>
