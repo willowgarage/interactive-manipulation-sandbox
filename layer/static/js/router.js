@@ -8,6 +8,7 @@ define([
   'controllers/robot',
   'controllers/plug',
   'controllers/navigate',
+  'controllers/look',
   'views/application',
   'views/navigating',
   'views/robots',
@@ -15,8 +16,10 @@ define([
   'views/robot',
   'views/plug',
   'views/navigate',
+  'views/look',
   'models/robot',
-  'models/place'
+  'models/place',
+  'helpers/all'
 ],
 function(
   Ember,
@@ -28,14 +31,17 @@ function(
   RobotController,
   PlugController,
   NavigateController,
+  LookController,
   ApplicationView,
   NavigatingView,
   RobotsView,
   RobotView,
   PlugView,
   NavigateView,
+  LookView,
   Robot,
-  Place
+  Place,
+  Helpers
 ) {
 
   App.Router = Ember.Router.extend({
@@ -70,6 +76,7 @@ function(
         showAllRobots: Ember.Route.transitionTo('robots'),
 
         plug: Ember.Route.transitionTo('plug'),
+        look: Ember.Route.transitionTo('look'),
 
         // TODO: Clean-up
         navigateTo: function( router, context) {
@@ -110,6 +117,7 @@ function(
         showAllRobots: Ember.Route.transitionTo('robots'),
 
         navigate: Ember.Route.transitionTo('navigate'),
+        look: Ember.Route.transitionTo('look'),
 
         connectOutlets: function(router, context) {
           router.get('applicationController')
@@ -119,11 +127,29 @@ function(
         }
       }),
 
+      look : Ember.Route.extend({
+        route: '/robots/:id/look',
+        showAllRobots: Ember.Route.transitionTo('robots'),
+
+        navigate: Ember.Route.transitionTo('navigate'),
+        plug: Ember.Route.transitionTo('plug'),
+
+        connectOutlets: function(router, context) {
+          router.get('applicationController')
+            .connectOutlet('robot', App.Robot.find(context.id));
+          router.get('robotController')
+            .connectOutlet('look', App.Robot.find(context.id));
+        }
+      }),
+
+
+
       navigating: Ember.Route.extend({
         route: '/navigating/:robot_id/:place_id',
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
+        look: Ember.Route.transitionTo('look'),
 
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);

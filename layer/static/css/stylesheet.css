@@ -143,6 +143,7 @@ a {
 	background-color: red;
 	padding: 20px;
 	display: block;
+	border-radius: 0px 0px 10px 10px;
 }
 
 /* The login panel */
@@ -156,10 +157,6 @@ a {
 	color: red;
 }
 
-.robot .disabled,
-.robot_info .disbled {
-	color: gray;
-}
 .robot .ready,
 .robot_info .ready {
 	color: green;
@@ -167,7 +164,7 @@ a {
 .robot .disabled,
 .robot_info .disbled {
 	font-style: italic;
-	color: red;
+	color: gray;
 }
 
 .placeinfo {
@@ -220,7 +217,7 @@ a {
    text-decoration: none;
    color: #666;
    display: block;
-   padding: 100px 5px;
+   padding: 50px 5px;
 }
 #tab-container ul li:hover
 {
@@ -278,3 +275,69 @@ a {
 	text-align: center;
 	padding: 10px;
 }
+
+.progress_update {
+	text-align: right;
+	background: #f2f2f2;
+	padding: 2px;
+}
+
+/* For an on/off switch */
+.onoffswitch {
+    position: relative; width: 130px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+
+.onoffswitch-checkbox {
+    display: none;
+}
+
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #666666; border-radius: 5px;
+}
+
+.onoffswitch-inner {
+    width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+
+.onoffswitch-inner > div {
+    float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 16px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+.onoffswitch-inner .onoffswitch-active {
+    padding-left: 10px;
+    background-color: #25E883; color: #000000;
+}
+
+.onoffswitch-inner .onoffswitch-inactive {
+    padding-right: 10px;
+    background-color: #FF0000; color: #000000;
+    text-align: right;
+}
+
+.onoffswitch-switch {
+    width: 35px; margin: 0px;
+    background: #FFFFFF;
+    border: 2px solid #666666; border-radius: 5px;
+    position: absolute; top: 0; bottom: 0; right: 91px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+    background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+}
+
