@@ -22,8 +22,7 @@
     container = document.getElementById("container");
 
     // setup camera
-    camera = new THREE.PerspectiveCamera(40, window.innerWidth
-        / window.innerHeight, 0.01, 1000);
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
     camera.position.x = 3;
     camera.position.y = 3;
     camera.position.z = 3;
@@ -121,7 +120,7 @@
 
   function onMouseUp(event) {
     callFn(DRAGGING, 'onmouseup');
-    if ( DRAGGING != INTERSECTED )
+    if ( DRAGGING !== INTERSECTED )
     {
       callFn(DRAGGING, 'onmouseout');
       callFn(INTERSECTED, 'onmouseover');
@@ -151,7 +150,7 @@
       container.style.cursor = 'auto';
     }
     
-    if (!DRAGGING && INTERSECTED != intersect) {
+    if (!DRAGGING && INTERSECTED !== intersect) {
 
       callFn(INTERSECTED, 'onmouseout');
       INTERSECTED = intersect;

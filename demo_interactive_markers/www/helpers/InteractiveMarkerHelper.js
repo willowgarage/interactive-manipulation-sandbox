@@ -20,6 +20,10 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
 
       // convert position into my own local coordinate frame
       markerHelper.position = that.worldToLocal( markerHelper.position );
+      markerHelper.quaternion.multiply( that.quaternion.clone().inverse(), markerHelper.quaternion );
+      
+      markerHelper.updateMatrixWorld();
+      
       that.add(markerHelper);
       
     });
