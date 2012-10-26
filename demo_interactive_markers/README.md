@@ -3,7 +3,9 @@ This demo app runs the Interactive Markers basic_controls tuturial in the browse
 Installation
 ============
 
-You need to get the rosbridge suite first (https://github.com/RobotWebTools/rosbridge_suite).
+You need to get the rosbridge suite (https://github.com/RobotWebTools/rosbridge_suite),
+the ROS Groovy version of interactive_markers (https://github.com/ros-visualization/interactive_markers)
+and rviz (https://github.com/ros-visualization/rviz).
 
 To compile, add the interactive-manipulation-sandbox repo to your ROS_PACKAGE_PATH and run
 
