@@ -20,7 +20,8 @@ class PointHead(State):
 
     HEAD_TIMEOUT_DEFAULT = 3.0  # default timeout in seconds
 
-    def __init__(self, input_keys=['target_x', 'target_y', 'target_z', 'target_frame', 'pointing_frame']):
+    def __init__(self, input_keys=['target_x', 'target_y', 'target_z', 'target_frame',
+            'pointing_frame', 'pointing_x', 'pointing_y', 'pointing_z']):
         action_uri = '/head_traj_controller/point_head_action'
         self.point_head_client = actionlib.SimpleActionClient(action_uri, PointHeadAction)
         rospy.loginfo("waiting for %s"%action_uri)
@@ -40,13 +41,11 @@ class PointHead(State):
             goal.target.header.frame_id = 'base_link'
         else:
             goal.target.header.frame_id = userdata['target_frame']
-        if not userdata['pointing_frame']:
-            goal.pointing_frame = 'head_mount_kinect_rgb_optical_frame'
-        else:
-            goal.pointing_frame = userdata['pointing_frame']
-        goal.pointing_axis.x = 0.0
-        goal.pointing_axis.y = 0.0
-        goal.pointing_axis.z = 1.0
+
+        goal.pointing_frame = userdata['pointing_frame']
+        goal.pointing_axis.x = userdata['pointing_x']
+        goal.pointing_axis.y = userdata['pointing_y']
+        goal.pointing_axis.z = userdata['pointing_z']
         rospy.loginfo("Sending head pointing goal (%f, %f, %f) and waiting for result" % (
                 goal.target.point.x, goal.target.point.y, goal.target.point.z))
 
@@ -57,9 +56,3 @@ class PointHead(State):
             self.point_head_client.cancel_goal()
             return 'failed'
         return 'succeeded'
-        
-        
-        
-        
-
-    
