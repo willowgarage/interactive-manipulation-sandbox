@@ -31,6 +31,8 @@ class Robot(models.Model):
     description = models.TextField(blank=True,null=True)
     image = models.ImageField(upload_to="static/images",blank=True,null=True)
 
+    public = models.NullBooleanField(blank=True,null=True)
+
     state = models.IntegerField(choices=(
         (0,'Idle'), (1,'Busy'),
     ))
