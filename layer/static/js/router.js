@@ -9,6 +9,7 @@ define([
   'controllers/plug',
   'controllers/navigate',
   'controllers/look',
+  'controllers/client',
   'views/application',
   'views/navigating',
   'views/robots',
@@ -17,8 +18,10 @@ define([
   'views/plug',
   'views/navigate',
   'views/look',
+  'views/client',
   'models/robot',
   'models/place',
+  'models/client',
   'helpers/all'
 ],
 function(
@@ -44,6 +47,22 @@ function(
   Helpers
 ) {
 
+  function doTheAppThing( router, name, context, client_context) {
+    router.get('applicationController')
+      .connectOutlet({
+        outletName: 'content',
+        name: name,
+        context: context
+      });
+    clientObj = App.Client.find(client_context);
+    router.get('applicationController')
+      .connectOutlet({
+        outletName: 'client',
+        name: 'client',
+        context: clientObj
+      });
+  };
+
   App.Router = Ember.Router.extend({
     root : Ember.Route.extend({
       index: Ember.Route.extend({
@@ -58,8 +77,7 @@ function(
         showRobot: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router) {
-          router.get('applicationController')
-            .connectOutlet('robots', App.Robot.find({format:'json'}));
+          doTheAppThing( router, 'robots', App.Robot.find({format:'json'}), 'robots');
         }
       }),
 
@@ -92,8 +110,9 @@ function(
           this.robot = App.Robot.find(context.id);
           /* Set the ApplicationView's {{outlet}} to be a RobotView with
            * a RobotController which has a Robot model as context */
-          router.get('applicationController')
-            .connectOutlet('robot', this.robot);
+          /* And also update the client status information view with the new
+           * application context (i.e.: where the user is now in the app) */
+          doTheAppThing( router, 'robot', this.robot, 'robot:' + context.id);
           /* Set the RobotView's {{outlet}} to be a NavigateView with
            * a NagivateController which has a Robot model as context */
           router.get('robotController')
@@ -120,8 +139,7 @@ function(
         look: Ember.Route.transitionTo('look'),
 
         connectOutlets: function(router, context) {
-          router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+          doTheAppThing( router, 'robot', App.Robot.find(context.id), 'robot:' + context.id);
           router.get('robotController')
             .connectOutlet('plug', App.Robot.find(context.id));
         }
@@ -135,8 +153,7 @@ function(
         plug: Ember.Route.transitionTo('plug'),
 
         connectOutlets: function(router, context) {
-          router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+          doTheAppThing( router, 'robot', App.Robot.find(context.id), 'robot:' + context.id);
           router.get('robotController')
             .connectOutlet('look', App.Robot.find(context.id));
         }
@@ -154,8 +171,7 @@ function(
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
-          router.get('applicationController')
-            .connectOutlet('robot', this.robot);
+          doTheAppThing( router, 'robot', this.robot, 'robot:' + context.robot_id);
           router.get('robotController').
             connectOutlet('navigating', Ember.Object.create({
               robot: this.robot,

@@ -12,6 +12,16 @@ def index(request):
 def context(request):
     # Get or create Client object associated with this session
     print "Session Key = %s" % request.session.session_key
+    # This is a COMPLETE HACK
+    # I'm making Ember.data believe that this is a REST API and that
+    # the object it is retrieving is a different one per request
+    # In order to do that, I send the "client context" (where in the application the user is)
+    # as the ID form the client. here I parse it (because ember-data sends it as a REST URL)
+    # and I return it as the ID of the "returned Client object"
+    # Again, in reality, this ID is simply the context, it is just that in order to
+    # make use of this very dirty hack, I have to use it in this way
+    id = request.path.split('/')[-1]
+    print "Context = %s" % id
     try: 
         client = Client.objects.get(session_key=request.session.session_key)
         print "got existing"
@@ -30,6 +40,7 @@ def context(request):
     # TODO: Clean-up and remove stale client objects
 
     response_obj = {
+        'id': id,
         'username': client.username,
         'other_users': []
     }
