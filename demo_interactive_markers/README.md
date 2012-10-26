@@ -1,5 +1,9 @@
 This demo app runs the Interactive Markers basic_controls tuturial in the browser.
 
+You need to download and compile the rosbridge suite first:
+
+https://github.com/RobotWebTools/rosbridge_suite
+
 To compile, add the interactive-manipulation-sandbox repo to your ROS_PACKAGE_PATH and run
 
 `rosmake demo_interactive_markers`
