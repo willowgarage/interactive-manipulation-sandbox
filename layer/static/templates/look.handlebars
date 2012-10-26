@@ -11,8 +11,34 @@
 
 	<div id="main-container">
 	    Look around and tell me what you see...<br>
-	    <img width=400 height=300 {{bindAttr src="camera_url"}}><br>
-	    (camera controls will go here)
-	</div>
 
+            <table>
+              <tr>
+                <td>
+	          <img width=400 height=300 {{bindAttr src="camera_url"}}><br>
+                </td>
+
+                <td>
+                  <table class="joypad">
+                    <tr>
+                      <td></td>
+                      <td><div class="mybutton" {{action pointHeadUp target="controller"}}>Up</div></td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><div class="mybutton" {{action pointHeadLeft target="controller"}}>Left</div></td>
+                      <td><div class="mybutton" {{action pointHeadForward target="controller"}}>O</div></td>
+                      <td><div class="mybutton" {{action pointHeadRight target="controller"}}>Right</div></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td><div class="mybutton" {{action pointHeadDown target="controller"}}>Down</div></td>
+                      <td></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+	</div>
 </div>

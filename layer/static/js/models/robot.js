@@ -261,14 +261,7 @@ function( Ember, DS, App, ROS, Action) {
       // Get notified when head movement finishes
       var _this = this;
       action.on("result", function(result) {
-        console.log("point-head result: " + result.outcome);
         _this.set('progress_update', 'Look forward ' + result.outcome);
-        if (result.outcome == "succeeded") {
-          // TODO: notify user that plugging in finished
-        } else {
-          // TODO: notify the user that plugging in failed
-        }
-
         // Regardless of outcome, tell the UI to say that plugging is done
         _this.set('is_plugging_in', false);
       });
@@ -276,10 +269,32 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.target_frame        = 'torso_lift_link';
       action.inputs.target_x            = 1.0;
       action.inputs.target_y            = 0;
-      action.inputs.target_z            = 0.6;
+      action.inputs.target_z            = 0.4;
       action.inputs.pointing_frame      = 'head_mount_kinect_rgb_optical_frame';
+      action.inputs.pointing_x          = 0.0;
+      action.inputs.pointing_y          = 0.0;
+      action.inputs.pointing_z          = 1.0;
       action.execute();
       console.log('Calling PointHead action');
+    },
+
+    pointHead: function(x, y, z) {
+      this.set('progress_update', 'Looking ...');
+      var action = new Action({
+        ros: this.ros,
+        name: 'PointHead'
+      });
+
+      action.inputs.target_frame        = 'wide_stereo_link';
+      action.inputs.target_x            = x;
+      action.inputs.target_y            = y;
+      action.inputs.target_z            = z;
+      action.inputs.pointing_frame      = 'wide_stereo_link';
+      action.inputs.pointing_x          = 1.0;
+      action.inputs.pointing_y          = 0;
+      action.inputs.pointing_z          = 0;
+      action.execute();
+      console.log('Calling PointHead action with ' + x + '/' + y + '/' + z);
     },
 
     plugIn: function() {

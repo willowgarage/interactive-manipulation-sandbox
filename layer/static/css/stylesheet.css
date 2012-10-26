@@ -341,3 +341,8 @@ a {
     right: 0px; 
 }
 
+/* For the arrow-key keypad */
+.joypad .mybutton {
+	margin: 10px;
+	padding: 5px;
+}
