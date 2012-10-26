@@ -1,6 +1,6 @@
 This demo app runs the Interactive Markers basic_controls tuturial in the browser.
 
-You need to download and compile the rosbridge suite first:
+You need to get the rosbridge suite first:
 
 https://github.com/RobotWebTools/rosbridge_suite
 
