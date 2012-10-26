@@ -25,7 +25,6 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
       markerHelper.updateMatrixWorld();
       
       that.add(markerHelper);
-      
     });
   });
   
@@ -33,13 +32,28 @@ THREE.InteractiveMarkerHelper = function ( intMarkerMsg )
 
 THREE.InteractiveMarkerHelper.prototype = Object.create( THREE.Object3D.prototype );
 
-//THREE.Camera.prototype.lookAt = function ( vector ) {
-//  this.matrix.lookAt( this.position, vector, this.up );
 
-
-THREE.InteractiveMarkerHelper.prototype.startDragging = function (  ) 
+THREE.InteractiveMarkerHelper.prototype.onmousedown = function( event )
 {
-  
+  console.log( 'start dragging' );
+  this.dragging = true;
+  this.intersectionPoint = event.intersectionPoint;
+  event.stopPropagation();
+}
+
+THREE.InteractiveMarkerHelper.prototype.onmouseup = function( event )
+{
+  console.log( 'stop dragging' );
+  this.dragging = false;
+  event.stopPropagation();
+}
+
+THREE.InteractiveMarkerHelper.prototype.onmousemove = function ( event ) 
+{
+  if( this.dragging ) {
+    console.log( 'dragging' );
+    event.stopPropagation();
+  }
 }
 
 THREE.InteractiveMarkerHelper.prototype.setPose = function ( pose ) 

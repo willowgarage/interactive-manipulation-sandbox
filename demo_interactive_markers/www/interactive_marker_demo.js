@@ -13,7 +13,7 @@
   init();
   animate();
 
-  var INTERSECTED, DRAGGING;
+  var INTERSECTED, INTERSECTION, DRAGGING;
 
   function init() {
 
@@ -29,12 +29,12 @@
 
     projector = new THREE.Projector();
 
-    // setup camera mouse control
-    controls = new THREE.RosOrbitControls(camera);
-
     // setup scene
     scene0 = new THREE.Scene();
     scene1 = new THREE.Scene();
+
+    // setup camera mouse control
+    controls = new THREE.RosOrbitControls(camera);
 
     // scene0.eulerOrder = 'YXZ';
 
@@ -68,8 +68,7 @@
     axes = new THREE.Axes();
     scene0.add(axes);
 
-    imc = new THREE.InteractiveMarkerClient('ws://localhost:9090',
-        '/basic_controls');
+    imc = new THREE.InteractiveMarkerClient('ws://localhost:9090','/basic_controls');
     scene0.add(imc);
 
     renderer = new THREE.WebGLRenderer({
@@ -84,9 +83,12 @@
     renderer.setFaceCulling(0);
 
     container.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener('mousemove', onMouseMove);
-    renderer.domElement.addEventListener('mousedown', onMouseDown);
-    renderer.domElement.addEventListener('mouseup', onMouseUp);
+    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+    renderer.domElement.addEventListener('mousewheel', onMouseWheel, false);
+
+    renderer.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
     // here you add your objects
     //THREE.Object3D._threexDomEvent.camera(camera);
@@ -97,65 +99,104 @@
   // try to call the member function fn on object obj
   // if if does not posess the function, walk up to
   // it's 'parent' object and try again, etc.
-  function callFn( obj, fn )
-  {
-    while ( obj && obj.hasOwnProperty('parent') )
+  function callFn( obj, fn, event ) {
+    
+    // make the event cancelable
+    event.cancelBubble = false;
+    event.stopPropagation = function()
+    {
+      event.cancelBubble = true;
+    }
+    
+    while ( obj )
     {
       if ( obj[fn] && obj[fn] instanceof Function )
       {
-        obj[fn]();
-        return obj;
-      } else {
-        // walk up the graph
+        obj[fn]( event );
+        if ( event.cancelBubble ) {
+          return;
+        }
+      }
+      
+      // walk up the graph
+      if ( obj.hasOwnProperty('parent') ) {
         obj = obj.parent;
+      } else {
+        return;
       }
     }
-    return undefined;
+    
+    // if we arrive here, no object has stopped propagation
+    if ( controls[fn] && controls[fn] instanceof Function )
+    {
+        controls[fn]( event );
+        return;
+    }
   }
   
+  function onMouseWheel(event) {
+    event.intersectionPoint = INTERSECTION;
+    callFn(INTERSECTED, 'onmousewheel', event);
+    DRAGGING = INTERSECTED;
+  }
+
   function onMouseDown(event) {
-    callFn(INTERSECTED, 'onmousedown');
+    event.intersectionPoint = INTERSECTION;
+    callFn(INTERSECTED, 'onmousedown', event);
     DRAGGING = INTERSECTED;
   }
 
   function onMouseUp(event) {
-    callFn(DRAGGING, 'onmouseup');
+    event.intersectionPoint = INTERSECTION;
+    callFn(DRAGGING, 'onmouseup', event);
     if ( DRAGGING !== INTERSECTED )
     {
-      callFn(DRAGGING, 'onmouseout');
-      callFn(INTERSECTED, 'onmouseover');
+      callFn(DRAGGING, 'onmouseout', event);
+      callFn(INTERSECTED, 'onmouseover', event);
     }
     DRAGGING = undefined;
   }
 
   function onMouseMove(event) {
-    
+
+    // keep this event from interacting with the DOM
     event.preventDefault();
 
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    // trace a ray through the mouse cursor position
     var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
     projector.unprojectVector(vector, camera);
-    var ray = new THREE.Ray(camera.position, vector.subSelf(camera.position)
-        .normalize());
+    var ray = new THREE.Ray(camera.position, vector.subSelf(camera.position).normalize());
 
-    var intersects = ray.intersectObject(scene0, true);
+    event.intersectionPoint = INTERSECTION;
     
-    var intersect;
+    event.ray = ray;
+    
+    // if we're not dragging, see if there is something new under the mouse cursor
+    var intersectedObjs = ray.intersectObject(scene0, true);
+    var intersectedObj;
 
-    if (intersects.length > 0) {
-      intersect = intersects[0].object;
+    if (intersectedObjs.length > 0) {
+      intersectedObj = intersectedObjs[0].object;
+      INTERSECTION = intersectedObjs[0].point;
     } else {
       container.style.cursor = 'auto';
+      intersectedObj = controls;
+      INTERSECTION = undefined;
     }
-    
-    if (!DRAGGING && INTERSECTED !== intersect) {
 
-      callFn(INTERSECTED, 'onmouseout');
-      INTERSECTED = intersect;
-      callFn(INTERSECTED, 'onmouseover');
+    // store intersection point in event
+    event.intersectionPoint = INTERSECTION;
+    
+    if (DRAGGING === undefined && INTERSECTED !== intersectedObj) {
+      callFn(INTERSECTED, 'onmouseout', event);
+      INTERSECTED = intersectedObj;
+      callFn(INTERSECTED, 'onmouseover', event);
       container.style.cursor = 'pointer';
+    } else if ( DRAGGING ) {
+      callFn(DRAGGING, 'onmousemove', event);
     }
 
   }

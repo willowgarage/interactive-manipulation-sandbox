@@ -58,33 +58,37 @@ THREE.ArrowMarkerHelper = function( options ) {
 
   this.position = origin;
   this.setDirection(dir);
+  
+  this.dragging = false;
 
   //this.scale = new THREE.Vector3( 1, 1, 1 );
   
   var that = this;
-  this.onmouseover = function()
+  this.onmouseover = function( event )
   {
     console.log( 'onmouseover' );
     that.shaft.material = that.hoverMaterial;
     that.cone.material = that.hoverMaterial;
   }
-  this.onmouseout = function()
+  this.onmouseout = function( event )
   {
     console.log( 'onmouseout' );
     that.shaft.material = that.normalMaterial;
     that.cone.material = that.normalMaterial;
   }
-  this.onmousedown = function()
+  this.onmousedown = function( event )
   {
     console.log( 'onmousedown' );
     that.shaft.material = that.activeMaterial;
     that.cone.material = that.activeMaterial;
   }
-  this.onmouseup = function()
+  this.onmouseup = function( event )
   {
     console.log( 'onmouseup' );
     that.shaft.material = that.hoverMaterial;
     that.cone.material = that.hoverMaterial;
+
+    this.dragging = false;
   }
 };
 
