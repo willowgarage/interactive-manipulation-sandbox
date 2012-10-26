@@ -44,3 +44,9 @@ class Robot(models.Model):
     service_url = models.CharField(max_length=512)     # URL to robot's rosbridge instance
     camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's camera
     forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera
+
+class Client(models.Model):
+    '''Represents a client (browser) connected to the server and it's state'''
+    session_key = models.CharField(max_length=40)
+    username = models.CharField(max_length=30)
+    # client_context = models.TextField()
