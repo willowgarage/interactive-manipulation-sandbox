@@ -72,7 +72,7 @@ if __name__ == '__main__':
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
             initial_pose_pub.publish(pose_msg)
 
-    # Save and publish the current transform every five seconds
+    # Save and publish the current transform every second
     while not rospy.is_shutdown():
         rospy.sleep(1.0)
 
