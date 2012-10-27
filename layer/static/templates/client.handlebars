@@ -7,4 +7,7 @@
   <a href="/accounts/login/">Login</a>
 {{/if}}
 </div>
+{{#if thereAreOtherUsers}}
+<div id="concurrency" {{ bindAttr title="otherUserNames" }}>There are other users on this page</div>
+{{/if}}
 </div>

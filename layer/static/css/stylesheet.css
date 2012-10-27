@@ -155,6 +155,10 @@ a {
 	float: right;
 	margin: 0px;
 }
+#concurrency {
+	float: right;
+	margin-right: 25px;
+}
 
 .tbd {
 	font-style: italic;
