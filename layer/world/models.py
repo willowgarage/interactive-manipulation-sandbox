@@ -49,4 +49,4 @@ class Client(models.Model):
     '''Represents a client (browser) connected to the server and it's state'''
     session_key = models.CharField(max_length=40)
     username = models.CharField(max_length=30)
-    # client_context = models.TextField()
+    client_context = models.TextField()

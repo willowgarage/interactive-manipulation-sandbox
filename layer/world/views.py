@@ -30,9 +30,12 @@ def context(request):
         print "created new"
 
     # Associate the current logged-in user to the session
+    # NOTE: 'username' is the key for the User object so storing
+    # this value is enough to retrieve the User object later
     client.username = request.user.username
 
-    # TODO: Associate current user context with client object
+    # Associate current user context with client object
+    client.context = id
 
     client.save()
 
@@ -41,7 +44,9 @@ def context(request):
 
     response_obj = {
         'id': id,
-        'username': client.username,
+        'username': request.user.username,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
         'other_users': []
     }
     

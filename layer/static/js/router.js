@@ -48,12 +48,6 @@ function(
 ) {
 
   function doTheAppThing( router, name, context, client_context) {
-    router.get('applicationController')
-      .connectOutlet({
-        outletName: 'content',
-        name: name,
-        context: context
-      });
     clientObj = App.Client.find(client_context);
     router.get('applicationController')
       .connectOutlet({
@@ -61,6 +55,13 @@ function(
         name: 'client',
         context: clientObj
       });
+    router.get('applicationController')
+      .connectOutlet({
+        outletName: 'content',
+        name: name,
+        context: context
+      });
+    router.get(name+'Controller').set('client',clientObj)
   };
 
   App.Router = Ember.Router.extend({

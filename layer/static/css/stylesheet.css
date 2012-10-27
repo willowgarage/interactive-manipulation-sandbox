@@ -118,6 +118,10 @@ a {
 }
 
 /* Single robot view */
+.header {
+	position: relative;
+}
+
 .robot_map {
 	margin: 0px 50px 0px 50px;
 }
