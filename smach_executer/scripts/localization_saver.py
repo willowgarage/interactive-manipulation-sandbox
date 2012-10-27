@@ -72,9 +72,9 @@ if __name__ == '__main__':
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
             initial_pose_pub.publish(pose_msg)
 
-    # Save and publish the current transform every five seconds
+    # Save and publish the current transform every second
     while not rospy.is_shutdown():
-        rospy.sleep(5.0)
+        rospy.sleep(1.0)
 
         try:
             (trans,rot) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
@@ -110,7 +110,7 @@ if __name__ == '__main__':
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
             current_pose_pub.publish(pose_msg)
 
-        except (tf.LookupException, tf.ConnectivityException):
-            rospy.loginfo("localization_saver: tf exception")
+        except (tf.LookupException, tf.ConnectivityException) as e:
+            rospy.loginfo("localization_saver: tf exception: " + e)
             continue
 
