@@ -8,14 +8,6 @@
 </head>
 <body>
 
-<div id="login-logout-link">
-{% if user.is_authenticated %}
-  Welcome {{ user.first_name }} {{ user.last_name }}, <a href="/accounts/logout/">Logout</a>
-{% else %}
-  <a href="/accounts/login/">Login</a></li>
-{% endif %}                                      
-</div>
-
 <div class="loading">
 <span>Loading application ... please wait</span>&nbsp;<img src="/static/img/spinnerLarge.gif"/>
 <p>Please be patient if this is your first time loading the application. We're downloading all sorts of magic spices for your browser. It will be worth the wait.</p>

@@ -126,11 +126,20 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
-OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
-#OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=willowgarage.com'
 OPENID_UPDATE_DETAILS_FROM_SREG = True
 OPENID_CREATE_USERS = True
-#OPENID_STRICT_USERNAMES = True
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
+# The actual URL for authentication using Google Apps (Willow Garage Domain, not Google or any other)
+# is the following one:
+# OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=willowgarage.com'
+# but it fails in the underlying python-openid layer with:
+# 
+#   Error attempting to use stored discovery information: <openid.consumer.consumer.TypeURIMismatch: Required type http://specs.openid.net/auth/2.0/signon not found in ['http://specs.openid.net/auth/2.0/server', 'http://openid.net/srv/ax/1.0', 'http://specs.openid.net/extensions/ui/1.0/mode/popup', 'http://specs.openid.net/extensions/ui/1.0/icon', 'http://specs.openid.net/extensions/pape/1.0'] for endpoint <openid.consumer.discover.OpenIDServiceEndpoint server_url='https://www.google.com/a/willowgarage.com/o8/ud?be=o8' claimed_id=None local_id=None canonicalID=None used_yadis=True >>
+#   Attempting discovery to verify endpoint
+#   Performing discovery on http://willowgarage.com/openid?id=117302733910584657424
+#
+# and then it times out
+#
 
 INSTALLED_APPS = (
     'django.contrib.auth',
