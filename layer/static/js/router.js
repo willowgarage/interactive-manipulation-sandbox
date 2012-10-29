@@ -9,6 +9,7 @@ define([
   'controllers/plug',
   'controllers/navigate',
   'controllers/look',
+  'controllers/markers',
   'views/application',
   'views/navigating',
   'views/robots',
@@ -17,6 +18,7 @@ define([
   'views/plug',
   'views/navigate',
   'views/look',
+  'views/markers',
   'models/robot',
   'models/place',
   'helpers/all'
@@ -32,6 +34,7 @@ function(
   PlugController,
   NavigateController,
   LookController,
+  MarkersController,
   ApplicationView,
   NavigatingView,
   RobotsView,
@@ -39,6 +42,7 @@ function(
   PlugView,
   NavigateView,
   LookView,
+  MarkersView,
   Robot,
   Place,
   Helpers
@@ -77,6 +81,7 @@ function(
 
         plug: Ember.Route.transitionTo('plug'),
         look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
 
         // TODO: Clean-up
         navigateTo: function( router, context) {
@@ -118,6 +123,7 @@ function(
 
         navigate: Ember.Route.transitionTo('navigate'),
         look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
           router.get('applicationController')
@@ -133,6 +139,7 @@ function(
 
         navigate: Ember.Route.transitionTo('navigate'),
         plug: Ember.Route.transitionTo('plug'),
+        markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
           router.get('applicationController')
@@ -142,14 +149,13 @@ function(
         }
       }),
 
-
-
       navigating: Ember.Route.extend({
         route: '/navigating/:robot_id/:place_id',
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
         look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
           this.robot = App.Robot.find(context.robot_id);
@@ -171,6 +177,22 @@ function(
             }));
           // Send the robot the actual navigateTo command via ROS
           this.robot.navigateTo(this.place);
+        }
+      }),
+
+      markers: Ember.Route.extend({
+        route: '/markers/:robot_id',
+        showAllRobots: Ember.Route.transitionTo('robots'),
+        plug: Ember.Route.transitionTo('plug'),
+        navigate: Ember.Route.transitionTo('navigate'),
+        look: Ember.Route.transitionTo('look'),
+
+
+        connectOutlets: function(router, context) {
+          router.get('applicationController')
+            .connectOutlet('robot', App.Robot.find(context.id));
+          router.get('robotController')
+            .connectOutlet('markers', App.Robot.find(context.id));
         }
       })
     })
