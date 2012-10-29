@@ -13,6 +13,9 @@ class RobotModel(ModelResource):
     model = Robot
     exclude = ()    # This was necessary to override the exclusion of the 'id' field
 
+# This view filters the robots that are returned to the user
+# If the user is logged in, then all robots are returned
+# Otherwise, only Robots which are marked with property "Public" = True
 class RobotsView(View, ListModelMixin):
     def get(self, request, *args, **kwArgs):
         if type(request.user) == AnonymousUser:
@@ -25,7 +28,6 @@ urlpatterns = patterns('',
     url(r'^places/admin$', ListOrCreateModelView.as_view(resource=PlaceModel)),
     url(r'^places/admin/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=PlaceModel)),
 
-    #url(r'^robots$', ListModelView.as_view(resource=RobotModel)),
     url(r'^robots$', RobotsView.as_view(resource=RobotModel)),
     url(r'^robots/(?P<pk>[^/]+)/$', ReadOnlyModelView.as_view(resource=RobotModel)),
     url(r'^robots/admin$', ListOrCreateModelView.as_view(resource=RobotModel)),

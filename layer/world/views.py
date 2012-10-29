@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from layer.world.models import *
 from django.contrib.auth.models import User, AnonymousUser
 import json
+import datetime
+from django.conf import settings
 
 # Create your views here.
 
@@ -38,9 +40,18 @@ def context(request):
     # Associate current user context with client object
     client.context = id
 
+    # Record an update from this client
+    client.last_seen = datetime.datetime.now()
+
     client.save()
 
-    # TODO: Clean-up and remove stale client objects
+    # Clean-up and remove stale client objects
+    expire_minutes = getattr( settings, 'LAYER_EXPIRE_MINUTES', 5)
+    expire_datetime = datetime.datetime.now() - datetime.timedelta(minutes=expire_minutes)
+    expired = Client.objects.filter(last_seen__lte=expire_datetime)
+    if len(expired) > 0:
+        print "Deleting %d expired sessions" % len(expired)
+        expired.delete()
 
     # Search and return all other users currently in this context
     others = Client.objects.filter(context=id).exclude(username=client.username)

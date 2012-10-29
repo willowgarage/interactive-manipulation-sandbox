@@ -50,3 +50,4 @@ class Client(models.Model):
     session_key = models.CharField(max_length=40)
     username = models.CharField(max_length=30)
     context = models.TextField()
+    last_seen = models.DateTimeField()
