@@ -217,7 +217,8 @@ a {
    text-decoration: none;
    color: #666;
    display: block;
-   padding: 50px 5px;
+   /* This controls the height of the navbar tabs */
+   padding: 40px 5px;
 }
 #tab-container ul li:hover
 {
@@ -263,6 +264,12 @@ a {
 	background: blue;
 	color: white;
 	border-radius: 25px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .mybutton.disabled {
