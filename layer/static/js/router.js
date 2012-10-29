@@ -61,10 +61,19 @@ function(
         showRobot: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router) {
+          // HACK: Set-up periodic refreshing of client state
+          if( ! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client =  App.Client.find('robots');
           router.get('applicationController')
             .connectOutlet('content', 'robots', App.Robot.find({format:'json'}));
           router.get('robotsController')
-            .connectOutlet('client', 'client', App.Client.find('robots'));
+            .connectOutlet('client', 'client', this.client);
         }
       }),
 
@@ -94,7 +103,16 @@ function(
 
         /* Initialize the "navigate" state */
         connectOutlets: function(router, context) {
+          // HACK: Set-up periodic refreshing of client state
+          if( ! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
           this.robot =  App.Robot.find(context.id);
+          this.client = App.Client.find('robot:'+context.id);
           // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
           /* Set the ApplicationView's {{outlet}} to be a RobotView with
            * a RobotController which has a Robot model as context */
@@ -128,6 +146,15 @@ function(
         look: Ember.Route.transitionTo('look'),
 
         connectOutlets: function(router, context) {
+          // HACK: Set-up periodic refreshing of client state
+          if( ! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client = App.Client.find('robot:'+context.id);
           // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
@@ -146,6 +173,15 @@ function(
         plug: Ember.Route.transitionTo('plug'),
 
         connectOutlets: function(router, context) {
+          // HACK: Set-up periodic refreshing of client state
+          if( ! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client = App.Client.find('robot:'+context.id);
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
@@ -163,6 +199,7 @@ function(
         look: Ember.Route.transitionTo('look'),
 
         connectOutlets: function(router, context) {
+          this.client = App.Client.find('robot:'+context.id);
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
           router.get('applicationController').
@@ -189,3 +226,4 @@ function(
     })
   });
 });
+

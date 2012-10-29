@@ -46,7 +46,7 @@ def context(request):
     client.save()
 
     # Clean-up and remove stale client objects
-    expire_minutes = getattr( settings, 'LAYER_EXPIRE_MINUTES', 5)
+    expire_minutes = getattr( settings, 'LAYER_EXPIRE_MINUTES', 1)
     expire_datetime = datetime.datetime.now() - datetime.timedelta(minutes=expire_minutes)
     expired = Client.objects.filter(last_seen__lte=expire_datetime)
     if len(expired) > 0:
