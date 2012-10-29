@@ -5,3 +5,4 @@ build
 *.swp
 layer/local_settings.py
 .vagrant
+layer/static/images
