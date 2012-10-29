@@ -217,7 +217,8 @@ a {
    text-decoration: none;
    color: #666;
    display: block;
-   padding: 50px 5px;
+   /* This controls the height of the navbar tabs */
+   padding: 40px 5px;
 }
 #tab-container ul li:hover
 {
