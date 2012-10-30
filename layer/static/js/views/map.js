@@ -46,6 +46,7 @@ define([
       if (this.enableRobot) {
         var robot = content.robot;
         robot.addObserver('map_coords', this, 'drawRobot');
+        robot.addObserver('navigation_plan', this, 'drawNavPlan');
       }
 
       // Draw the robot now, because it'll be a couple seconds before the
@@ -65,6 +66,7 @@ define([
       if (this.enableRobot) {
         var robot = content.robot;
         robot.removeObserver('map_coords', this, 'drawRobot');
+        robot.removeObserver('navigation_plan', this, 'drawNavPlan');
       }
 
       // Remove the map so it gets redrawn next time
@@ -208,6 +210,34 @@ define([
           .attr("width", 20)
           .attr("height", 20)
           .on("click", nodeSelected);
+    },
+
+    drawNavPlan : function() {
+      var robot = this.get('controller').get('content').robot;
+
+      var plan = robot.get('navigation_plan');
+      if (!plan) return;
+
+      var poses = plan.poses;
+
+      // Construct an array of points
+      var array1 = poses.slice(0, poses.length - 1);
+      var array2 = poses.slice(1, poses.length);
+      var poseSegments = d3.zip(array1, array2);
+
+      var map = d3.select("#mapsvg");
+      map.selectAll('.path')
+        .data(poseSegments)
+        .enter().append('svg:line')
+        .attr('x1', function(d) { return robot.transformPoseToMap(d[0].pose.position).x; })
+        .attr('y1', function(d) { return robot.transformPoseToMap(d[0].pose.position).y; })
+        .attr('x2', function(d) { return robot.transformPoseToMap(d[1].pose.position).x; })
+        .attr('y2', function(d) { return robot.transformPoseToMap(d[1].pose.position).y; })
+        .attr('stroke', 'green')
+        .attr('stroke-width', '2')
+        .attr('fill', 'none')
+        .attr('class', 'navplan');
+
     }
   });
 

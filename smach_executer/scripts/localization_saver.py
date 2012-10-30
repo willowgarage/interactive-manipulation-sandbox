@@ -32,14 +32,19 @@ if __name__ == '__main__':
     #wait for the map frame to exist (which means localization is now running)
     trans = 0
     rot = 0
+    count = 0
     while not rospy.is_shutdown():
         try:
             (trans,rot) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
             rospy.loginfo("localization_saver: tf says trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
         except (tf.LookupException, tf.ConnectivityException):
+            count += 1
             rospy.loginfo("localization_saver: map frame not available yet")
             rospy.sleep(5.0)
-            continue
+            if count >= 3:
+                raise
+            else:
+                continue
         break
 
     #if robot is not already localized, get the old localized pose from file and broadcast it
