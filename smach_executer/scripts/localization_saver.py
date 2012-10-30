@@ -178,6 +178,6 @@ if __name__ == '__main__':
             rospy.loginfo("localization_saver: tf2 lookup or connectivity exception: " + str(e))
             continue
         except tf2.TimeoutException as e:
-            rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException" + str(e))
+            rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException: " + str(e))
             continue
 
