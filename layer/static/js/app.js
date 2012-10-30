@@ -6,7 +6,9 @@ function(
   Ember,
   DS
 ) {
-  var App = Ember.Application.create();
+  var App = Ember.Application.create({
+    autoinit: false
+  });
   window.TheApp = App;
 
   /* Overriding behavior in RESTAdapter to handle responses of the type
