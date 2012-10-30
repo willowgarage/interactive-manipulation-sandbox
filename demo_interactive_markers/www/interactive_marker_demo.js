@@ -36,11 +36,6 @@
     // setup camera mouse control
     controls = new THREE.RosOrbitControls(camera);
 
-    // scene0.eulerOrder = 'YXZ';
-
-    // scene0.scale.x=-1;
-    // scene0.scale.y=-1;
-
     scene0.add(directionalLight);
 
     // add lights
@@ -58,15 +53,16 @@
     });
     gridMaterial.wireframe = true;
     gridMaterial.wireframeLinewidth = 1;
+    gridMaterial.transparent = true;
     var gridObj = new THREE.Mesh(gridGeom, gridMaterial);
-    scene0.add(gridObj);
+    scene1.add(gridObj);
 
     // add coordinate frame visualization
     // axes = new THREE.AxisHelper();
     // axes.scale.x=axes.scale.y=axes.scale.z=0.01;
     // scene1.add(axes);
     axes = new THREE.Axes();
-    scene0.add(axes);
+    scene1.add(axes);
 
     imc = new THREE.InteractiveMarkerClient('ws://localhost:9090','/basic_controls');
     scene0.add(imc);
@@ -90,10 +86,6 @@
 
     renderer.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
-    // here you add your objects
-    //THREE.Object3D._threexDomEvent.camera(camera);
-
-    // THREEx.DomEvent = function(camera, container);
   }
 
   // try to call the member function fn on object obj
@@ -170,9 +162,9 @@
     projector.unprojectVector(vector, camera);
     var ray = new THREE.Ray(camera.position, vector.subSelf(camera.position).normalize());
 
-    event.intersectionPoint = INTERSECTION;
-    
-    event.ray = ray;
+    event.mouseRay = ray;
+    event.mousePos = mouse;
+    event.camera = camera;
     
     // if we're not dragging, see if there is something new under the mouse cursor
     var intersectedObjs = ray.intersectObject(scene0, true);
@@ -218,7 +210,7 @@
     renderer.clear(true, true, true);
     renderer.render(scene0, camera);
     // clear depth & stencil & render overlay scene
-    renderer.clear(false, true, true);
+    //renderer.clear(false, true, true);
     renderer.render(scene1, camera);
   }
 
