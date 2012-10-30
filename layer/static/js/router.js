@@ -138,10 +138,11 @@ function(
              MapController using a Place model as context */
           router.get('navigateController')
             .connectOutlet('map', Ember.Object.create({
-              'enablePlaces': true,
-              'enableRobot': true,
-              'robot': this.robot,
-              'places': App.Place.find({format:'json'})
+              enablePlaces: true,
+              enableRobot: true,
+              enableDestination: false,
+              robot: this.robot,
+              places: App.Place.find({format:'json'})
             }));
         }
       }),
@@ -226,6 +227,7 @@ function(
             connectOutlet('map', Ember.Object.create({
               enablePlaces: false,
               enableRobot: true,
+              enableDestination: true,
               robot: this.robot,
               place: this.place,
               places: App.Place.find({format:'json'})
