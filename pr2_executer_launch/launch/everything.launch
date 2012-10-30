@@ -12,6 +12,11 @@
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
+  <!-- TF2 Buffer Server -->
+  <node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen">
+    <param name="buffer_size" value="120.0"/>
+  </node>
+
   <!-- robot pose in map saver -->
   <node pkg="smach_executer" type="localization_saver.py" name="localization_saver">
     <param if="$(arg run_sim)" name="save_pose" value="false"/>
