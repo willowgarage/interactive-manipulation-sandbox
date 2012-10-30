@@ -30,6 +30,8 @@ define([
       var content = this.get('controller').get('content');
       this.enablePlaces = content.get('enablePlaces');
       this.enableRobot = content.get('enableRobot');
+      // Whether to draw the current destination on the map
+      this.enableDestination = content.get('enableDestination');
 
       // Observer so that when the places in the database change, we update
       // the map
@@ -47,11 +49,15 @@ define([
         var robot = content.robot;
         robot.addObserver('map_coords', this, 'drawRobot');
         robot.addObserver('navigation_plan', this, 'drawNavPlan');
+        // Draw the robot now, because it'll be a couple seconds before the
+        // location updates
+        this.drawRobot(content.robot);
       }
 
-      // Draw the robot now, because it'll be a couple seconds before the
-      // location updates
-      this.drawRobot(content.robot);
+      if (this.enableDestination) {
+        // Draw the destination on the map
+        this.drawDestination(content.place);
+      }
     },
 
     willDestroyElement: function() {
@@ -162,6 +168,10 @@ define([
               return d.get('map_coords').y;
             })
           .attr("r", 5);
+    },
+
+    drawDestination : function(place) {
+      this.drawPlaces([place]);
     },
 
     drawPlaces: function(places) {
