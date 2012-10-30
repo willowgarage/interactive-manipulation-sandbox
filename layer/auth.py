@@ -169,8 +169,8 @@ class HackedOpenIDBackend:
         try:
             while True:
                 new_nickname = "%s-%d" % (nickname, int(random.random()*10000))
-                user_openid = UserOpenID.objects.get(username__exact=new_nickname)
-        except UserOpenID.DoesNotExist:
+                user_openid = User.objects.get(username__exact=new_nickname)
+        except User.DoesNotExist:
             return new_nickname
 
     def create_user_from_openid(self, openid_response):

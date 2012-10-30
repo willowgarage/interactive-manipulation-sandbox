@@ -31,6 +31,8 @@ class Robot(models.Model):
     description = models.TextField(blank=True,null=True)
     image = models.ImageField(upload_to="static/images",blank=True,null=True)
 
+    public = models.NullBooleanField(blank=True,null=True)
+
     state = models.IntegerField(choices=(
         (0,'Idle'), (1,'Busy'),
     ))
@@ -42,3 +44,10 @@ class Robot(models.Model):
     service_url = models.CharField(max_length=512)     # URL to robot's rosbridge instance
     camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's camera
     forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera
+
+class Client(models.Model):
+    '''Represents a client (browser) connected to the server and it's state'''
+    session_key = models.CharField(max_length=40)
+    username = models.CharField(max_length=30)
+    context = models.TextField()
+    last_seen = models.DateTimeField()

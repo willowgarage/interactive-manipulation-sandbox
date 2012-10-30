@@ -35,7 +35,7 @@
 
 ## @package smach_executer
 # Loads saved robot localization poses from file, saves them to file, and broadcasts the 
-# current pose every five seconds on /robot_pose
+# current pose every second on /robot_pose
 
 import roslib
 roslib.load_manifest('smach_executer')
@@ -91,12 +91,14 @@ if __name__ == '__main__':
     #wait for the map frame to exist (which means localization is now running)
     trans = 0
     rot = 0
+    count = 0
     while not rospy.is_shutdown():
         try:
             (trans,rot) = lookup_transform(listener, 'map', 'base_link', rospy.Time(0))
             rospy.loginfo("localization_saver: tf2 says trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
-        except (tf2.LookupException, tf2.ConnectivityException):
+        except (tf2.LookupException, tf2.ConnectivityException) as e:
             rospy.loginfo("localization_saver: tf2 lookup or connectivity exception, map frame probably not available yet")
+            rospy.loginfo("tf2 error: " + e)
             rospy.sleep(5.0)
             continue
         except tf2.TimeoutException:
@@ -134,9 +136,9 @@ if __name__ == '__main__':
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
             initial_pose_pub.publish(pose_msg)
 
-    # Save and publish the current transform every five seconds
+    # Save and publish the current transform every second
     while not rospy.is_shutdown():
-        rospy.sleep(5.0)
+        rospy.sleep(1.0)
 
         try:
             (trans,rot) = lookup_transform(listener, 'map', 'base_link', rospy.Time(0))
@@ -172,8 +174,8 @@ if __name__ == '__main__':
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
             current_pose_pub.publish(pose_msg)
 
-        except (tf2.LookupException, tf2.ConnectivityException):
-            rospy.loginfo("localization_saver: tf2 lookup or connectivity exception")
+        except (tf2.LookupException, tf2.ConnectivityException) as e:
+            rospy.loginfo("localization_saver: tf2 lookup or connectivity exception: " + e)
             continue
         except tf2.TimeoutException:
             rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException")

@@ -1,5 +1,6 @@
 requirejs.config({
   enforceDefine: true,
+  waitSeconds: 300,
 
   paths: {
     jquery       : 'libs/jquery',
@@ -42,8 +43,7 @@ define([
   'router'
 ],
 function( App, Router) {
-
+  $(".loading").remove();
   App.initialize();
-
 });
 

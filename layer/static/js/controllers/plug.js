@@ -14,6 +14,17 @@ define([
         this.get('content').unplug();
       }
     },
+
+    /* TODO: These two functions (tuck and point) should be deleted when they can
+     * be automatically called from unplug */
+    tuckArms: function() {
+      this.get('content')._tuckArms();
+    },
+
+    pointHeadForward: function() {
+      this.get('content')._pointHeadForward();
+    },
+
     _toggle: function() {
       var btns = $('.mybutton');
       if( btns.hasClass('disabled')) {

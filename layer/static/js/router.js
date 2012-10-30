@@ -8,6 +8,9 @@ define([
   'controllers/robot',
   'controllers/plug',
   'controllers/navigate',
+  'controllers/look',
+  'controllers/client',
+  'controllers/markers',
   'views/application',
   'views/navigating',
   'views/robots',
@@ -15,8 +18,13 @@ define([
   'views/robot',
   'views/plug',
   'views/navigate',
+  'views/look',
+  'views/client',
+  'views/markers',
   'models/robot',
-  'models/place'
+  'models/place',
+  'models/client',
+  'helpers/all'
 ],
 function(
   Ember,
@@ -28,14 +36,22 @@ function(
   RobotController,
   PlugController,
   NavigateController,
+  LookController,
+  ClientController,
+  MarkersController,
   ApplicationView,
   NavigatingView,
   RobotsView,
   RobotView,
   PlugView,
   NavigateView,
+  LookView,
+  ClientView,
+  MarkersView,
   Robot,
-  Place
+  Place,
+  Client,
+  Helpers
 ) {
 
   App.Router = Ember.Router.extend({
@@ -52,8 +68,19 @@ function(
         showRobot: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router) {
+          // HACK: Set-up periodic refreshing of client state
+          if(! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client =  App.Client.find('robots');
           router.get('applicationController')
-            .connectOutlet('robots', App.Robot.find({format:'json'}));
+            .connectOutlet('content', 'robots', App.Robot.find({format:'json'}));
+          router.get('robotsController')
+            .connectOutlet('client', 'client', this.client);
         }
       }),
 
@@ -70,6 +97,8 @@ function(
         showAllRobots: Ember.Route.transitionTo('robots'),
 
         plug: Ember.Route.transitionTo('plug'),
+        look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
 
         // TODO: Clean-up
         navigateTo: function( router, context) {
@@ -82,26 +111,39 @@ function(
 
         /* Initialize the "navigate" state */
         connectOutlets: function(router, context) {
-          this.robot = App.Robot.find(context.id);
+          // HACK: Set-up periodic refreshing of client state
+          if(! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.robot =  App.Robot.find(context.id);
+          this.client = App.Client.find('robot:'+context.id);
+          // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
           /* Set the ApplicationView's {{outlet}} to be a RobotView with
            * a RobotController which has a Robot model as context */
-          router.get('applicationController')
-            .connectOutlet('robot', this.robot);
+          router.get('applicationController').
+            connectOutlet('content','robot', this.robot);
+          /* And also update the client status information view with the new
+           * application context (i.e.: where the user is now in the app) */
+          router.get('robotController').
+            connectOutlet('periphery','client',App.Client.find('robot:'+context.id)); 
           /* Set the RobotView's {{outlet}} to be a NavigateView with
            * a NagivateController which has a Robot model as context */
           router.get('robotController')
-            .connectOutlet('navigate', this.robot);
+            .connectOutlet('main', 'navigate', this.robot);
           /* Set the NagivateView's {{outlet}} to be a MapView with a
              MapController using a Place model as context */
           router.get('navigateController')
-            .connectOutlet('map', Ember.Object.create(
-              {
-              'enablePlaces': true,
-              'enableRobot': true,
-              'robot': this.robot,
-              'places': App.Place.find({format:'json'})
-              }
-            ));
+            .connectOutlet('map', Ember.Object.create({
+              enablePlaces: true,
+              enableRobot: true,
+              enableDestination: false,
+              robot: this.robot,
+              places: App.Place.find({format:'json'})
+            }));
         }
       }),
 
@@ -110,12 +152,53 @@ function(
         showAllRobots: Ember.Route.transitionTo('robots'),
 
         navigate: Ember.Route.transitionTo('navigate'),
+        look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
-          router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+          // HACK: Set-up periodic refreshing of client state
+          if(! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client = App.Client.find('robot:'+context.id);
+          // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
+          router.get('applicationController').
+            connectOutlet('content','robot',App.Robot.find(context.id));
+          router.get('robotController').
+            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
           router.get('robotController')
-            .connectOutlet('plug', App.Robot.find(context.id));
+            .connectOutlet('main', 'plug', App.Robot.find(context.id));
+        }
+      }),
+
+      look : Ember.Route.extend({
+        route: '/robots/:id/look',
+        showAllRobots: Ember.Route.transitionTo('robots'),
+
+        navigate: Ember.Route.transitionTo('navigate'),
+        plug: Ember.Route.transitionTo('plug'),
+        markers: Ember.Route.transitionTo('markers'),
+
+        connectOutlets: function(router, context) {
+          // HACK: Set-up periodic refreshing of client state
+          if(! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client = App.Client.find('robot:'+context.id);
+          router.get('applicationController').
+            connectOutlet('content','robot',App.Robot.find(context.id));
+          router.get('robotController').
+            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+          router.get('robotController')
+            .connectOutlet('main', 'look', App.Robot.find(context.id));
         }
       }),
 
@@ -124,14 +207,19 @@ function(
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
+        look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
+          this.client = App.Client.find('robot:'+context.id);
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
-          router.get('applicationController')
-            .connectOutlet('robot', this.robot);
+          router.get('applicationController').
+            connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('navigating', Ember.Object.create({
+            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+          router.get('robotController').
+            connectOutlet('main', 'navigating', Ember.Object.create({
               robot: this.robot,
               place: this.place
             }));
@@ -139,6 +227,7 @@ function(
             connectOutlet('map', Ember.Object.create({
               enablePlaces: false,
               enableRobot: true,
+              enableDestination: true,
               robot: this.robot,
               place: this.place,
               places: App.Place.find({format:'json'})
@@ -146,7 +235,34 @@ function(
           // Send the robot the actual navigateTo command via ROS
           this.robot.navigateTo(this.place);
         }
+      }),
+
+      markers: Ember.Route.extend({
+        route: '/markers/:robot_id',
+        showAllRobots: Ember.Route.transitionTo('robots'),
+        plug: Ember.Route.transitionTo('plug'),
+        navigate: Ember.Route.transitionTo('navigate'),
+        look: Ember.Route.transitionTo('look'),
+
+
+        connectOutlets: function(router, context) {
+          // HACK: Set-up periodic refreshing of client state
+          if(! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          router.get('applicationController')
+            .connectOutlet('robot', App.Robot.find(context.id));
+          router.get('robotController').
+            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+          router.get('robotController')
+            .connectOutlet('main', 'markers', App.Robot.find(context.id));
+        }
       })
     })
   });
 });
+
