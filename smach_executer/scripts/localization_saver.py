@@ -98,11 +98,11 @@ if __name__ == '__main__':
             rospy.loginfo("localization_saver: tf2 says trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
         except (tf2.LookupException, tf2.ConnectivityException) as e:
             rospy.loginfo("localization_saver: tf2 lookup or connectivity exception, map frame probably not available yet")
-            rospy.loginfo("tf2 error: " + e)
+            rospy.loginfo("tf2 error: " + str(e))
             rospy.sleep(5.0)
             continue
-        except tf2.TimeoutException:
-            rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException")
+        except tf2.TimeoutException as e:
+            rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException: " + str(e))
             continue
         break
 
@@ -175,9 +175,9 @@ if __name__ == '__main__':
             current_pose_pub.publish(pose_msg)
 
         except (tf2.LookupException, tf2.ConnectivityException) as e:
-            rospy.loginfo("localization_saver: tf2 lookup or connectivity exception: " + e)
+            rospy.loginfo("localization_saver: tf2 lookup or connectivity exception: " + str(e))
             continue
-        except tf2.TimeoutException:
-            rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException")
+        except tf2.TimeoutException as e:
+            rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException" + str(e))
             continue
 
