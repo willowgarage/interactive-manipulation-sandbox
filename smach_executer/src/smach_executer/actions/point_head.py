@@ -5,8 +5,8 @@ import rospy
 import actionlib
 from smach import State
 
-
 from pr2_controllers_msgs.msg import PointHeadAction, PointHeadGoal
+from actionlib_msgs.msg import GoalStatus
 
 class PointHead(State):
     """
@@ -27,7 +27,7 @@ class PointHead(State):
         rospy.loginfo("waiting for %s"%action_uri)
         self.point_head_client.wait_for_server()
         rospy.loginfo("%s found"%action_uri)
-        State.__init__(self, outcomes=['succeeded', 'failed'], input_keys = input_keys)
+        State.__init__(self, outcomes=['succeeded', 'failed', 'preempted'], input_keys = input_keys)
         
         self.head_timeout = rospy.get_param('~head_timeout', PointHead.HEAD_TIMEOUT_DEFAULT)
                        
@@ -51,8 +51,26 @@ class PointHead(State):
 
         # send the goal
         self.point_head_client.send_goal(goal)
-        finished_within_time = self.point_head_client.wait_for_result(rospy.Duration(self.head_timeout))
-        if not finished_within_time:
-            self.point_head_client.cancel_goal()
-            return 'failed'
+        start_time = rospy.get_rostime()
+        r = rospy.Rate(10)
+        while not rospy.is_shutdown():
+            now = rospy.get_rostime()
+            if now - start_time > rospy.Duration(self.head_timeout):
+                rospy.loginfo("head timed out!")
+                self.point_head_client.cancel_goal()
+                return 'failed'
+            if self.preempt_requested():
+                rospy.loginfo("point head goal preempted!")
+                self.point_head_client.cancel_goal()
+                self.service_preempt()
+                return 'preempted'
+            state = self.point_head_client.get_state()
+            if state == GoalStatus.SUCCEEDED:
+                break
+            r.sleep()
+        # finished_within_time = self.point_head_client.wait_for_result(rospy.Duration(self.head_timeout))
+        # if not finished_within_time:
+        #     self.point_head_client.cancel_goal()
+        #     return 'failed'
+        rospy.loginfo("point head succeeded")
         return 'succeeded'

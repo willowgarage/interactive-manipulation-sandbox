@@ -210,6 +210,10 @@ function(
         look: Ember.Route.transitionTo('look'),
         markers: Ember.Route.transitionTo('markers'),
 
+        cancelAllGoals: function(router) {
+          this.robot.cancelAllGoals();
+        },
+
         connectOutlets: function(router, context) {
           this.client = App.Client.find('robot:'+context.robot_id);
           this.robot = App.Robot.find(context.robot_id);

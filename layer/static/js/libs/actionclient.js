@@ -124,7 +124,7 @@ var ActionClient = function(options) {
   });
 
   actionClient.cancel = function() {
-    var cancelMessage = new ros.Message({});
+    var cancelMessage = new actionClient.ros.Message({});
     actionClient.cancelTopic.publish(cancelMessage);
   };
 
@@ -176,7 +176,7 @@ var ActionClient = function(options) {
     };
 
     goal.cancel = function() {
-      var cancelMessage = new ros.Message({
+      var cancelMessage = new actionClient.ros.Message({
         id: goal.goalId
       });
       actionClient.cancelTopic.publish(cancelMessage);
