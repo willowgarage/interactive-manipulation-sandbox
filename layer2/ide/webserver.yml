@@ -104,15 +104,24 @@
     - name: set up local_settings.py for vagrant
       action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer2/server/server' creates=/home/vagrant/layer2/server/server/local_settings.py
 
+    # TODO: Shut-down Django if it's running
+
+    # TODO: Implement migrations
+    # Until then: backup database, wipe, re-created and load fixtures again
+    - name: back-up application data before resetting database
+      action: shell /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json chdir='~/layer2/server'
+
+    - name: delete previous database if it exists
+      action: command /bin/rm server.db chdir='~/layer2/server' removed=/home/vagrant/layer2/server/server.db
+
     - name: sync up database
       action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir='~/layer2/server'
 
-    - name: back-up application data before (re)applying fixture
-      action: shell /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json chdir='~/layer2/server'
-
+    # TODO: Propagate failures (currently fails silently)
     - name: Apply initial application fixtures
       action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/prototype.json chdir='~/layer2/server'
 
+    # TODO: Start django
     # - name: run django
     #   action: command /usr/bin/python2.7./manage.py runserver 0.0.0.0:8000 chdir='~/layer'
 
