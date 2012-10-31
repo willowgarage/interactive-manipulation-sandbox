@@ -210,13 +210,13 @@ function(
         markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
-          this.client = App.Client.find('robot:'+context.id);
+          this.client = App.Client.find('robot:'+context.robot_id);
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
           router.get('applicationController').
-            connectOutlet('content','robot',App.Robot.find(context.id));
+            connectOutlet('content','robot', this.robot);
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery','client', this.client);
           router.get('robotController').
             connectOutlet('main', 'navigating', Ember.Object.create({
               robot: this.robot,
