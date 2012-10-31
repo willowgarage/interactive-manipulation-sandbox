@@ -1,0 +1,34 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li class="tabselected"><a> Navigate </a></li>
+        <li><a {{action plug robot}}> Plug </a></li>
+        <li><a {{action look robot}}> Look </a></li>
+        <li><a {{action markers robot}}> Markers </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
+	<div class="content">
+
+	  <div class="heading">Navigating to the {{place.name}}</div>
+
+	  <table width="100%">
+		<tr>
+		  <td>
+			{{outlet}}
+		  </td>
+		  <td>
+			<img {{bindAttr src="robot.camera_url"}} width="300" height="225">
+		  </td>
+		</tr>
+	  </table>
+
+  	  <div class="button" {{action navigate robot}}> STOP (unimplemented) </div>
+
+    </div>
+  </div>
+
+</div>

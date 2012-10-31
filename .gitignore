@@ -4,5 +4,7 @@ build
 .settings
 *.swp
 layer/local_settings.py
-.vagrant
 layer/static/images
+.vagrant
+layer2/server/server.db
+layer2/server/server/local_settings.py

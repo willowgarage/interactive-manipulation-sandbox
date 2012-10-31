@@ -23,7 +23,7 @@ define([
         .attr("id","mapsvg");
 
       svg.append("svg:image")
-        .attr("xlink:href", "/static/images/willow-floorplan.png")
+        .attr("xlink:href", "/static/img/willow-floorplan.png")
         .attr("width", w)
         .attr("height", h);
 
@@ -214,7 +214,7 @@ define([
         .data(outlets.toArray())
         .enter().append("svg:image")
           .attr("class", "outlet")
-          .attr("xlink:href", "/static/outlet.jpg")
+          .attr("xlink:href", "/static/img/outlet.jpg")
           .attr("x", function(d) { return d.get('map_x'); })
           .attr("y", function(d) { return d.get('map_y'); })
           .attr("width", 20)
