@@ -5,6 +5,7 @@
 THREE.InteractiveMarkerClient = function( rosbridgeURL, topicNS ) 
 {
   THREE.Object3D.call( this );
+  var that = this;
   
   var ros = new ROS( rosbridgeURL );
 
@@ -13,8 +14,13 @@ THREE.InteractiveMarkerClient = function( rosbridgeURL, topicNS )
     messageType : 'visualization_msgs/InteractiveMarkerUpdate'
   });
 
-  var that = this;
   topic.subscribe( that.processUpdate.bind( that ) );
+
+  this.feedbackTopic = new ros.Topic({
+    name : topicNS+'/feedback',
+    messageType : 'visualization_msgs/InteractiveMarkerFeedback'
+  });
+  this.feedbackTopic.advertise();
 };
 
 THREE.InteractiveMarkerClient.prototype = Object.create( THREE.Object3D.prototype );
@@ -47,7 +53,7 @@ THREE.InteractiveMarkerClient.prototype.processUpdate = function(message)
       console.log(that.add);
       that.remove( oldIntMarkerObj );
     }
-    intMarkerObj = new THREE.InteractiveMarkerHelper( intMarkerMsg );
+    intMarkerObj = new THREE.InteractiveMarkerHelper( intMarkerMsg, that.feedbackTopic );
     //console.log("adding ",intMarkerObj);
     that.add(intMarkerObj);
   });

@@ -2,11 +2,13 @@
  * @author dgossow@willowgarage.com
  */
 
-THREE.InteractiveMarkerHelper = function ( intMarkerMsg ) 
+THREE.InteractiveMarkerHelper = function ( intMarkerMsg, feedbackTopic ) 
 {
   THREE.Object3D.call( this );
   
   this.name = intMarkerMsg.name;
+  this.feedbackTopic = feedbackTopic;
+  this.intMarkerMsg = intMarkerMsg;
 
   var that = this;
   
@@ -56,8 +58,6 @@ THREE.InteractiveMarkerHelper.ORIENTATION_MODE = {
 THREE.InteractiveMarkerHelper.INTERACTION_MODE = {
     NONE: 0, MENU: 1, BUTTON: 2, MOVE_AXIS: 3, 
     MOVE_PLANE: 4, ROTATE_AXIS:5, MOVE_ROTATE: 6};
-
-
 
 THREE.InteractiveMarkerHelper.prototype = Object.create( THREE.Object3D.prototype );
 
@@ -132,6 +132,31 @@ THREE.InteractiveMarkerHelper.prototype.moveAxis = function( axis, event ) {
     if ( t ) {
       this.position.add(this.dragStartPosition, axisRay.direction.multiplyScalar(t));
     }
+    
+    var f = {
+      header: this.intMarkerMsg.header,
+      client_id: "",
+      marker_name: this.intMarkerMsg.name,
+      control_name: "",
+      event_type: 1,
+      pose: {
+        position: { 
+          x: this.position.x,
+          y: this.position.y,
+          z: this.position.z },
+        orientation: {
+          x: this.quaternion.x,
+          y: this.quaternion.y,
+          z: this.quaternion.z,
+          w: this.quaternion.w }
+        },
+      mouse_point: { 
+        x: this.dragStartPoint.x,
+        y: this.dragStartPoint.y,
+        z: this.dragStartPoint.z }
+    }
+    
+    this.feedbackTopic.publish(f);
   }
 };
 
@@ -148,6 +173,8 @@ THREE.InteractiveMarkerHelper.prototype.onmouseup = function( event ) {
   console.log( 'stop dragging' );
   this.dragging = false;
   event.stopPropagation();
+  this.setPose(this.bufferedPose);
+  this.bufferedPose = undefined;
 }
 
 THREE.InteractiveMarkerHelper.prototype.onmousemove = function ( event ) {
@@ -158,6 +185,14 @@ THREE.InteractiveMarkerHelper.prototype.onmousemove = function ( event ) {
 }
 
 THREE.InteractiveMarkerHelper.prototype.setPose = function ( pose ) {
+  if ( pose === undefined ) {
+    return;
+  }
+  
+  if ( this.dragging ) {
+    this.bufferedPose = pose;
+  }
+  
   this.position.x = pose.position.x;
   this.position.y = pose.position.y;
   this.position.z = pose.position.z;
