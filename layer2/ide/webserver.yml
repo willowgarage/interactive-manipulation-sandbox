@@ -108,6 +108,7 @@
 
     # TODO: Implement migrations
     # Until then: backup database, wipe, re-created and load fixtures again
+    # TODO: Test to make it work when there is no dtabase created yet and then re-enable
 #    - name: back-up application data before resetting database
 #      action: shell /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json chdir='~/layer2/server'
 
