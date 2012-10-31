@@ -191,6 +191,7 @@ THREE.InteractiveMarkerHelper.prototype.setPose = function ( pose ) {
   
   if ( this.dragging ) {
     this.bufferedPose = pose;
+    return;
   }
   
   this.position.x = pose.position.x;

@@ -68,7 +68,7 @@
     scene0.add(imc);
 
     renderer = new THREE.WebGLRenderer({
-      antialias : false
+      antialias : true
     });
 
     renderer.setClearColorHex(0x333333, 1.0);
