@@ -72,7 +72,7 @@ def lookup_transform(listener, parent_frame_id, child_frame_id, time=None, timeo
     if timeout == None:
         timeout = rospy.Duration(2.0)
 
-    transform_stamped = listener.lookup_transform(child_frame_id, parent_frame_id, time, timeout)
+    transform_stamped = listener.lookup_transform(parent_frame_id, child_frame_id, time, timeout)
     return (get_xyz(transform_stamped.transform.translation), get_xyzw(transform_stamped.transform.rotation))
 
 if __name__ == '__main__':

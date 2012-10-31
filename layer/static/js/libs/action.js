@@ -43,6 +43,17 @@
       });
 
       goal.send();
+    },
+
+    action.cancel = function() {
+
+      var actionClient = new ActionClient({
+        ros         : action.ros,
+        actionName : 'executer_actions/ExecuteAction',
+        serverName : '/executer/execute'
+      });
+
+      actionClient.cancel();
     }
   };
   Action.prototype.__proto__ = EventEmitter2.prototype;
