@@ -4,8 +4,8 @@
     "model": "auth.user",
     "fields": {
       "username": "layerman",
-      "first_name": "",
-      "last_name": "",
+      "first_name": "Layer",
+      "last_name": "Manager",
       "is_active": true,
       "is_superuser": true,
       "is_staff": true,
