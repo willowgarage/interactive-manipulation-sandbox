@@ -123,7 +123,7 @@ a {
 }
 
 .robot_map {
-	margin: 0px 50px 0px 50px;
+	margin: 0px 0px 0px 50px;
 }
 
 /* The brown robot info box at the top right of the screen */
@@ -289,6 +289,7 @@ a {
 	border: 1px solid;
 	text-align: center;
 	padding: 10px;
+	margin-bottom: 10px;
 }
 
 .progress_update {
