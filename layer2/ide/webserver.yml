@@ -107,6 +107,12 @@
     - name: sync up database
       action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir='~/layer2/server'
 
+    - name: back-up application data before (re)applying fixture
+      action: shell /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json chdir='~/layer2/server'
+
+    - name: Apply initial application fixtures
+      action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/prototype.json chdir='~/layer2/server'
+
     # - name: run django
     #   action: command /usr/bin/python2.7./manage.py runserver 0.0.0.0:8000 chdir='~/layer'
 
