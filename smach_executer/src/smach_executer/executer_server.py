@@ -2,6 +2,7 @@ import traceback
 import json
 import rospy
 import actionlib
+import smach_ros
 
 from executer_actions.msg import ExecuteAction, ExecuteResult
 from smach_executer import parser
@@ -20,6 +21,7 @@ class ExecuterServer:
         
         self.actionlib_server = actionlib.SimpleActionServer(
             'executer/execute', ExecuteAction, self.execute, False)
+        self.actionlib_server.register_preempt_callback(self.preempt)
 
         # set of actions should eventually be found dynamically, instead of defined explicitly here
         self.actions = {
@@ -31,12 +33,20 @@ class ExecuterServer:
             'PointHead': PointHead
             }
 
+        self.sm = None
+
     def start(self):
         rospy.loginfo('Starting Executer server')
         self.actionlib_server.start()
 
+    def preempt(self):
+         rospy.loginfo("Executer Server: got preempt")
+         if self.sm:
+             self.sm.request_preempt()
+         self.actionlib_server.set_preempted()
+
     def execute(self, goal):
-        rospy.logdebug('Got goal:\n %s' % str(goal))
+        rospy.loginfo('Got goal:\n %s' % str(goal))
 
         # parse the json string
         try:
@@ -58,7 +68,6 @@ class ExecuterServer:
             result = ExecuteResult()
             result.retval = result.RETVAL_RUNTIME_ERROR
             result.error_string = str(e)
-            result.retval = result.RETVAL_SUCCESS
             self.actionlib_server.set_succeeded(result)
             return
 
@@ -71,11 +80,18 @@ class ExecuterServer:
             
     def execute_action(self, action_dict):
         # create a state machine wrapper for the action
-        sm = parser.create_state_machine_from_action_dict(action_dict, self.actions)
+        self.sm = parser.create_state_machine_from_action_dict(action_dict, self.actions)
         
         # execute the state machine
-        rospy.loginfo('Executing state machine')
-        outcome = sm.execute()
+        if self.sm:
+            rospy.loginfo('Executing state machine')
+            sis = smach_ros.IntrospectionServer('executer_server_introspection', self.sm, '/EXECUTER_SERVER')
+            sis.start()
+            outcome = self.sm.execute()
+
+        else:
+            rospy.loginfo("Received cancel request")
+            return "succeeded"
 
         # state machine executed successfully; return outcome
         rospy.loginfo('State machine executed successfully with outcome: %s' % outcome)
