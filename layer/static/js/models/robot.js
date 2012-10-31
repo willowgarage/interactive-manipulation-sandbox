@@ -162,8 +162,6 @@ function( Ember, DS, App, ROS, Action) {
       // Sanity checks to make sure we are navigating to a reasonable place
       if (!place.get('pose_x') || !place.get('pose_y')) {
         this.set('progress_update', 'Invalid navigation coordinates');
-        console.dir(place.get('pose_x'));
-        console.dir(place.get('pose_y'));
         // Redirect to navigate view. We probably got here because the user
         // reloaded in the navigating view
         App.get('router').send("navigate", this);
