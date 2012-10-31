@@ -11,7 +11,9 @@ function(
 
   App.NavigatingView = Ember.View.extend({
     template: Ember.Handlebars.compile(navigatingHtml)
+
   });
+
 
 });
 

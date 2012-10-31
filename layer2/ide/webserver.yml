@@ -108,11 +108,12 @@
 
     # TODO: Implement migrations
     # Until then: backup database, wipe, re-created and load fixtures again
-    - name: back-up application data before resetting database
-      action: shell /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json chdir='~/layer2/server'
+    # TODO: Test to make it work when there is no dtabase created yet and then re-enable
+#    - name: back-up application data before resetting database
+#      action: shell /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json chdir='~/layer2/server'
 
     - name: delete previous database if it exists
-      action: command /bin/rm server.db chdir='~/layer2/server' removed=/home/vagrant/layer2/server/server.db
+      action: command /bin/rm server.db chdir='~/layer2/server' removes=/home/vagrant/layer2/server/server.db
 
     - name: sync up database
       action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir='~/layer2/server'
