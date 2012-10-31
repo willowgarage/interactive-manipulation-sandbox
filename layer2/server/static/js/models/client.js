@@ -15,7 +15,8 @@ function(
     last_name: DS.attr('string'),
     other_users: DS.attr('string'),
     isLoggedIn: function() {
-      return (this.get('username') != "AnonymousUser")
+      loggedin = (this.get('username') != "AnonymousUser");
+      return loggedin;
     }.property('username'),
     thereAreOtherUsers: function() {
       return (this.get('other_users') && this.get('other_users').length > 0);
