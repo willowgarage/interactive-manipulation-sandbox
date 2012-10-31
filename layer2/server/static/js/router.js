@@ -138,10 +138,11 @@ function(
              MapController using a Place model as context */
           router.get('navigateController')
             .connectOutlet('map', Ember.Object.create({
-              'enablePlaces': true,
-              'enableRobot': true,
-              'robot': this.robot,
-              'places': App.Place.find({format:'json'})
+              enablePlaces: true,
+              enableRobot: true,
+              enableDestination: false,
+              robot: this.robot,
+              places: App.Place.find({format:'json'})
             }));
         }
       }),
@@ -209,14 +210,18 @@ function(
         look: Ember.Route.transitionTo('look'),
         markers: Ember.Route.transitionTo('markers'),
 
+        cancelAllGoals: function(router) {
+          this.robot.cancelAllGoals();
+        },
+
         connectOutlets: function(router, context) {
           this.client = App.Client.find('robot:'+context.robot_id);
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
           router.get('applicationController').
-            connectOutlet('content','robot', this.robot);
+            connectOutlet('content','robot',this.robot);
           router.get('robotController').
-            connectOutlet('periphery','client', this.client);
+            connectOutlet('periphery','client',this.client);
           router.get('robotController').
             connectOutlet('main', 'navigating', Ember.Object.create({
               robot: this.robot,
@@ -226,6 +231,7 @@ function(
             connectOutlet('map', Ember.Object.create({
               enablePlaces: false,
               enableRobot: true,
+              enableDestination: true,
               robot: this.robot,
               place: this.place,
               places: App.Place.find({format:'json'})

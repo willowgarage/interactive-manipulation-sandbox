@@ -220,6 +220,18 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
     },
 
+    /* Sending a Cancel goal (ExecuteAction is currently a SimpleActionState, 
+     * so that should cancel any previous goals) */ 
+    cancelAllGoals: function() {
+      this.set('progress_update', 'Cancelling all goals');
+
+      var action = new Action({
+        ros: this.ros
+	  });
+      action.cancel();
+      console.log("Cancelling all goals");
+    },
+
     /* Unplugging has three steps: remove the plug from the wall, tuck your
      * arms, and point the head forward. We call them in sequence, checking
      * for a successful result after each step. */
