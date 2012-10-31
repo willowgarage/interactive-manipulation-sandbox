@@ -226,17 +226,22 @@ define([
       var robot = this.get('controller').get('content').robot;
 
       var plan = robot.get('navigation_plan');
-      if (!plan) return;
 
       var poses = plan.poses;
+
+      var map = d3.select("#mapsvg");
+      // Remove the old plan
+      map.selectAll(".navpath").remove();
+
+      if (poses.length == 0) return;
 
       // Construct an array of points
       var array1 = poses.slice(0, poses.length - 1);
       var array2 = poses.slice(1, poses.length);
       var poseSegments = d3.zip(array1, array2);
 
-      var map = d3.select("#mapsvg");
-      map.selectAll('.path')
+      // Draw the new plan
+      map.selectAll('.navpath')
         .data(poseSegments)
         .enter().append('svg:line')
         .attr('x1', function(d) { return robot.transformPoseToMap(d[0].pose.position).x; })
@@ -246,7 +251,8 @@ define([
         .attr('stroke', 'green')
         .attr('stroke-width', '2')
         .attr('fill', 'none')
-        .attr('class', 'navplan');
+        // Tagging them with a class name lets us remove them later
+        .attr('class', 'navpath');
 
     }
   });

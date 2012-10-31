@@ -49,8 +49,7 @@
   </group>
 
   <node name="throttle_plan" pkg="topic_tools" type="throttle"
-    args="messages /move_base_node/NavfnROS/plan 3.0 /plan_throttled">
-    <param name="lazy" value="true"/>
+    args="messages /move_base_node/NavfnROS/plan 0.20 /plan_throttled">
   </node>
 
 </launch>
