@@ -55,8 +55,7 @@ function( Ember, DS, App, ROS, Action) {
       console.log("["+ this.get('name') + "]: " + msg);
     },
 
-    map_coords: function() {
-      var pose = this.get('pose');
+    transformPoseToMap : function(pose) {
       var map_x, map_y;
       if (pose.x == -1) {
         map_x = -1;
@@ -69,6 +68,11 @@ function( Ember, DS, App, ROS, Action) {
         map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
       }
       return {'x': map_x, 'y': map_y};
+    },
+
+    map_coords: function() {
+      var pose = this.get('pose');
+      return this.transformPoseToMap(pose);
     }.property('pose'),
 
     // TL: Define a derived property that will be used to display the
@@ -83,6 +87,9 @@ function( Ember, DS, App, ROS, Action) {
         return pose.x.toFixed(2) + ', ' + pose.y.toFixed(2);
       }
     }.property('pose'),
+
+    // Empty navigation plan
+    navigation_plan: { poses: [] },
 
     serviceUrlChanged: function() {
       if(this.get('service_url')) {
@@ -132,6 +139,21 @@ function( Ember, DS, App, ROS, Action) {
           _this.ros.on('close',function() {
             _this.topic_pose.unsubscribe();
           });
+
+          // Subscribe to navigation plans
+          _this.topic_navplan = new _this.ros.Topic({
+            name: '/plan_throttled',
+            messageType: 'nav_msgs/Path'
+          });
+          _this.topic_navplan.subscribe(function(message) {
+            _this.set('navigation_plan', {
+              'poses': message.poses
+            });
+          });
+          _this.ros.on('close',function() {
+            _this.topic_navplan.unsubscribe();
+          });
+
         });
       }
     }.observes('service_url'),
@@ -142,6 +164,9 @@ function( Ember, DS, App, ROS, Action) {
         this.set('progress_update', 'Invalid navigation coordinates');
         console.dir(place.get('pose_x'));
         console.dir(place.get('pose_y'));
+        // Redirect to navigate view. We probably got here because the user
+        // reloaded in the navigating view
+        App.get('router').send("navigate", this);
         return;
       }
 
@@ -160,6 +185,7 @@ function( Ember, DS, App, ROS, Action) {
 
       var _this = this;
       action.on("result", function(result) {
+        console.log("Received result from tucking arms: ", result);
         _this.set('progress_update', 'Tucking arms ' + result.outcome);
         if (result.outcome == "succeeded") {
           // Tuckarms worked, now go
@@ -168,6 +194,7 @@ function( Ember, DS, App, ROS, Action) {
           _this.set('progress_update', 'Arms not tucked, navigating anyway');
         }
       });
+      console.log("Sending TuckArm action");
       action.execute();
     },
 
@@ -191,8 +218,7 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.y        = place.get('pose_y');
       action.inputs.theta    = place.get('pose_angle');
       action.inputs.frame_id = '/map';
-      console.log("Sending navigation action:");
-      console.dir(action.inputs);
+      console.log("Sending navigation action:", action.inputs);
       action.execute();
     },
 

@@ -1,6 +1,12 @@
+{{outlet client}}
+
 <div class="heading"><img src="static/img/wg-logo.png" class="headingimg"> Robot Lobby</div>
 
+{{#if controller.client.isLoggedIn}}
 <div class="content_heading">My robots</div>
+{{else}}
+<div class="content_heading">Public robots</div>
+{{/if}}
 
 <div class="robot_list">
 {{#if content.isLoaded}}
