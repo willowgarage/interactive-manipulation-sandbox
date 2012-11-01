@@ -53,7 +53,7 @@ THREE.InteractiveMarkerClient.prototype.processUpdate = function(message)
       console.log(that.add);
       that.remove( oldIntMarkerObj );
     }
-    intMarkerObj = new THREE.InteractiveMarkerHelper( intMarkerMsg, that.feedbackTopic );
+    intMarkerObj = new THREE.InteractiveMarker( intMarkerMsg, that.feedbackTopic );
     //console.log("adding ",intMarkerObj);
     that.add(intMarkerObj);
   });
