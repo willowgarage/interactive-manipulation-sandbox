@@ -14,7 +14,11 @@ def index(request):
 
 def context(request):
     # Get or create Client object associated with this session
+    # Force creation of session key if none is created yet
+    if request.session.session_key is None:
+        request.session.save()
     print "Session Key = %s" % request.session.session_key
+
     # This is a COMPLETE HACK
     # I'm making Ember.data believe that this is a REST API and that
     # the object it is retrieving is a different one per request
