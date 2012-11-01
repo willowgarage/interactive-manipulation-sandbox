@@ -180,4 +180,7 @@ if __name__ == '__main__':
         except tf2.TimeoutException as e:
             rospy.loginfo("localization_saver: tf2 lookup returned TimeoutException: " + str(e))
             continue
+        except Exception as e:
+            rospy.loginfo("localization_saver: tf2 lookup raised other error: " + str(e))
+            continue
 
