@@ -43,7 +43,6 @@ class NavigateToPose(State):
         r = rospy.Rate(10)
         while not rospy.is_shutdown():
             if self.preempt_requested():
-                rospy.loginfo("navigation goal was preempted after checking preempt_requested!")
                 self.move_base_client.cancel_goal()
                 self.service_preempt()
                 return 'preempted'
@@ -58,7 +57,7 @@ class NavigateToPose(State):
 
     def request_preempt(self):
          State.request_preempt(self)
-         rospy.logwarn("NavigateToPose was preempted!")
+         rospy.loginfo("NavigateToPose was preempted")
 
 
 def _yaw(q):

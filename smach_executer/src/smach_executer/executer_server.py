@@ -43,7 +43,10 @@ class ExecuterServer:
          rospy.loginfo("Executer Server: got preempt")
          if self.sm:
              self.sm.request_preempt()
-         self.actionlib_server.set_preempted()
+         result = ExecuteResult()
+         result.retval = result.RETVAL_SUCCESS
+         result.outcome = 'preempted'
+         self.actionlib_server.set_preempted(result)
 
     def execute(self, goal):
         rospy.loginfo('Got goal:\n %s' % str(goal))
@@ -71,6 +74,10 @@ class ExecuterServer:
             self.actionlib_server.set_succeeded(result)
             return
 
+        # set_preempted is done in the preempted callback function
+        if self.actionlib_server.is_preempt_requested():
+            return
+
         # finished successfully (even though the action itself may have failed)
         result = ExecuteResult()
         result.retval = result.RETVAL_SUCCESS
@@ -83,15 +90,10 @@ class ExecuterServer:
         self.sm = parser.create_state_machine_from_action_dict(action_dict, self.actions)
         
         # execute the state machine
-        if self.sm:
-            rospy.loginfo('Executing state machine')
-            sis = smach_ros.IntrospectionServer('executer_server_introspection', self.sm, '/EXECUTER_SERVER')
-            sis.start()
-            outcome = self.sm.execute()
-
-        else:
-            rospy.loginfo("Received cancel request")
-            return "succeeded"
+        rospy.loginfo('Executing state machine')
+        sis = smach_ros.IntrospectionServer('executer_server_introspection', self.sm, '/EXECUTER_SERVER')
+        sis.start()
+        outcome = self.sm.execute()
 
         # state machine executed successfully; return outcome
         rospy.loginfo('State machine executed successfully with outcome: %s' % outcome)
