@@ -72,7 +72,7 @@ THREE.InteractiveMarkerControl = function(parent, control) {
     var markerHelper = new THREE.MarkerHelper(markerMsg);
 
     // convert position into my own local coordinate frame
-    markerHelper.position = that.worldToLocal(markerHelper.position);
+    markerHelper.position = parent.worldToLocal(markerHelper.position);
     markerHelper.quaternion.multiply(that.quaternion.clone().inverse(), markerHelper.quaternion);
     markerHelper.updateMatrixWorld();
 

@@ -41,7 +41,7 @@
     controls = new THREE.RosOrbitControls(camera);
 
     scene0.add(directionalLight);
-
+    
     // add lights
     // scene0.add(new THREE.AmbientLight(0x555555));
     directionalLight = new THREE.DirectionalLight(0xffffff);
@@ -86,116 +86,12 @@
     renderer.setFaceCulling(0);
 
     container.appendChild(renderer.domElement);
-    //renderer.domElement.addEventListener('mousemove', onMouseMove, false);
-    //renderer.domElement.addEventListener('mousedown', onMouseDown, false);
-    //renderer.domElement.addEventListener('mouseup', onMouseUp, false);
-    //renderer.domElement.addEventListener('mousewheel', onMouseWheel, false);
 
     renderer.domElement.addEventListener('contextmenu', function(event) {
       event.preventDefault();
     }, false);
 
     mouseHandler = new THREE.MouseHandler(renderer, camera, scene0);
-  }
-
-  // try to call the member function fn on object obj
-  // if if does not posess the function, walk up to
-  // it's 'parent' object and try again, etc.
-  function callFn(obj, fn, event) {
-
-    // make the event cancelable
-    event.cancelBubble = false;
-    event.stopPropagation = function() {
-      event.cancelBubble = true;
-    }
-    while (obj) {
-      if (obj[fn] && obj[fn] instanceof Function) {
-        obj[fn](event);
-        if (event.cancelBubble) {
-          return;
-        }
-      }
-
-      // walk up the graph
-      if (obj.hasOwnProperty('parent')) {
-        obj = obj.parent;
-      } else {
-        return;
-      }
-    }
-
-    // if we arrive here, no object has stopped propagation
-    if (controls[fn] && controls[fn] instanceof Function) {
-      controls[fn](event);
-      return;
-    }
-  }
-
-  function onMouseWheel(event) {
-    event.intersectionPoint = INTERSECTION;
-    callFn(INTERSECTED, 'onmousewheel', event);
-    DRAGGING = INTERSECTED;
-  }
-
-  function onMouseDown(event) {
-    event.intersectionPoint = INTERSECTION;
-    callFn(INTERSECTED, 'onmousedown', event);
-    DRAGGING = INTERSECTED;
-  }
-
-  function onMouseUp(event) {
-    event.intersectionPoint = INTERSECTION;
-    callFn(DRAGGING, 'onmouseup', event);
-    if (DRAGGING !== INTERSECTED) {
-      callFn(DRAGGING, 'onmouseout', event);
-      callFn(INTERSECTED, 'onmouseover', event);
-    }
-    DRAGGING = undefined;
-  }
-
-  function onMouseMove(event) {
-
-    // keep this event from interacting with the DOM
-    event.preventDefault();
-
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // trace a ray through the mouse cursor position
-    var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-    projector.unprojectVector(vector, camera);
-    var ray = new THREE.Ray(camera.position, vector.subSelf(camera.position).normalize());
-
-    event.mouseRay = ray;
-    event.mousePos = mouse;
-    event.camera = camera;
-
-    // if we're not dragging, see if there is something new under the mouse cursor
-    var intersectedObjs = ray.intersectObject(scene0, true);
-    console.log(intersectedObjs);
-    var intersectedObj;
-
-    if (intersectedObjs.length > 0) {
-      intersectedObj = intersectedObjs[0].object;
-      INTERSECTION = intersectedObjs[0].point;
-    } else {
-      container.style.cursor = 'auto';
-      intersectedObj = controls;
-      INTERSECTION = undefined;
-    }
-
-    // store intersection point in event
-    event.intersectionPoint = INTERSECTION;
-
-    if (DRAGGING === undefined && INTERSECTED !== intersectedObj) {
-      callFn(INTERSECTED, 'onmouseout', event);
-      INTERSECTED = intersectedObj;
-      callFn(INTERSECTED, 'onmouseover', event);
-      container.style.cursor = 'pointer';
-    } else if (DRAGGING) {
-      callFn(DRAGGING, 'onmousemove', event);
-    }
-
   }
 
   function animate() {
