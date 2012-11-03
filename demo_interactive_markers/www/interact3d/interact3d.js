@@ -58,6 +58,30 @@ var INTERACT3D = INTERACT3D || {
     var mua = INTERACT3D.findClosestPoint( axisRay, mpRay, mua );
   
     return mua;
+  },
+  
+  addHighlight : function( object )
+  {
+    THREE.SceneUtils.traverseHierarchy( object, function(object) {
+      
+      object.normalMaterial = object.material;
+  
+      object.hoverMaterial = object.normalMaterial.clone();
+      object.hoverMaterial.color.r = 1;
+      object.hoverMaterial.color.g = 1;
+      object.hoverMaterial.color.b = 1;
+    
+      object.activeMaterial = object.normalMaterial.clone();
+      object.activeMaterial.emissive.r *= 0.3;
+      object.activeMaterial.emissive.g *= 0.3;
+      object.activeMaterial.emissive.b *= 0.3;
+      object.activeMaterial.opacity = 1.0;
+      object.activeMaterial.transparent = false;
+      object.activeMaterial.depthWrite = true;
+      object.activeMaterial.blending = THREE.NormalBlending;
+      
+      
+    });    
   }
 
 }

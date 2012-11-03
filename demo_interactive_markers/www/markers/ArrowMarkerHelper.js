@@ -11,8 +11,6 @@
 
 THREE.ArrowMarkerHelper = function( options ) {
 
-  THREE.Object3D.call(this);
-
   var origin = options.origin || new THREE.Vector3(0,0,0);
   var dir = options.dir || new THREE.Vector3(1,0,0);
   
@@ -22,29 +20,33 @@ THREE.ArrowMarkerHelper = function( options ) {
   var shaftDiameter = options.shaftDiameter || 0.05;
   var headDiameter = options.headDiameter || 0.1;
   
-  this.material = options.material || new THREE.MeshBasicMaterial();
+  var material = options.material || new THREE.MeshBasicMaterial();
 
   var shaftLength = length - headLength;
 
-  var shaftGeometry = new THREE.CylinderGeometry(shaftDiameter * 0.5,
+  // create and merge geometry
+  var geometry = new THREE.CylinderGeometry(shaftDiameter * 0.5,
       shaftDiameter * 0.5, shaftLength, 12, 1);
 
-  this.shaft = new THREE.Mesh(shaftGeometry, this.material);
-  this.shaft.position.set(0, shaftLength * 0.5, 0);
-  this.add(this.shaft);
-
+  var m = new THREE.Matrix4;
+  m.setPosition( new THREE.Vector3(0, shaftLength * 0.5, 0) );
+  geometry.applyMatrix(m);
+  
   var coneGeometry = new THREE.CylinderGeometry(0, headDiameter * 0.5,
       headLength, 12, 1);
 
-  this.cone = new THREE.Mesh(coneGeometry, this.material);
-  this.cone.position.set(0, shaftLength + (headLength * 0.5), 0);
-  this.add(this.cone);
+  m.setPosition( new THREE.Vector3(0, shaftLength + (headLength * 0.5), 0) );
+  coneGeometry.applyMatrix(m);
+      
+  THREE.GeometryUtils.merge( geometry, coneGeometry );
+
+  THREE.Mesh.call(this,geometry,material);
 
   this.position = origin;
   this.setDirection(dir);
 };
 
-THREE.ArrowMarkerHelper.prototype = Object.create(THREE.Object3D.prototype);
+THREE.ArrowMarkerHelper.prototype = Object.create(THREE.Mesh.prototype);
 
 THREE.ArrowMarkerHelper.prototype.setDirection = function(dir) {
 

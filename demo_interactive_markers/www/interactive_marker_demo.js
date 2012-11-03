@@ -8,12 +8,16 @@
 
   var directionalLight;
 
+  var mouseHandler;
+
   var mouse = new THREE.Vector2(), offset = new THREE.Vector3(10, 10, 10);
 
   init();
   animate();
 
   var INTERSECTED, INTERSECTION, DRAGGING;
+  
+  var imc,imm;
 
   function init() {
 
@@ -46,8 +50,7 @@
     scene0.add(directionalLight);
 
     var numCells = 50;
-    var gridGeom = new THREE.PlaneGeometry(numCells, numCells, numCells,
-        numCells);
+    var gridGeom = new THREE.PlaneGeometry(numCells, numCells, numCells, numCells);
     var gridMaterial = new THREE.MeshBasicMaterial({
       color : 0x999999
     });
@@ -64,8 +67,12 @@
     axes = new THREE.Axes();
     scene1.add(axes);
 
-    imc = new THREE.InteractiveMarkerClient('ws://localhost:9090','/basic_controls');
-    scene0.add(imc);
+    var ros = new ROS('ws://localhost:9090');
+
+    imc = new interactive_markers.Client(ros);
+    imm = new THREE.InteractiveMarkerManager(scene0, imc);
+    
+    imc.subscribe('/basic_controls');
 
     renderer = new THREE.WebGLRenderer({
       antialias : true
@@ -79,53 +86,51 @@
     renderer.setFaceCulling(0);
 
     container.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
-    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
-    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
-    renderer.domElement.addEventListener('mousewheel', onMouseWheel, false);
+    //renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+    //renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+    //renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+    //renderer.domElement.addEventListener('mousewheel', onMouseWheel, false);
 
-    renderer.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+    renderer.domElement.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+    }, false);
 
+    mouseHandler = new THREE.MouseHandler(renderer, camera, scene0);
   }
 
   // try to call the member function fn on object obj
   // if if does not posess the function, walk up to
   // it's 'parent' object and try again, etc.
-  function callFn( obj, fn, event ) {
-    
+  function callFn(obj, fn, event) {
+
     // make the event cancelable
     event.cancelBubble = false;
-    event.stopPropagation = function()
-    {
+    event.stopPropagation = function() {
       event.cancelBubble = true;
     }
-    
-    while ( obj )
-    {
-      if ( obj[fn] && obj[fn] instanceof Function )
-      {
-        obj[fn]( event );
-        if ( event.cancelBubble ) {
+    while (obj) {
+      if (obj[fn] && obj[fn] instanceof Function) {
+        obj[fn](event);
+        if (event.cancelBubble) {
           return;
         }
       }
-      
+
       // walk up the graph
-      if ( obj.hasOwnProperty('parent') ) {
+      if (obj.hasOwnProperty('parent')) {
         obj = obj.parent;
       } else {
         return;
       }
     }
-    
+
     // if we arrive here, no object has stopped propagation
-    if ( controls[fn] && controls[fn] instanceof Function )
-    {
-        controls[fn]( event );
-        return;
+    if (controls[fn] && controls[fn] instanceof Function) {
+      controls[fn](event);
+      return;
     }
   }
-  
+
   function onMouseWheel(event) {
     event.intersectionPoint = INTERSECTION;
     callFn(INTERSECTED, 'onmousewheel', event);
@@ -141,8 +146,7 @@
   function onMouseUp(event) {
     event.intersectionPoint = INTERSECTION;
     callFn(DRAGGING, 'onmouseup', event);
-    if ( DRAGGING !== INTERSECTED )
-    {
+    if (DRAGGING !== INTERSECTED) {
       callFn(DRAGGING, 'onmouseout', event);
       callFn(INTERSECTED, 'onmouseover', event);
     }
@@ -165,9 +169,10 @@
     event.mouseRay = ray;
     event.mousePos = mouse;
     event.camera = camera;
-    
+
     // if we're not dragging, see if there is something new under the mouse cursor
     var intersectedObjs = ray.intersectObject(scene0, true);
+    console.log(intersectedObjs);
     var intersectedObj;
 
     if (intersectedObjs.length > 0) {
@@ -181,13 +186,13 @@
 
     // store intersection point in event
     event.intersectionPoint = INTERSECTION;
-    
+
     if (DRAGGING === undefined && INTERSECTED !== intersectedObj) {
       callFn(INTERSECTED, 'onmouseout', event);
       INTERSECTED = intersectedObj;
       callFn(INTERSECTED, 'onmouseover', event);
       container.style.cursor = 'pointer';
-    } else if ( DRAGGING ) {
+    } else if (DRAGGING) {
       callFn(DRAGGING, 'onmousemove', event);
     }
 
@@ -202,8 +207,7 @@
     controls.update();
 
     // put light to the top-left of the camera
-    directionalLight.position = camera
-        .localToWorld(new THREE.Vector3(-1, 1, 0));
+    directionalLight.position = camera.localToWorld(new THREE.Vector3(-1, 1, 0));
     directionalLight.position.normalize();
 
     // clear & render regular scene
