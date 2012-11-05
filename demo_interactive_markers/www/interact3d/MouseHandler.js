@@ -1,4 +1,4 @@
-THREE.MouseHandler = function(renderer, camera, scene) {
+THREE.MouseHandler = function(renderer, camera, scene, fallbackTarget) {
 
   if (!renderer || !renderer.domElement || !camera || !scene) {
     return;
@@ -12,9 +12,10 @@ THREE.MouseHandler = function(renderer, camera, scene) {
   this.projector = new THREE.Projector();
   this.lastTarget = null;
   this.dragging = null;
+  this.fallbackTarget = fallbackTarget;
 
   // listen to DOM events
-  var eventNames = ["click", "dblclick", "mouseout", "mousedown", "mouseup", "mousemove"];
+  var eventNames = ["click", "dblclick", "mouseout", "mousedown", "mouseup", "mousemove","mousewheel"];
   this.listeners = {};
 
   eventNames.forEach(function(eventName) {
@@ -50,45 +51,49 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
     mouseRay : mouseRay,
     domEvent : domEvent,
     camera : this.camera,
-    intersection : null
+    intersection : this.lastIntersection
   };
 
-  // While the user is holding the mouse down, 
+  // While the user is holding the mouse down,
   // stay on the same target
   if (this.dragging) {
     this.notify(this.lastTarget, domEvent.type, event3d);
-    if ( domEvent.type === "mouseup" ) {
+    if (domEvent.type === "mouseup") {
       this.dragging = false;
     }
     return;
   }
-  
+
   // if the mouse leaves the dom element, stop everything
   if (domEvent.type == "mouseout") {
     this.dragging = false;
     this.notify(this.lastTarget, "mouseout", event3d);
   }
-  
-  var target = null;
+
+  var target = this.fallbackTarget;
 
   // In the normal case, we need to check what is under the mouse
   intersections = mouseRay.intersectObject(this.scene, true);
   if (intersections.length > 0) {
     target = intersections[0].object;
     event3d.intersection = intersections[0];
-    // pass through event
-    this.notify(target, domEvent.type, event3d);
-    if ( domEvent.type === "mousedown" ) {
-      this.dragging = true;
-    }
+    this.lastIntersection = intersections[0];
   }
 
   // if the mouse moves from one object to another
   // (or from/to the 'null' object), notify both
   if (target !== this.lastTarget) {
-    this.notify(target, 'mouseover', event3d);
     this.notify(this.lastTarget, 'mouseout', event3d);
+    this.notify(target, 'mouseover', event3d);
   }
+
+  // pass through event
+  this.notify(target, domEvent.type, event3d);
+  if (domEvent.type === "mousedown") {
+    this.dragging = true;
+  }
+
+  console.log(target);
 
   this.lastTarget = target;
 }
