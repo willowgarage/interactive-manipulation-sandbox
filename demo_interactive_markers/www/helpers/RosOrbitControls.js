@@ -219,9 +219,6 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 		}
 
-		document.addEventListener( 'mousemove', onMouseMove, false );
-		document.addEventListener( 'mouseup', onMouseUp, false );
-
 	}
 
 	function onMouseMove( event ) {
@@ -263,9 +260,6 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 		if ( ! scope.userRotate ) return;
 
-		document.removeEventListener( 'mousemove', onMouseMove, false );
-		document.removeEventListener( 'mouseup', onMouseUp, false );
-
 		state = STATE.NONE;
 
 	}
@@ -285,9 +279,9 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 		}
 
 	}
-
-	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
-	this.domElement.addEventListener( 'mousedown', onMouseDown, false );
-	this.domElement.addEventListener( 'mousewheel', onMouseWheel, false );
-
+	
+  this.onmousedown = function(event){ onMouseDown(event); }
+  this.onmouseup = function(event){ onMouseUp(event); }
+  this.onmousemove = function(event){ onMouseMove(event); }
+  this.onmousewheel = function(event){ onMouseWheel(event); }
 };
