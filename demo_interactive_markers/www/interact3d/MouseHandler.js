@@ -15,7 +15,7 @@ THREE.MouseHandler = function(renderer, camera, scene, fallbackTarget) {
   this.fallbackTarget = fallbackTarget;
 
   // listen to DOM events
-  var eventNames = ["click", "dblclick", "mouseout", "mousedown", "mouseup", "mousemove","mousewheel"];
+  var eventNames = ["click", "dblclick", "mouseout", "mousedown", "mouseup", "mousemove", "mousewheel"];
   this.listeners = {};
 
   eventNames.forEach(function(eventName) {
@@ -70,14 +70,18 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
     this.notify(this.lastTarget, "mouseout", event3d);
   }
 
-  var target = this.fallbackTarget;
+  var target = this.lastTarget;
 
   // In the normal case, we need to check what is under the mouse
-  intersections = mouseRay.intersectObject(this.scene, true);
-  if (intersections.length > 0) {
-    target = intersections[0].object;
-    event3d.intersection = intersections[0];
-    this.lastIntersection = intersections[0];
+  if (domEvent.type == 'mousemove') {
+    intersections = mouseRay.intersectObject(this.scene, true);
+    if (intersections.length > 0) {
+      target = intersections[0].object;
+      event3d.intersection = this.lastIntersection = intersections[0];
+      console.log(target);
+    } else {
+      target = this.fallbackTarget;
+    }
   }
 
   // if the mouse moves from one object to another
@@ -92,8 +96,6 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
   if (domEvent.type === "mousedown") {
     this.dragging = true;
   }
-
-  console.log(target);
 
   this.lastTarget = target;
 }
