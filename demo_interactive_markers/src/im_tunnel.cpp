@@ -66,7 +66,7 @@ public:
         topic_ns+"/tunneled", 1000,
         boost::bind(&ImTunnel::connectCallback, this, _1) );
 
-    timer_ = node_handle_.createTimer(ros::Duration(0.1), boost::bind(&ImTunnel::timerCb, this, _1 ) );
+    timer_ = node_handle_.createTimer(ros::Duration(0.05), boost::bind(&ImTunnel::timerCb, this, _1 ) );
   }
 
   typedef visualization_msgs::InteractiveMarkerInitConstPtr InitConstPtr;

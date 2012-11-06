@@ -118,7 +118,8 @@ var INTERACT3D = INTERACT3D || {
       depthTest : true,
       depthWrite : false,
       polygonOffset : true,
-      polygonOffsetUnits : -1
+      polygonOffsetUnits : -1,
+      side : THREE.DoubleSide
     });
     scene.overrideMaterial = overrideMaterial;
 
