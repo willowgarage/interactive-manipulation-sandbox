@@ -27,12 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-THREE.InteractiveMarker.ORIENTATION_MODE = {
-  INHERIT : 0,
-  FIXED : 1,
-  VIEW_FACING : 2
-};
-
 THREE.InteractiveMarkerControl = function(parent, control) {
   THREE.Object3D.call(this);
   THREE.EventTarget.call(this);
@@ -42,28 +36,73 @@ THREE.InteractiveMarkerControl = function(parent, control) {
 
   var that = this;
 
-  var MODE = {
-    NONE : 0,
-    MENU : 1,
-    BUTTON : 2,
-    MOVE_AXIS : 3,
-    MOVE_PLANE : 4,
-    ROTATE_AXIS : 5,
-    MOVE_ROTATE : 6
-  };
+  var NONE = 0;
+  var MENU = 1;
+  var BUTTON = 2;
+  var MOVE_AXIS = 3;
+  var MOVE_PLANE = 4;
+  var ROTATE_AXIS = 5;
+  var MOVE_ROTATE = 6;
+
+  var controlAxis = new THREE.Vector3(1, 0, 0);
+  var controlOrientation = new THREE.Quaternion(control.orientation.x, control.orientation.y, control.orientation.z, control.orientation.w);
+
+  // transform x axis into local frame
+  controlOrientation.multiplyVector3(controlAxis);
 
   // determine mouse interaction
   switch(control.interaction_mode) {
-    case MODE.MOVE_AXIS:
-      var controlAxis = new THREE.Vector3(1, 0, 0);
-      var controlOrientation = new THREE.Quaternion(control.orientation.x, control.orientation.y, control.orientation.z, control.orientation.w);
-
-      // transform x axis into local frame
-      controlOrientation.multiplyVector3(controlAxis);
-
+    case MOVE_AXIS:
       this.addEventListener("mousemove", parent.moveAxis.bind(parent, controlAxis));
-      this.addEventListener('mousedown', parent.startDrag.bind(parent));
-      this.addEventListener('mouseup', parent.stopDrag.bind(parent));
+      break;
+    case ROTATE_AXIS:
+      this.addEventListener("mousemove", parent.rotateAxis.bind(parent, controlOrientation));
+      break;
+    case MOVE_PLANE:
+      this.addEventListener("mousemove", parent.movePlane.bind(parent, controlAxis));
+      break;
+    default:
+      break;
+  }
+
+  // install default listeners for highlighting / dragging
+  function stopPropagation(event) {
+    event.stopPropagation();
+  }
+
+  if (control.interaction_mode != NONE) {
+    this.addEventListener('mousedown', parent.startDrag.bind(parent));
+    this.addEventListener('mouseup', parent.stopDrag.bind(parent));
+    this.addEventListener('mouseover', stopPropagation);
+    this.addEventListener('mouseout', stopPropagation);
+  }
+
+  // define rotation behaviour
+  var INHERIT = 0;
+  var FIXED = 1;
+  var VIEW_FACING = 2;
+  
+  var rotInv = new THREE.Quaternion();
+  var posInv = new THREE.Vector3();
+
+  switch(control.orientation_mode) {
+    case INHERIT:
+      rotInv = parent.quaternion.clone().inverse();
+      posInv = parent.position.clone().multiplyScalar(-1);
+      break;
+    case FIXED:
+      that.updateMatrixWorld = function(force) {
+        //console.log("sdfsdf")
+        that.useQuaternion = true;
+        that.quaternion = that.parent.quaternion.clone().inverse();
+        that.updateMatrix();
+        that.matrixWorldNeedsUpdate = true;
+        THREE.InteractiveMarkerControl.prototype.updateMatrixWorld.call(that,force);
+      }
+      break;
+    case VIEW_FACING:
+      break;
+    default:
       break;
   }
 
@@ -72,18 +111,13 @@ THREE.InteractiveMarkerControl = function(parent, control) {
     var markerHelper = new THREE.MarkerHelper(markerMsg);
 
     // convert position into my own local coordinate frame
-    markerHelper.position = parent.worldToLocal(markerHelper.position);
-    markerHelper.quaternion.multiply(that.quaternion.clone().inverse(), markerHelper.quaternion);
+    markerHelper.position.addSelf(posInv);
+    rotInv.multiplyVector3(markerHelper.position);
+    markerHelper.quaternion.multiply(rotInv,markerHelper.quaternion);
     markerHelper.updateMatrixWorld();
 
     that.add(markerHelper);
   });
-
-  if ( control.interaction_mode != MODE.NONE )
-  {
-    this.addEventListener('mouseover', function(event){event.stopPropagation();});
-    this.addEventListener('mouseout', function(event){event.stopPropagation();});
-  }
 
 }
 

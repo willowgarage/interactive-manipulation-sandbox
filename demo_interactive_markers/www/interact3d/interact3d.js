@@ -60,11 +60,34 @@ var INTERACT3D = INTERACT3D || {
     return mua;
   },
 
+  intersectPlane : function(mouseRay, planeOrigin, planeNormal) {
+
+    var vector = new THREE.Vector3();
+    var intersectPoint = new THREE.Vector3();
+
+    vector.sub(planeOrigin, mouseRay.origin);
+    dot = mouseRay.direction.dot(planeNormal);
+
+    // bail if ray and plane are parallel
+    if (Math.abs(dot) < mouseRay.precision)
+      return null;
+
+    // calc distance to plane
+    scalar = planeNormal.dot(vector) / dot;
+
+    // if negative distance, then plane is behind ray
+    //if (scalar < 0)
+    //  return null;
+      
+    intersectPoint.add( mouseRay.origin, mouseRay.direction.clone().multiplyScalar( scalar ) );
+    return intersectPoint;
+  },
+
   getWebglObjects : function(scene, objects, renderList) {
     var objlist = scene.__webglObjects;
     // get corresponding webgl objects
     for (var c = 0; c < objects.length; c++) {
-      if ( !objects[c] ) {
+      if (!objects[c]) {
         continue;
       }
       for (var o = objlist.length - 1; o >= 0; o--) {
