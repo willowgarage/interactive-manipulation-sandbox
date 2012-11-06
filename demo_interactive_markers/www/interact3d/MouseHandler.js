@@ -80,19 +80,31 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
       event3d.intersection = this.lastIntersection = intersections[0];
       console.log(target);
     } else {
-      target = this.fallbackTarget;
+      target = null;
     }
   }
 
   // if the mouse moves from one object to another
   // (or from/to the 'null' object), notify both
   if (target !== this.lastTarget) {
-    this.notify(this.lastTarget, 'mouseout', event3d);
-    this.notify(target, 'mouseover', event3d);
+    
+    var eventAccepted = this.notify(target, 'mouseover', event3d);
+    
+    if (eventAccepted) {
+      this.notify(this.lastTarget, 'mouseout', event3d);
+    } else {
+      // if target was null or no target has caught our event, fall back
+      target = this.fallbackTarget;
+      if (target !== this.lastTarget) {
+        this.notify(target, 'mouseover', event3d);
+        this.notify(this.lastTarget, 'mouseout', event3d);
+      }
+    }
   }
 
   // pass through event
   this.notify(target, domEvent.type, event3d);
+
   if (domEvent.type === "mousedown") {
     this.dragging = true;
   }
@@ -101,7 +113,6 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
 }
 
 THREE.MouseHandler.prototype.notify = function(target, type, event3d) {
-
   event3d.type = type;
 
   // make the event cancelable
@@ -118,16 +129,12 @@ THREE.MouseHandler.prototype.notify = function(target, type, event3d) {
       event3d.currentTarget.dispatchEvent(event3d);
       if (event3d.cancelBubble) {
         this.dispatchEvent(event3d);
-        return;
+        return true;
       }
     }
 
     // walk up
-    if (event3d.currentTarget['parent']) {
-      event3d.currentTarget = event3d.currentTarget.parent;
-    } else {
-      return;
-    }
+    event3d.currentTarget = event3d.currentTarget.parent;
   }
-
+  return false;
 }
