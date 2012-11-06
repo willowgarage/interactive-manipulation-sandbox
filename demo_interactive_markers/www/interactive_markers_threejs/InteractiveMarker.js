@@ -43,9 +43,9 @@ THREE.InteractiveMarker = function(intMarkerMsg) {
 
   this.dragStart = {
     position : new THREE.Vector3(),
-    rotation : new THREE.Quaternion(),
+    orientation : new THREE.Quaternion(),
     positionWorld : new THREE.Vector3(),
-    rotationWorld : new THREE.Quaternion(),
+    orientationWorld : new THREE.Quaternion(),
     event3d : {}
   };
 
@@ -56,11 +56,12 @@ THREE.InteractiveMarker = function(intMarkerMsg) {
 
 THREE.InteractiveMarker.prototype = Object.create(THREE.Object3D.prototype);
 
-THREE.InteractiveMarker.prototype.moveAxis = function(axis, event3d) {
+THREE.InteractiveMarker.prototype.moveAxis = function(control, origAxis, event3d) {
   if (this.dragging) {
+    var axis = control.quaternion.multiplyVector3(origAxis.clone());
     // get move axis in world coords
     var originWorld = this.dragStart.event3d.intersection.point;
-    var axisWorld = this.dragStart.rotationWorld.clone().multiplyVector3(axis.clone());
+    var axisWorld = this.dragStart.orientationWorld.clone().multiplyVector3(axis.clone());
     
     var axisRay = new THREE.Ray(originWorld, axisWorld);
     
@@ -69,18 +70,19 @@ THREE.InteractiveMarker.prototype.moveAxis = function(axis, event3d) {
 
     // offset from drag start position
     var p = new THREE.Vector3;
-    p.add(this.dragStart.position, this.dragStart.rotation.multiplyVector3(axis.clone()).multiplyScalar(t));
+    p.add(this.dragStart.position, this.dragStart.orientation.multiplyVector3(axis.clone()).multiplyScalar(t));
     this.setPosition(p);
     
     event3d.stopPropagation();
   }
 };
 
-THREE.InteractiveMarker.prototype.movePlane = function(normal, event3d) {
+THREE.InteractiveMarker.prototype.movePlane = function(control, origNormal, event3d) {
   if (this.dragging) {
+    var normal = control.quaternion.multiplyVector3(origNormal.clone());
     // get plane params in world coords
     var originWorld = this.dragStart.event3d.intersection.point;
-    var normalWorld = this.dragStart.rotationWorld.multiplyVector3(normal.clone());
+    var normalWorld = this.dragStart.orientationWorld.multiplyVector3(normal.clone());
 
     // intersect mouse ray with plane
     var intersection = INTERACT3D.intersectPlane(event3d.mouseRay, originWorld, normalWorld);
@@ -94,14 +96,17 @@ THREE.InteractiveMarker.prototype.movePlane = function(normal, event3d) {
   }
 };
 
-THREE.InteractiveMarker.prototype.rotateAxis = function(orientation, event3d) {
+THREE.InteractiveMarker.prototype.rotateAxis = function(control, origOrientation, event3d) {
   if (this.dragging) {
+    var orientation = control.quaternion.clone().multiplySelf(origOrientation);
+    
+    console.log(control.quaternion.clone());
 
     var normal = orientation.multiplyVector3(new THREE.Vector3(1, 0, 0));
 
     // get plane params in world coords
     var originWorld = this.dragStart.event3d.intersection.point;
-    var normalWorld = this.dragStart.rotationWorld.multiplyVector3(normal);
+    var normalWorld = this.dragStart.orientationWorld.multiplyVector3(normal);
 
     // intersect mouse ray with plane
     var intersection = INTERACT3D.intersectPlane(event3d.mouseRay, originWorld, normalWorld);
@@ -111,7 +116,7 @@ THREE.InteractiveMarker.prototype.rotateAxis = function(orientation, event3d) {
     var rotOrigin = INTERACT3D.intersectPlane(normalRay, originWorld, normalWorld);
 
     // rotates from world to plane coords
-    var orientationWorld = this.dragStart.rotationWorld.clone().multiplySelf(orientation);
+    var orientationWorld = this.dragStart.orientationWorld.clone().multiplySelf(orientation);
     var orientationWorldInv = orientationWorld.clone().inverse();
     
     // rotate original and current intersection into local coords
@@ -131,8 +136,8 @@ THREE.InteractiveMarker.prototype.rotateAxis = function(orientation, event3d) {
     rot.setFromAxisAngle( normal, a );
     
     // rotate
-//    this.setOrientation( rot.multiplySelf(this.dragStart.rotationWorld) );
-    this.setOrientation( rot.multiplySelf(this.dragStart.rotationWorld) );
+//    this.setOrientation( rot.multiplySelf(this.dragStart.orientationWorld) );
+    this.setOrientation( rot.multiplySelf(this.dragStart.orientationWorld) );
     
     // offset from drag start position
     event3d.stopPropagation();
@@ -145,11 +150,11 @@ THREE.InteractiveMarker.prototype.startDrag = function(event3d) {
   this.dragging = true;
   this.updateMatrixWorld(true);
   var scale = new THREE.Vector3();
-  this.matrixWorld.decompose(this.dragStart.positionWorld, this.dragStart.rotationWorld, scale);
+  this.matrixWorld.decompose(this.dragStart.positionWorld, this.dragStart.orientationWorld, scale);
   this.dragStart.position = this.position.clone();
-  this.dragStart.rotation = this.quaternion.clone();
+  this.dragStart.orientation = this.quaternion.clone();
   this.dragStart.event3d = event3d;
-  console.log(this.dragStart.rotationWorld);
+  //console.log(this.dragStart.orientationWorld);
 }
 
 THREE.InteractiveMarker.prototype.stopDrag = function(event3d) {

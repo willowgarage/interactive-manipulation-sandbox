@@ -53,13 +53,13 @@ THREE.InteractiveMarkerControl = function(parent, control) {
   // determine mouse interaction
   switch(control.interaction_mode) {
     case MOVE_AXIS:
-      this.addEventListener("mousemove", parent.moveAxis.bind(parent, controlAxis));
+      this.addEventListener("mousemove", parent.moveAxis.bind(parent, that, controlAxis));
       break;
     case ROTATE_AXIS:
-      this.addEventListener("mousemove", parent.rotateAxis.bind(parent, controlOrientation));
+      this.addEventListener("mousemove", parent.rotateAxis.bind(parent, that, controlOrientation));
       break;
     case MOVE_PLANE:
-      this.addEventListener("mousemove", parent.movePlane.bind(parent, controlAxis));
+      this.addEventListener("mousemove", parent.movePlane.bind(parent, that, controlAxis));
       break;
     default:
       break;
@@ -81,14 +81,13 @@ THREE.InteractiveMarkerControl = function(parent, control) {
   var INHERIT = 0;
   var FIXED = 1;
   var VIEW_FACING = 2;
-  
+
   var rotInv = new THREE.Quaternion();
-  var posInv = new THREE.Vector3();
+  var posInv = parent.position.clone().multiplyScalar(-1);
 
   switch(control.orientation_mode) {
     case INHERIT:
       rotInv = parent.quaternion.clone().inverse();
-      posInv = parent.position.clone().multiplyScalar(-1);
       break;
     case FIXED:
       that.updateMatrixWorld = function(force) {
@@ -97,7 +96,7 @@ THREE.InteractiveMarkerControl = function(parent, control) {
         that.quaternion = that.parent.quaternion.clone().inverse();
         that.updateMatrix();
         that.matrixWorldNeedsUpdate = true;
-        THREE.InteractiveMarkerControl.prototype.updateMatrixWorld.call(that,force);
+        THREE.InteractiveMarkerControl.prototype.updateMatrixWorld.call(that, force);
       }
       break;
     case VIEW_FACING:
@@ -113,7 +112,7 @@ THREE.InteractiveMarkerControl = function(parent, control) {
     // convert position into my own local coordinate frame
     markerHelper.position.addSelf(posInv);
     rotInv.multiplyVector3(markerHelper.position);
-    markerHelper.quaternion.multiply(rotInv,markerHelper.quaternion);
+    markerHelper.quaternion.multiply(rotInv, markerHelper.quaternion);
     markerHelper.updateMatrixWorld();
 
     that.add(markerHelper);
