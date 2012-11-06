@@ -47,11 +47,15 @@ public:
   ros::Timer timer_;
   unsigned subscribers_;
   std::string topic_ns_;
+  std::string target_frame_;
+
+  std::map< std::string, geometry_msgs::PoseStamped > frame_locked_poses_;
 
   ImTunnel( std::string target_frame, std::string topic_ns ) :
     client_(tf_, target_frame, topic_ns ),
     subscribers_(0),
-    topic_ns_(topic_ns)
+    topic_ns_(topic_ns),
+    target_frame_(target_frame)
   {
     client_.setInitCb( boost::bind(&ImTunnel::initCb, this, _1 ) );
     client_.setUpdateCb( boost::bind(&ImTunnel::updateCb, this, _1 ) );
@@ -62,11 +66,12 @@ public:
         topic_ns+"/tunneled", 1000,
         boost::bind(&ImTunnel::connectCallback, this, _1) );
 
-    timer_ = node_handle_.createTimer(ros::Duration(0.05), boost::bind(&ImTunnel::timerCb, this, _1 ) );
+    timer_ = node_handle_.createTimer(ros::Duration(0.1), boost::bind(&ImTunnel::timerCb, this, _1 ) );
   }
 
   typedef visualization_msgs::InteractiveMarkerInitConstPtr InitConstPtr;
   typedef visualization_msgs::InteractiveMarkerUpdateConstPtr UpdateConstPtr;
+  typedef visualization_msgs::InteractiveMarkerUpdatePtr UpdatePtr;
 
   void connectCallback(const ros::SingleSubscriberPublisher& pub)
   {
@@ -79,30 +84,91 @@ public:
   void timerCb( const ros::TimerEvent& )
   {
     client_.update();
+
+    // send pose updates for frame-locked IMs
+    visualization_msgs::InteractiveMarkerUpdate up_msg;
+    up_msg.poses.reserve(frame_locked_poses_.size());
+
+    std::map< std::string, geometry_msgs::PoseStamped >::iterator it;
+    for ( it = frame_locked_poses_.begin(); it != frame_locked_poses_.end(); it++ )
+    {
+      try
+      {
+        std_msgs::Header& header = it->second.header;
+        tf::StampedTransform transform;
+        tf_.lookupTransform( target_frame_, header.frame_id, header.stamp, transform );
+
+        tf::Pose pose;
+        tf::poseMsgToTF( it->second.pose, pose );
+        pose = transform * pose;
+
+        // store transformed pose in original message
+        visualization_msgs::InteractiveMarkerPose imp;
+        imp.name = it->first;
+        tf::poseTFToMsg( pose, imp.pose );
+        imp.header = header;
+        up_msg.poses.push_back(imp);
+      }
+      catch ( ... )
+      {
+      }
+    }
+    pub_.publish(up_msg);
   }
 
-  void updateCb( const UpdateConstPtr& msg )
+  void updateCb( const UpdateConstPtr& up_msg )
   {
-    ROS_INFO("updateCb");
-    pub_.publish(msg);
+    pub_.publish(up_msg);
+
+    const visualization_msgs::InteractiveMarkerUpdate::_erases_type& erases = up_msg->erases;
+    for ( unsigned i = 0; i<erases.size(); i++){
+        frame_locked_poses_.erase(erases[i]);
+    }
+
+    const visualization_msgs::InteractiveMarkerUpdate::_poses_type& poses = up_msg->poses;
+    for ( unsigned i = 0; i<poses.size(); i++){
+      if ( poses[i].header.stamp == ros::Time(0) ) {
+        geometry_msgs::PoseStamped p;
+        p.header = poses[i].header;
+        p.pose = poses[i].pose;
+        frame_locked_poses_[poses[i].name] = p;
+      }
+      else
+      {
+        frame_locked_poses_.erase(poses[i].name);
+      }
+    }
+
+    const visualization_msgs::InteractiveMarkerUpdate::_markers_type& markers = up_msg->markers;
+    for ( unsigned i = 0; i<markers.size(); i++){
+      if ( markers[i].header.stamp == ros::Time(0) ) {
+        geometry_msgs::PoseStamped p;
+        p.header = markers[i].header;
+        p.pose = markers[i].pose;
+        frame_locked_poses_[markers[i].name] = p;
+      }
+      else
+      {
+        frame_locked_poses_.erase(markers[i].name);
+      }
+    }
   }
 
-  void initCb( const InitConstPtr& msg )
+  void initCb( const InitConstPtr& init_msg )
   {
-    ROS_INFO("initCb");
-    visualization_msgs::InteractiveMarkerUpdate update;
-    update.markers = msg->markers;
-    update.seq_num = msg->seq_num;
-    update.server_id = msg->server_id;
-    pub_.publish(update);
+    UpdatePtr update(new visualization_msgs::InteractiveMarkerUpdate());
+    update->markers = init_msg->markers;
+    update->seq_num = init_msg->seq_num;
+    update->server_id = init_msg->server_id;
+    updateCb(update);
   }
 
   void statusCb( InteractiveMarkerClient::StatusT status,
       const std::string& server_id,
-      const std::string& msg )
+      const std::string& status_text )
   {
     std::string status_string[]={"INFO","WARN","ERROR"};
-    ROS_INFO_STREAM( "(" << status_string[(unsigned)status] << ") " << server_id << ": " << msg );
+    ROS_INFO_STREAM( "(" << status_string[(unsigned)status] << ") " << server_id << ": " << status_text );
   }
 
   void resetCb( const std::string& server_id )
