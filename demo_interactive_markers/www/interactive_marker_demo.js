@@ -19,6 +19,8 @@
 
   var imc, imm;
 
+  var hoverObjs = [];
+
   function init() {
 
     // ////////////////////////////////////////////////
@@ -103,14 +105,12 @@
     render();
   }
 
-  var hoverObj;
-
   function onMouseOver(event) {
-    hoverObj = event.currentTarget;
+    hoverObjs.push(event.currentTarget);
   }
 
   function onMouseOut(event) {
-    hoverObj = undefined;
+    hoverObjs.splice(hoverObjs.indexOf(event.currentTarget), 1);
   }
 
   function render() {
@@ -123,8 +123,8 @@
     renderer.clear(true, true, true);
     renderer.render(scene0, camera);
 
-    INTERACT3D.renderHighlight(renderer, scene0, camera, [hoverObj]);
-    
+    INTERACT3D.renderHighlight(renderer, scene0, camera, hoverObjs);
+
     // clear depth & stencil & render overlay scene
     //renderer.clear(false, true, true);
     renderer.render(scene1, camera);
