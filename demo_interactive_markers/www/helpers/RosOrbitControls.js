@@ -183,7 +183,6 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 			lastPosition.copy( this.object.position );
 
 		}
-
 	};
 
 
@@ -199,9 +198,9 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 	}
 
-	function onMouseDown( event ) {
-
-		if ( !scope.userRotate ) return;
+	function onMouseDown( event3d ) {
+	  
+	  var event = event3d.domEvent;
 
 		event.preventDefault();
 
@@ -221,9 +220,10 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 	}
 
-	function onMouseMove( event ) {
+	function onMouseMove( event3d ) {
 
-		event.preventDefault();
+		    var event = event3d.domEvent;
+
 
 		if ( state === STATE.ROTATE ) {
 
@@ -256,7 +256,9 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 	}
 
-	function onMouseUp( event ) {
+	function onMouseUp( event3d ) {
+
+    var event = event3d.domEvent;
 
 		if ( ! scope.userRotate ) return;
 
@@ -264,9 +266,11 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 	}
 
-	function onMouseWheel( event ) {
+	function onMouseWheel( event3d ) {
 
 		if ( ! scope.userZoom ) return;
+
+    var event = event3d.domEvent;
 
 		if ( event.wheelDelta > 0 ) {
 
@@ -280,8 +284,13 @@ THREE.RosOrbitControls = function ( object, domElement ) {
 
 	}
 	
-  this.onmousedown = function(event){ onMouseDown(event); }
-  this.onmouseup = function(event){ onMouseUp(event); }
-  this.onmousemove = function(event){ onMouseMove(event); }
-  this.onmousewheel = function(event){ onMouseWheel(event); }
+	THREE.EventTarget.call(this);
+  this.addEventListener('mousedown',onMouseDown);
+  this.addEventListener('mouseup',onMouseUp);
+  this.addEventListener('mousemove',onMouseMove);
+  this.addEventListener('mousewheel',onMouseWheel);
+  //this.onmousedown = function(event){ onMouseDown(event); }
+  //this.onmouseup = function(event){ onMouseUp(event); }
+  //this.onmousemove = function(event){ onMouseMove(event); }
+  //this.onmousewheel = function(event){ onMouseWheel(event); }
 };

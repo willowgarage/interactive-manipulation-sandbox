@@ -1,7 +1,7 @@
 (function(THREE) {
 
   var container;
-  var camera, controls, scene0, scene1, renderer;
+  var camera, cameraControls, scene0, scene1, hoverScene, renderer;
   var pickingData = [], pickingTexture, pickingScene;
   var objects = [];
   var highlightBox;
@@ -16,8 +16,10 @@
   animate();
 
   var INTERSECTED, INTERSECTION, DRAGGING;
-  
-  var imc,imm;
+
+  var imc, imm;
+
+  var hoverObjs = [];
 
   function init() {
 
@@ -36,12 +38,13 @@
     // setup scene
     scene0 = new THREE.Scene();
     scene1 = new THREE.Scene();
+    hoverScene = new THREE.Scene();
 
     // setup camera mouse control
-    controls = new THREE.RosOrbitControls(camera);
+    cameraControls = new THREE.RosOrbitControls(camera);
 
     scene0.add(directionalLight);
-    
+
     // add lights
     // scene0.add(new THREE.AmbientLight(0x555555));
     directionalLight = new THREE.DirectionalLight(0xffffff);
@@ -71,7 +74,7 @@
 
     imc = new interactive_markers.Client(ros);
     imm = new THREE.InteractiveMarkerManager(scene0, imc);
-    
+
     imc.subscribe('/basic_controls');
 
     renderer = new THREE.WebGLRenderer({
@@ -91,7 +94,10 @@
       event.preventDefault();
     }, false);
 
-    mouseHandler = new THREE.MouseHandler(renderer, camera, scene0);
+    mouseHandler = new THREE.MouseHandler(renderer, camera, scene0, cameraControls);
+
+    mouseHandler.addEventListener("mouseover", onMouseOver);
+    mouseHandler.addEventListener("mouseout", onMouseOut);
   }
 
   function animate() {
@@ -99,16 +105,26 @@
     render();
   }
 
+  function onMouseOver(event) {
+    hoverObjs.push(event.currentTarget);
+  }
+
+  function onMouseOut(event) {
+    hoverObjs.splice(hoverObjs.indexOf(event.currentTarget), 1);
+  }
+
   function render() {
-    controls.update();
+    cameraControls.update();
 
     // put light to the top-left of the camera
     directionalLight.position = camera.localToWorld(new THREE.Vector3(-1, 1, 0));
     directionalLight.position.normalize();
 
-    // clear & render regular scene
     renderer.clear(true, true, true);
     renderer.render(scene0, camera);
+
+    INTERACT3D.renderHighlight(renderer, scene0, camera, hoverObjs);
+
     // clear depth & stencil & render overlay scene
     //renderer.clear(false, true, true);
     renderer.render(scene1, camera);

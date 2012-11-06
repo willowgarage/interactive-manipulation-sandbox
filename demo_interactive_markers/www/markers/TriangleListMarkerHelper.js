@@ -10,6 +10,8 @@ THREE.TriangleListMarkerHelper = function ( material, vertices )
   
   if ( material === undefined ) material = new THREE.MeshBasicMaterial();
   
+  //material.side = THREE.DoubleSide;
+  
   var geometry = new THREE.Geometry();
   
   for ( i = 0; i < vertices.length; i++ ) 
@@ -19,15 +21,15 @@ THREE.TriangleListMarkerHelper = function ( material, vertices )
   for ( i = 0; i < vertices.length; i+=3 )
   {
     geometry.faces.push( new THREE.Face3( i, i+1, i+2 ) );
-    // duplicate face backwards to get around the back face culling
-    // (mesh.doubleSided seems not to have any effect.) 
     geometry.faces.push( new THREE.Face3( i+2, i+1, i ) );
   }
   
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
   geometry.computeCentroids();
+  geometry.computeFaceNormals();
   
   this.mesh = new THREE.Mesh( geometry, material );
-  //this.mesh.doubleSided = true;
   this.add( this.mesh );
 };
 
