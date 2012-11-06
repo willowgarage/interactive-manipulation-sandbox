@@ -79,8 +79,11 @@ THREE.InteractiveMarkerControl = function(parent, control) {
     that.add(markerHelper);
   });
 
-  this.addEventListener('mouseover', function(event){event.stopPropagation();});
-  this.addEventListener('mouseout', function(event){event.stopPropagation();});
+  if ( control.interaction_mode != MODE.NONE )
+  {
+    this.addEventListener('mouseover', function(event){event.stopPropagation();});
+    this.addEventListener('mouseout', function(event){event.stopPropagation();});
+  }
 
 }
 

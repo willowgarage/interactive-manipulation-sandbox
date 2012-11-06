@@ -17,7 +17,7 @@ THREE.MarkerHelper = function ( markerMsg )
     color2.setRGB(r*0.3, g*0.3, b*0.3);
     return new THREE.MeshLambertMaterial({
     //return new THREE.MeshPhongMaterial({
-      color : color.getHex(),
+      color : transparent ? 0 : color.getHex(),
       emissive: color.getHex(),
       opacity: a,
       transparent: transparent,
@@ -92,30 +92,39 @@ THREE.MarkerHelper = function ( markerMsg )
     break;
     
   case SPHERE:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case CYLINDER:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case LINE_STRIP:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case LINE_LIST:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case CUBE_LIST:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case SPHERE_LIST:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case POINTS:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case TEXT_VIEW_FACING:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case MESH_RESOURCE:
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
     
   case TRIANGLE_LIST:
@@ -123,13 +132,10 @@ THREE.MarkerHelper = function ( markerMsg )
     break;
     
   default:
-    var geom = new THREE.CubeGeometry(0.1,0.1,0.1);
-    addMesh(geom, colorMaterial);
+    addMesh(new THREE.CubeGeometry(0.1,0.1,0.1), colorMaterial);
     break;
   }
 
-  var geom = new THREE.CubeGeometry(0.1,0.1,0.1);
-  addMesh(geom, new THREE.MeshBasicMaterial);
 
 };
 
