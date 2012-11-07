@@ -27,18 +27,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-THREE.InteractiveMarker = function(intMarkerMsg) {
+THREE.InteractiveMarker = function(options) {
   THREE.Object3D.call(this);
   THREE.EventTarget.call(this);
 
   var that = this;
 
-  this.name = intMarkerMsg.name;
-  this.intMarkerMsg = intMarkerMsg;
+  this.name = options.name;
 
   this.dragging = false;
+  console.log(options);
   this.onServerSetPose({
-    pose : intMarkerMsg.pose
+    pose : options.pose
   });
 
   this.dragStart = {
@@ -49,7 +49,7 @@ THREE.InteractiveMarker = function(intMarkerMsg) {
     event3d : {}
   };
 
-  intMarkerMsg.controls.forEach(function(control) {
+  options.controls.forEach(function(control) {
     that.add(new THREE.InteractiveMarkerControl(that, control));
   });
 };

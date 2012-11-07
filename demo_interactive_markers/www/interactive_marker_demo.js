@@ -55,7 +55,7 @@
     var gridMaterial = new THREE.MeshBasicMaterial({
       color : 0x999999
     });
-    
+
     gridMaterial.wireframe = true;
     gridMaterial.wireframeLinewidth = 1;
     gridMaterial.transparent = true;
@@ -71,9 +71,9 @@
 
     var ros = new ROS('ws://localhost:9090');
 
-    imc = new interactive_markers.Client(ros);
-    imm = new THREE.InteractiveMarkerManager(scene0, imc);
 
+    imc = new InteractiveMarkers.Client(ros);
+    imm = new THREE.InteractiveMarkerManager(scene0, imc);
     imc.subscribe('/basic_controls');
 
     renderer = new THREE.WebGLRenderer({
