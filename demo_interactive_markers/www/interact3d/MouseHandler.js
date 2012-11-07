@@ -1,4 +1,4 @@
-THREE.MouseHandler = function(renderer, camera, scene) {
+THREE.MouseHandler = function(renderer, camera, scene, fallbackTarget) {
 
   if (!renderer || !renderer.domElement || !camera || !scene) {
     return;
@@ -10,11 +10,12 @@ THREE.MouseHandler = function(renderer, camera, scene) {
   this.scene = scene;
   this.renderer = renderer;
   this.projector = new THREE.Projector();
-  this.lastTarget = null;
+  this.lastTarget = fallbackTarget;
   this.dragging = null;
+  this.fallbackTarget = fallbackTarget;
 
   // listen to DOM events
-  var eventNames = ["click", "dblclick", "mouseout", "mousedown", "mouseup", "mousemove"];
+  var eventNames = ["click", "dblclick", "mouseout", "mousedown", "mouseup", "mousemove", "mousewheel"];
   this.listeners = {};
 
   eventNames.forEach(function(eventName) {
@@ -50,51 +51,66 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
     mouseRay : mouseRay,
     domEvent : domEvent,
     camera : this.camera,
-    intersection : null
+    intersection : this.lastIntersection
   };
 
-  // While the user is holding the mouse down, 
+  // While the user is holding the mouse down,
   // stay on the same target
   if (this.dragging) {
     this.notify(this.lastTarget, domEvent.type, event3d);
-    if ( domEvent.type === "mouseup" ) {
+    if (domEvent.type === "mouseup") {
       this.dragging = false;
     }
     return;
   }
-  
+
   // if the mouse leaves the dom element, stop everything
   if (domEvent.type == "mouseout") {
     this.dragging = false;
     this.notify(this.lastTarget, "mouseout", event3d);
   }
-  
-  var target = null;
+
+  var target = this.lastTarget;
 
   // In the normal case, we need to check what is under the mouse
   intersections = mouseRay.intersectObject(this.scene, true);
   if (intersections.length > 0) {
     target = intersections[0].object;
-    event3d.intersection = intersections[0];
-    // pass through event
-    this.notify(target, domEvent.type, event3d);
-    if ( domEvent.type === "mousedown" ) {
-      this.dragging = true;
-    }
+    event3d.intersection = this.lastIntersection = intersections[0];
+    console.log(target);
+  } else {
+    target = this.fallbackTarget;
   }
 
   // if the mouse moves from one object to another
   // (or from/to the 'null' object), notify both
   if (target !== this.lastTarget) {
-    this.notify(target, 'mouseover', event3d);
-    this.notify(this.lastTarget, 'mouseout', event3d);
+    
+    var eventAccepted = this.notify(target, 'mouseover', event3d);
+    
+    if (eventAccepted) {
+      this.notify(this.lastTarget, 'mouseout', event3d);
+    } else {
+      // if target was null or no target has caught our event, fall back
+      target = this.fallbackTarget;
+      if (target !== this.lastTarget) {
+        this.notify(target, 'mouseover', event3d);
+        this.notify(this.lastTarget, 'mouseout', event3d);
+      }
+    }
+  }
+
+  // pass through event
+  this.notify(target, domEvent.type, event3d);
+
+  if (domEvent.type === "mousedown") {
+    this.dragging = true;
   }
 
   this.lastTarget = target;
 }
 
 THREE.MouseHandler.prototype.notify = function(target, type, event3d) {
-
   event3d.type = type;
 
   // make the event cancelable
@@ -111,16 +127,12 @@ THREE.MouseHandler.prototype.notify = function(target, type, event3d) {
       event3d.currentTarget.dispatchEvent(event3d);
       if (event3d.cancelBubble) {
         this.dispatchEvent(event3d);
-        return;
+        return true;
       }
     }
 
     // walk up
-    if (event3d.currentTarget['parent']) {
-      event3d.currentTarget = event3d.currentTarget.parent;
-    } else {
-      return;
-    }
+    event3d.currentTarget = event3d.currentTarget.parent;
   }
-
+  return false;
 }
