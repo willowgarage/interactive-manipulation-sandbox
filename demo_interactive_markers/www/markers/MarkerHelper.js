@@ -99,7 +99,12 @@ THREE.MarkerHelper = function(markerMsg) {
       break;
 
     case CYLINDER:
-      addMesh(new THREE.CubeGeometry(0.1, 0.1, 0.1), colorMaterial);
+      var geom = new THREE.CylinderGeometry( 0.5, 0.5, 1, 16, 1, false );
+      var mesh = new THREE.Mesh(geom, colorMaterial);
+      mesh.useQuaternion = true;
+      mesh.quaternion.setFromAxisAngle( new THREE.Vector3(1,0,0), Math.PI*0.5 );
+      mesh.scale = pointMsgToVector3( markerMsg.scale );
+      this.add(mesh);
       break;
 
     case LINE_STRIP:

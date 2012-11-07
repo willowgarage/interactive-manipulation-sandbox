@@ -46,6 +46,10 @@ THREE.InteractiveMarkerManager.prototype = {
     this.root.add(intMarkerView);  
     event.intMarkerModel.addEventListener("server_changed_pose",intMarkerView.onServerSetPose.bind(intMarkerView));
     intMarkerView.addEventListener("user_changed_pose",event.intMarkerModel.onUserSetPose.bind(event.intMarkerModel));
+    
+    intMarkerView.addEventListener("user_mouse_down",event.intMarkerModel.onMouseDown.bind(event.intMarkerModel));
+    intMarkerView.addEventListener("user_mouse_up",event.intMarkerModel.onMouseUp.bind(event.intMarkerModel));
+    intMarkerView.addEventListener("user_clicked_button",event.intMarkerModel.onButtonClick.bind(event.intMarkerModel));
   },
   
   eraseMarker: function(event) {

@@ -55,6 +55,7 @@
     var gridMaterial = new THREE.MeshBasicMaterial({
       color : 0x999999
     });
+    
     gridMaterial.wireframe = true;
     gridMaterial.wireframeLinewidth = 1;
     gridMaterial.transparent = true;

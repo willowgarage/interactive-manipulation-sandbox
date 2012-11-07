@@ -33,7 +33,7 @@ interactive_markers.Client = function(ros) {
 
   this.ros = ros;
   this.interactiveMarkers = {};
-  
+
   THREE.EventTarget.call(this);
 };
 
@@ -41,6 +41,10 @@ interactive_markers.Client.prototype = Object.create(THREE.Object3D.prototype);
 
 interactive_markers.Client.prototype.subscribe = function(topicNS) {
   var ros = this.ros;
+
+  // make rfc4122 v4 uid
+  this.clientId = "rosjs client # "+'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});
+  console.log(this.clientId);
 
   this.topic = new ros.Topic({
     name : topicNS + '/tunneled',
@@ -62,7 +66,10 @@ interactive_markers.Client.prototype.processUpdate = function(message) {
   // delete markers
   message.erases.forEach(function(name) {
     that.interactiveMarkers[name] = undefined;
-    that.dispatchEvent({type:'erased_marker', name:name});
+    that.dispatchEvent({
+      type : 'erased_marker',
+      name : name
+    });
   });
 
   // update poses
@@ -75,10 +82,16 @@ interactive_markers.Client.prototype.processUpdate = function(message) {
   // add new markers
   message.markers.forEach(function(intMarkerMsg) {
     if (that.interactiveMarkers[intMarkerMsg.name] != undefined) {
-    that.dispatchEvent({type:'erased_marker', intMarkerModel:intMarkerModel});
+      that.dispatchEvent({
+        type : 'erased_marker',
+        intMarkerModel : intMarkerModel
+      });
     }
-    intMarkerModel = new interactive_markers.InteractiveMarker(intMarkerMsg, that.feedbackTopic);
+    intMarkerModel = new interactive_markers.InteractiveMarker(that.clientId,intMarkerMsg, that.feedbackTopic);
     that.interactiveMarkers[intMarkerMsg.name] = intMarkerModel;
-    that.dispatchEvent({type:'added_marker', intMarkerModel:intMarkerModel});
+    that.dispatchEvent({
+      type : 'added_marker',
+      intMarkerModel : intMarkerModel
+    });
   });
 };

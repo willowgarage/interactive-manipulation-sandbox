@@ -40,10 +40,10 @@ using namespace interactive_markers;
 class ImTunnel
 {
 public:
+  ros::NodeHandle node_handle_;
   tf::TransformListener tf_;
   interactive_markers::InteractiveMarkerClient client_;
   ros::Publisher pub_;
-  ros::NodeHandle node_handle_;
   ros::Timer timer_;
   unsigned subscribers_;
   std::string topic_ns_;
@@ -63,7 +63,7 @@ public:
     client_.setStatusCb( boost::bind(&ImTunnel::statusCb, this, _1, _2, _3 ) );
 
     pub_ = node_handle_.advertise<visualization_msgs::InteractiveMarkerUpdate>(
-        topic_ns+"/tunneled", 1000,
+        topic_ns_+"/tunneled", 1000,
         boost::bind(&ImTunnel::connectCallback, this, _1) );
 
     timer_ = node_handle_.createTimer(ros::Duration(0.05), boost::bind(&ImTunnel::timerCb, this, _1 ) );
@@ -181,7 +181,8 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "im_tunnel");
   {
-    ImTunnel im_tunnel( "/base_link", "basic_controls" );
+    ros::NodeHandle nh;
+    ImTunnel im_tunnel( nh.resolveName("target_frame"), nh.resolveName("topic_ns") );
     ros::spin();
   }
 }

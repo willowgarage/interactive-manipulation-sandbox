@@ -154,7 +154,12 @@ THREE.InteractiveMarker.prototype.startDrag = function(event3d) {
   this.dragStart.position = this.position.clone();
   this.dragStart.orientation = this.quaternion.clone();
   this.dragStart.event3d = event3d;
-  //console.log(this.dragStart.orientationWorld);
+
+  this.dispatchEvent({
+    type : "user_mouse_down",
+    position : this.position,
+    orientation : this.quaternion
+  });
 }
 
 THREE.InteractiveMarker.prototype.stopDrag = function(event3d) {
@@ -164,6 +169,12 @@ THREE.InteractiveMarker.prototype.stopDrag = function(event3d) {
   this.dragStart.event3d = {};
   this.onServerSetPose(this.bufferedPoseEvent);
   this.bufferedPoseEvent = undefined;
+
+  this.dispatchEvent({
+    type : "user_mouse_up",
+    position : this.position,
+    orientation : this.quaternion
+  });
 }
 
 THREE.InteractiveMarker.prototype.setPosition = function(position) {

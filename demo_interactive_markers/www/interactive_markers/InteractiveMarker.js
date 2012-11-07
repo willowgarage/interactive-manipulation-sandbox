@@ -29,12 +29,13 @@
 
 var interactive_markers = interactive_markers || {};
 
-interactive_markers.InteractiveMarker = function(intMarkerMsg, feedbackTopic) {
+interactive_markers.InteractiveMarker = function(clientId, intMarkerMsg, feedbackTopic) {
   var that = this;
   this.feedbackTopic = feedbackTopic;
   this.position = this.copyXyz(intMarkerMsg.pose.position);
   this.orientation = this.copyXyzw(intMarkerMsg.pose.orientation);
   this.intMarkerMsg = intMarkerMsg;
+  this.clientId = clientId;
 
   //todo: use other event dispatcher (?)
   THREE.EventTarget.apply(this);
@@ -85,6 +86,14 @@ interactive_markers.InteractiveMarker.prototype.onButtonClick = function(event) 
   this.sendFeedback(3, event.clickPosition);
 }
 
+interactive_markers.InteractiveMarker.prototype.onMouseDown = function(event) {
+  this.sendFeedback(4, event.clickPosition);
+}
+
+interactive_markers.InteractiveMarker.prototype.onMouseUp = function(event) {
+  this.sendFeedback(5, event.clickPosition);
+}
+
 interactive_markers.InteractiveMarker.prototype.sendFeedback = function(eventType, clickPosition) {
 
   var clickPosition = clickPosition || {
@@ -95,7 +104,7 @@ interactive_markers.InteractiveMarker.prototype.sendFeedback = function(eventTyp
 
   var f = {
     header : this.intMarkerMsg.header,
-    client_id : "",
+    client_id : this.clientId,
     marker_name : this.intMarkerMsg.name,
     control_name : "",
     event_type : eventType,
