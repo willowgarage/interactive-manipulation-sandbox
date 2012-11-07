@@ -136,7 +136,9 @@ THREE.MarkerHelper = function(markerMsg) {
       break;
 
     case TRIANGLE_LIST:
-      this.add(new THREE.TriangleListMarkerHelper(colorMaterial, markerMsg.points, markerMsg.colors));
+      var tri = new THREE.TriangleListMarkerHelper(colorMaterial, markerMsg.points, markerMsg.colors);
+      tri.scale = pointMsgToVector3( markerMsg.scale );
+      this.add(tri);
       break;
 
     default:
