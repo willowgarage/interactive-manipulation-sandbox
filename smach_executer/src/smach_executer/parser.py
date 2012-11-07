@@ -26,7 +26,7 @@ def create_state_machine_from_action_dict(action_dict, actions):
     # TODO: if action is already a StateMachine, don't need to make a wrapper for it
 
     # create state machine wrapper and set inputs
-    outcomes = outcomes=action.get_registered_outcomes()
+    outcomes = action.get_registered_outcomes()
     sm = smach.StateMachine(outcomes)
     for input_name in action_inputs:
         sm.userdata[input_name] = action_inputs[input_name]

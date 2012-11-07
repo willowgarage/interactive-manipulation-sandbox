@@ -4,8 +4,12 @@ Vagrant::Config.run do |config|
   config.vm.box     = "precise64"
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
-  # Forward guest port 8000 to host port 8000
+  # Forward guest port to host port
   config.vm.forward_port 8000, 8000
+  config.vm.forward_port 9090, 9090
+
+  # Change IP address for Vagrant host
+  config.vm.customize ["modifyvm", :id, "--natnet1", "10.101.100/24"]
 
   # Share the host folder (3rd argument) with the guest (2nd argument)
   config.vm.share_folder "layer", "~/layer", "../layer"

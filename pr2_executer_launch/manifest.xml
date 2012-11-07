@@ -1,0 +1,23 @@
+<package>
+  <description brief="pr2_executer_launch">
+
+    Contains main executer launchfiles. Should depend on every package
+    which needs to be compiled in order for the executer to work properly.
+
+  </description>
+  <author>jbinney</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_executer_launch</url>
+
+  <depend package="pr2_plugs_actions"/>
+  <depend package="map_server"/>
+  <depend package="pr2_2dnav"/>
+  <depend package="willow_maps"/>
+  <depend package="smach_executer"/>
+  <depend package="executer_actions"/>
+  <depend package="pr2_marker_control"/>
+
+</package>
+
+

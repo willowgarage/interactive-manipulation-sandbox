@@ -99,38 +99,43 @@
         - pillow
         - djangorestframework
         - django-ember
+        - python-openid
+        - django-openid-auth
 
     #-------------
     # ROS
     #-------------
 
+#   Uncomment the lines below if you want to also install ROS in your VM
+#   Note that this is not necessary to run layer
+
     # Tried adding key with command:
     # wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
     # But got an error. May be worth sending in a patch to Ansible's
     # apt_repository module.
-    - name: download ros repository key
-      action: get_url url=http://packages.ros.org/ros.key dest=/tmp/ros.key
-
-    - name: install ros repository key
-      action: command /usr/bin/apt-key add /tmp/ros.key
-
-    - name: add ros fuerte repository
-      action: apt_repository repo='deb http://packages.ros.org/ros/ubuntu precise main' state=present
-
-    - name: install ros
-      action: apt pkg=ros-fuerte-desktop-full state=present
-
-    - name: install third-party ros packages
-      action: apt pkg=$item state=present
-      with_items:
-        - ros-fuerte-rosbridge-suite
+#    - name: download ros repository key
+#      action: get_url url=http://packages.ros.org/ros.key dest=/tmp/ros.key
+#
+#    - name: install ros repository key
+#      action: command /usr/bin/apt-key add /tmp/ros.key
+#
+#    - name: add ros fuerte repository
+#      action: apt_repository repo='deb http://packages.ros.org/ros/ubuntu precise main' state=present
+#
+#    - name: install ros
+#      action: apt pkg=ros-fuerte-desktop-full state=present
+#
+#    - name: install third-party ros packages
+#      action: apt pkg=$item state=present
+#      with_items:
+#        - ros-fuerte-rosbridge-suite
 
     #-------------
     # Application
     #-------------
 
     - name: set up local_settings.py for vagrant
-      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer'
+      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer' creates=/home/vagrant/layer/local_settings.py
 
     # These python commands do not return.
     # - name: sync up database

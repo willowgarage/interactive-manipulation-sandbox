@@ -1,0 +1,13 @@
+<div>
+&nbsp;
+<div id="login-logout-link">
+{{#if isLoggedIn}}
+  Welcome {{ first_name }} {{ last_name }}, <a href="/accounts/logout/">Logout</a>
+{{else}}
+  <a href="/accounts/login/">Login</a>
+{{/if}}
+</div>
+{{#if thereAreOtherUsers}}
+<div id="concurrency" }}>Also viewing: {{otherUserNames}}</div>
+{{/if}}
+</div>
