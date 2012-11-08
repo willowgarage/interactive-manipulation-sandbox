@@ -77,7 +77,6 @@ THREE.MouseHandler.prototype.processDomEvent = function(domEvent) {
   if (intersections.length > 0) {
     target = intersections[0].object;
     event3d.intersection = this.lastIntersection = intersections[0];
-    console.log(target);
   } else {
     target = this.fallbackTarget;
   }
