@@ -38,7 +38,6 @@
     // setup scene
     scene0 = new THREE.Scene();
     scene1 = new THREE.Scene();
-    hoverScene = new THREE.Scene();
 
     // setup camera mouse control
     cameraControls = new THREE.RosOrbitControls(camera);

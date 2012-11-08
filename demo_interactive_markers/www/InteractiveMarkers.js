@@ -17,7 +17,7 @@
 
   Client.prototype.subscribe = function(topicName) {
     this.markerUpdateTopic = new this.ros.Topic({
-      name : topicName + '/tunneled',
+      name : topicName + '/tunneled/update',
       messageType : 'visualization_msgs/InteractiveMarkerUpdate'
     });
     this.markerUpdateTopic.subscribe(this.markerUpdate.bind(this));
@@ -27,7 +27,21 @@
       messageType : 'visualization_msgs/InteractiveMarkerFeedback'
     });
     this.feedbackTopic.advertise();
+    
+    this.initService = new this.ros.Service({
+        name        : topicName + '/tunneled/get_init'
+      , serviceType : 'demo_interactive_markers/GetInit'
+    });
+    var request = new this.ros.ServiceRequest({});
+    this.initService.callService(request, this.markerInit.bind(this));
   };
+
+  Client.prototype.markerInit = function(initMessage) {
+    var message = initMessage.msg;
+    message.erases = [];
+    message.poses = [];
+    this.markerUpdate(message);
+  }
 
   Client.prototype.markerUpdate = function(message) {
     var that = this;
@@ -115,7 +129,7 @@
       control_name : '',
       event_type   : eventType,
       pose         : this.pose,
-      mouse_point  : clickPosition
+      //mouse_point  : clickPosition
     }
 
     this.feedbackTopic.publish(feedback);
