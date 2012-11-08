@@ -36,7 +36,6 @@ THREE.InteractiveMarker = function(options) {
   this.name = options.name;
 
   this.dragging = false;
-  console.log(options);
   this.onServerSetPose({
     pose : options.pose
   });
