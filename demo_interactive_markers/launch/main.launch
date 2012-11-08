@@ -8,7 +8,7 @@
   
   <node output="screen" name="$(arg tutorial)" pkg="interactive_marker_tutorials" type="$(arg tutorial)" />
 
-  <node name="im_tunnel" pkg="demo_interactive_markers" type="im_tunnel">
+  <node output="screen" name="im_tunnel" pkg="demo_interactive_markers" type="im_tunnel">
     <remap from="target_frame" to="/base_link"/>
     <remap from="topic_ns" to="$(arg tutorial)"/>
   </node>
