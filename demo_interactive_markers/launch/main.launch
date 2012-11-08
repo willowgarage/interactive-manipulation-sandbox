@@ -1,9 +1,16 @@
 <launch>
+
+  <arg name="tutorial" default="basic_controls"/>
+
   <node output="screen" name="rosapi" pkg="rosapi" type="rosapi.py" />
   <node output="screen" name="rosbridge" pkg="rosbridge_server" type="rosbridge.py" />
-  <node output="screen" name="basic_controls" pkg="interactive_marker_tutorials" type="basic_controls" />
   <node output="screen" name="rviz" pkg="rviz" type="rviz" args="-d $(find demo_interactive_markers)/config/rviz_config.yaml" />
   
-  <node name="im_tunnel" pkg="demo_interactive_markers" type="im_tunnel" />
+  <node output="screen" name="$(arg tutorial)" pkg="interactive_marker_tutorials" type="$(arg tutorial)" />
+
+  <node name="im_tunnel" pkg="demo_interactive_markers" type="im_tunnel">
+    <remap from="target_frame" to="/base_link"/>
+    <remap from="topic_ns" to="$(arg tutorial)"/>
+  </node>
   
 </launch>

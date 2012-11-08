@@ -35,17 +35,30 @@ THREE.InteractiveMarkerManager = function ( scene, intMarkerClient )
   
   var that=this;
   
-  intMarkerClient.addEventListener("added_marker",this.addMarker.bind(this));
-  intMarkerClient.addEventListener("erased_marker",this.eraseMarker.bind(this));
+  intMarkerClient.on('created_marker', this.addMarker.bind(this));
+  intMarkerClient.on('deleted_marker', this.eraseMarker.bind(this));
 };
 
 THREE.InteractiveMarkerManager.prototype = {
   
-  addMarker: function(event) {
-    intMarkerView = new THREE.InteractiveMarker(event.intMarkerModel.intMarkerMsg, this.feedbackTopic);
-    this.root.add(intMarkerView);  
-    event.intMarkerModel.addEventListener("server_changed_pose",intMarkerView.onServerSetPose.bind(intMarkerView));
-    intMarkerView.addEventListener("user_changed_pose",event.intMarkerModel.onUserSetPose.bind(event.intMarkerModel));
+  addMarker: function(marker) {
+    var markerView = new THREE.InteractiveMarker(marker, this.feedbackTopic);
+    this.root.add(markerView);
+    marker.on('server_updated_pose', function(pose) {
+      markerView.onServerSetPose({
+        pose : pose
+      });
+    });
+    markerView.addEventListener('user_changed_pose', function() {
+      var pose = {
+        position: markerView.position,
+        orientation: markerView.orientation
+      };
+      marker.setPoseFromClient(pose);
+    });
+    markerView.addEventListener('user_mouse_down',marker.onMouseDown.bind(marker));
+    markerView.addEventListener('user_mouse_up', marker.onMouseUp.bind(marker));
+    markerView.addEventListener('user_clicked_button', marker.onButtonClick.bind(marker));
   },
   
   eraseMarker: function(event) {

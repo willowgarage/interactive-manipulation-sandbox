@@ -1,18 +1,25 @@
-This demo app runs the Interactive Markers basic_controls tuturial in the browser.
+This demo app runs the Interactive Markers basic_controls tutorial in the browser.
 
 Installation
 ============
 
-You need to get the rosbridge suite (https://github.com/RobotWebTools/rosbridge_suite),
-the ROS Groovy version of interactive_markers (https://github.com/ros-visualization/interactive_markers)
-and rviz (https://github.com/ros-visualization/rviz).
+Install interactive_markers and rviz from source:
 
-To compile, add the interactive-manipulation-sandbox repo to your ROS_PACKAGE_PATH and run
+ 1. `cd ~/ws/`
+ 2. `wget https://raw.github.com/gist/4021009/cb48243596cae5cf3aa5e9b6abea4487ab09e08d/gistfile1.txt`
+ 3. `rosinstall .`
+ 4. `source ~/ws/setup.bash`
 
-`rosmake demo_interactive_markers`
+Install rosbridge suite:
 
-To run, launch rosbridge, rosapi and the interactive marker tunnel (im_tunnel)
+ 1. `sudo apt-get install ros-fuerte-rosbridge-suiteq
 
-`roslaunch demo_interactive_markers main.launch`
+Compile and run interactive markers demo
 
-Then, open www/interactive_markers.html.
+ 1. `export ROS_PACKAGE_PATH=/path/to/demo_interactive_markers/:$ROS_PACKAGE_PATH`
+ 2. `rosmake demo_interactive_markers`
+ 3. `roslaunch demo_interactive_markers main.launch`
+
+View in browser by going to
+file:///path/to/demo_interactive_markers/www/interactive_markers.html.
+
