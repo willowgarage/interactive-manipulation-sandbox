@@ -14,6 +14,7 @@ from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
 from smach_executer.actions.tuck_arms import TuckArms
 from smach_executer.actions.point_head import PointHead
+from smach_executer.actions.move_base import MoveBase
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -27,6 +28,7 @@ class ExecuterServer:
         self.actions = {
             'Dummy': Dummy,
             'NavigateToPose': NavigateToPose,
+            'MoveBase': MoveBase,
             'PlugIn': PlugIn,
             'Unplug': Unplug,
             'TuckArms': TuckArms,
@@ -34,7 +36,7 @@ class ExecuterServer:
             }
 
         self.sm = None
-
+        
     def start(self):
         rospy.loginfo('Starting Executer server')
         self.actionlib_server.start()

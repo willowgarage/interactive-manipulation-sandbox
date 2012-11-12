@@ -20,6 +20,7 @@
                 </td>
 
                 <td>
+		  Point head
                   <table class="joypad">
                     <tr>
                       <td></td>
@@ -34,6 +35,27 @@
                     <tr>
                       <td></td>
                       <td><div class="mybutton" {{action pointHeadDown target="controller"}}>Down</div></td>
+                      <td></td>
+                    </tr>
+                  </table>
+                </td>
+
+                <td>
+		  Move base
+                  <table class="joypad">
+                    <tr>
+                      <td></td>
+                      <td><div class="mybutton" {{action moveForward target="controller"}}>&uarr;</div></td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td><div class="mybutton" {{action turnLeft target="controller"}}>&larr;</div></td>
+                      <td></td>
+                      <td><div class="mybutton" {{action turnRight target="controller"}}>&rarr;</div></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td><div class="mybutton" {{action moveBack target="controller"}}>&darr;</div></td>
                       <td></td>
                     </tr>
                   </table>

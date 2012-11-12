@@ -363,7 +363,64 @@ function( Ember, DS, App, ROS, Action) {
       });
       action.execute();
       console.log("Calling PlugIn action");
-    }
+    },
+
+    // ----------------------------------------------------------------------
+    // Move the base using open-loop control
+
+    moveForward: function() {
+      this.set('progress_update', 'Moving forward');
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveBase'
+      });
+
+      action.inputs.x        = 1.0;
+      action.inputs.y        = 0.0;
+      action.inputs.theta    = 0.0;
+      action.execute();
+      console.log('Calling MoveBase action');
+    },
+    moveBack: function() {
+      this.set('progress_update', 'Moving backward');
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveBase'
+      });
+
+      action.inputs.x        = -1.0;
+      action.inputs.y        = 0.0;
+      action.inputs.theta    = 0.0;
+      action.execute();
+      console.log('Calling MoveBase action');
+    },
+    turnLeft: function() {
+      this.set('progress_update', 'Turning left');
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveBase'
+      });
+
+      action.inputs.x        = 0.0;
+      action.inputs.y        = 0.0;
+      action.inputs.theta    = -1.0;
+      action.execute();
+      console.log('Calling MoveBase action');
+    },
+    turnRight: function() {
+      this.set('progress_update', 'Turning right');
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveBase'
+      });
+
+      action.inputs.x        = 0.0;
+      action.inputs.y        = 0.0;
+      action.inputs.theta    = 1.0;
+      action.execute();
+      console.log('Calling MoveBase action');
+    },
+
   });
 });
 function myDebugEvents( source, id, events) {
