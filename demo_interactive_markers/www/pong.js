@@ -41,6 +41,7 @@
 
     // setup camera mouse control
     cameraControls = new THREE.RosOrbitControls(camera);
+    cameraControls.zoomOut(6);
 
     // add lights
     scene0.add(new THREE.AmbientLight(0x555555));
@@ -49,34 +50,15 @@
     // attach light to camera
     scene0.add(directionalLight);
 
-    var numCells = 50;
-    var gridGeom = new THREE.PlaneGeometry(numCells, numCells, numCells, numCells);
-    var gridMaterial = new THREE.MeshBasicMaterial({
-      color : 0x999999
-    });
-
-    gridMaterial.wireframe = true;
-    gridMaterial.wireframeLinewidth = 1;
-    gridMaterial.transparent = true;
-    var gridObj = new THREE.Mesh(gridGeom, gridMaterial);
-    scene1.add(gridObj);
-
-    // add coordinate frame visualization
-    // axes = new THREE.AxisHelper();
-    // axes.scale.x=axes.scale.y=axes.scale.z=0.01;
-    // scene1.add(axes);
-    axes = new THREE.Axes();
-    scene1.add(axes);
-
-    var ros = new ROS('ws://localhost:9090');
+    var ros = new ROS('ws://'+document.domain+':9090');
 
 
     imc = new InteractiveMarkers.Client(ros);
     imm = new THREE.InteractiveMarkerManager(scene0, imc);
-    imc.subscribe('/basic_controls');
+    imc.subscribe('/pong');
 
     renderer = new THREE.WebGLRenderer({
-      antialias : true
+      antialias : false
     });
 
     renderer.setClearColorHex(0x333333, 1.0);
