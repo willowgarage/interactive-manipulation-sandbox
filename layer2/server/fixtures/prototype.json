@@ -344,5 +344,20 @@
       "public": true, 
       "name": "SimPR2 on BLH"
     }
+  },
+  {
+    "pk": 7, 
+    "model": "world.robot", 
+    "fields": {
+      "camera_url": "http://localhost:8080/stream?topic=/wide_stereo_throttled/image", 
+      "description": "Simulated PR-2 robot running on localhost", 
+      "forearm_camera_url": "http://localhost:8080/stream?topic=/r_forearm_cam_throttled/image", 
+      "tags": "", 
+      "image": "static/images/screenshot1.png", 
+      "state": 0, 
+      "service_url": "ws://localhost:9099/", 
+      "public": true, 
+      "name": "SimPR2 on localhost"
+    }
   } 
 ]
