@@ -506,7 +506,7 @@
       "cameras": [
         1,
         2
-      },
+      ],
       "state": 0, 
       "service_url": "ws://localhost:9099/", 
       "public": true, 
