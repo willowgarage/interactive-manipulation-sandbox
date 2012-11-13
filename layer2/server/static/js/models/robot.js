@@ -316,23 +316,20 @@ function( Ember, DS, App, ROS, Action) {
       console.log('Calling PointHead action', action.inputs);
     },
 
-    pointHead: function(x, y, z) {
-      this.set('progress_update', 'Looking ...');
+    // Point the head at a location in the camera view
+    pointHeadClick: function(fracX, fracY) {
+      this.set('progress_update', 'Looking where you clicked ...');
       var action = new Action({
         ros: this.ros,
-        name: 'PointHead'
+        name: 'PointHeadInImage'
       });
 
-      action.inputs.target_frame        = 'wide_stereo_link';
-      action.inputs.target_x            = x;
-      action.inputs.target_y            = y;
-      action.inputs.target_z            = z;
-      action.inputs.pointing_frame      = 'wide_stereo_link';
-      action.inputs.pointing_x          = 1.0;
-      action.inputs.pointing_y          = 0;
-      action.inputs.pointing_z          = 0;
+      action.inputs.target_x            = fracX;
+      action.inputs.target_y            = fracY;
+      action.inputs.camera_info_topic   = '/wide_stereo/left/camera_info';
+
       action.execute();
-      console.log('Calling PointHead action', action.inputs);
+      console.log('Calling PointHeadInImage', action.inputs);
     },
 
     plugIn: function() {

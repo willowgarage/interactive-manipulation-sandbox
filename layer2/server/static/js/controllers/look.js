@@ -6,28 +6,9 @@ define([
   App.LookController = Ember.ObjectController.extend({
 
     pointHeadClick: function(arg) {
-      console.log("You clicked in the image at " + arg.offsetX + "," + arg.offsetY);
-      console.dir(arg);
-    },
-
-    pointHeadForward: function() {
-      this.get('content')._pointHeadForward();
-    },
-
-    pointHeadUp: function() {
-      this.get('content').pointHead(1, 0, 0.1);
-    },
-
-    pointHeadDown: function() {
-      this.get('content').pointHead(1, 0, -0.1);
-    },
-
-    pointHeadLeft: function() {
-      this.get('content').pointHead(1, 0.1, 0);
-    },
-
-    pointHeadRight: function() {
-      this.get('content').pointHead(1, -0.1, 0);
+      var fracX = arg.offsetX / arg.target.clientWidth;
+      var fracY = arg.offsetY / arg.target.clientHeight;
+      this.get('content').pointHeadClick(fracX, fracY);
     },
 
     moveForward: function() {
