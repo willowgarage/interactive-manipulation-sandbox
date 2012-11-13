@@ -16,3 +16,5 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 rosbuild_add_executable(im_tunnel src/im_tunnel.cpp)
 #target_link_libraries(server_test ${PROJECT_NAME})
+
+rosbuild_gensrv()

@@ -14,7 +14,7 @@ from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
 from smach_executer.actions.tuck_arms import TuckArms
 from smach_executer.actions.point_head import PointHead
-from smach_executer.actions.move_base import MoveBase
+from smach_executer.actions.point_head_in_image import PointHeadInImage
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -32,7 +32,8 @@ class ExecuterServer:
             'PlugIn': PlugIn,
             'Unplug': Unplug,
             'TuckArms': TuckArms,
-            'PointHead': PointHead
+            'PointHead': PointHead,
+            'PointHeadInImage': PointHeadInImage
             }
 
         self.sm = None

@@ -227,8 +227,8 @@ function( Ember, DS, App, ROS, Action) {
 
       var action = new Action({
         ros: this.ros
-	  });
-      action.cancel();
+      });
+      action.cancelAll();
       console.log("Cancelling all goals");
     },
 
