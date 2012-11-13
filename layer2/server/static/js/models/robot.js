@@ -328,8 +328,19 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.target_y            = fracY;
       action.inputs.camera_info_topic   = '/wide_stereo/left/camera_info';
 
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Pointing the head failed');
+        }
+      });
+
       action.execute();
       console.log('Calling PointHeadInImage', action.inputs);
+
     },
 
     plugIn: function() {
@@ -380,6 +391,16 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.collision_aware    = false;
       action.inputs.frame_id           = "/base_footprint";
 
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
+
       action.execute();
       console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
@@ -395,6 +416,16 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.theta              = 0.0;
       action.inputs.collision_aware    = false;
       action.inputs.frame_id           = "/base_footprint";
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
 
       action.execute();
       console.log('Calling NavigateToPose action with parameters: ', action.inputs);
@@ -412,6 +443,16 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.collision_aware    = false;
       action.inputs.frame_id           = "/base_footprint";
 
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
+
       action.execute();
       console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
@@ -427,6 +468,16 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.theta              = -0.60;
       action.inputs.collision_aware    = false;
       action.inputs.frame_id           = "/base_footprint";
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
 
       action.execute();
       console.log('Calling NavigateToPose action with parameters: ', action.inputs);
