@@ -12,12 +12,23 @@
 
 	<div id="main-container">
 	    {{#if isConnected}}
-		Click in the image to look there...<br>
 
 		<table>
 		  <tr>
 		    <td>
-		      <img width=400 height=300 {{bindAttr src="camera_url"}} {{action pointHeadClick target="controller"}}><br>
+			View from the camera in the robot's
+			{{view Ember.Select
+			    contentBinding="content.cameras"
+			    selectionBinding="content.selected_camera"
+			    optionLabelPath="content.name"
+			    optionValuePath="content.url"
+			    class="dropdown"}}:
+			{{#if selectedCameraIsHead}}
+			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
+			    Click in the image to look around<br>
+			{{else}}
+			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
+			{{/if}}
 		    </td>
 
 		    <td align="center">
