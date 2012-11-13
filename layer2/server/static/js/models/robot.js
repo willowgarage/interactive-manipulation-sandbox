@@ -32,14 +32,14 @@ function( Ember, DS, App, ROS, Action) {
     //  and makes them available to be queried by other helper methods
     camerasChanged: function() {
         var cameras = this.get('cameras');
-        cameras.forEach(function(camera){
+        cameras && cameras.forEach(function(camera){
             cameras[camera.name] = camera;
         });
     }.observes('cameras'),
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
-        return this.get('camera_base_url') + this.get('cameras')[name].url;
+        return this.get('camera_base_url') + (this.get('cameras') && this.get('cameras')[name].url);
     },
 
     status_code: 0,            //  Calculated in the client

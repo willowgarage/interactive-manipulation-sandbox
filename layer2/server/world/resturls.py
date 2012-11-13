@@ -32,5 +32,5 @@ urlpatterns = patterns('',
     url(r'^places/(?P<pk>[^/]+)/$', generics.RetrieveAPIView.as_view(model=Place)),
 
     url(r'^robots$', PrivateView.as_view(model=Robot,serializer_class=RobotSerializer)),
-    url(r'^robots/(?P<pk>[^/]+)/$', generics.RetrieveAPIView.as_view(model=Robot)),
+    url(r'^robots/(?P<pk>[^/]+)/$', generics.RetrieveAPIView.as_view(model=Robot,serializer_class=RobotSerializer)),
 )
