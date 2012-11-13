@@ -374,7 +374,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
 
-      action.inputs.x                  = 2.0;
+      action.inputs.x                  = 0.5;
       action.inputs.y                  = 0.0;
       action.inputs.theta              = 0.0;
       action.inputs.collision_aware    = false;
@@ -390,7 +390,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
 
-      action.inputs.x                  = -2.0;
+      action.inputs.x                  = -0.5;
       action.inputs.y                  = 0.0;
       action.inputs.theta              = 0.0;
       action.inputs.collision_aware    = false;
@@ -419,7 +419,7 @@ function( Ember, DS, App, ROS, Action) {
       this.set('progress_update', 'Turning right');
       var action = new Action({
         ros: this.ros,
-        name: 'MoveBase'
+        name: 'NavigateToPose'
       });
 
       action.inputs.x                  = 0.0;

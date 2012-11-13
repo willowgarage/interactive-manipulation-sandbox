@@ -276,9 +276,9 @@
     "pk": 16, 
     "model": "world.place", 
     "fields": {
-      "map_height": 38, 
+      "map_height": 27, 
       "description": "", 
-      "map_width": 27, 
+      "map_width": 38, 
       "tags": "weights treadmill", 
       "pose_x": 31.956,
       "pose_y": 53.580,
