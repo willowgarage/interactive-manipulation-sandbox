@@ -34,8 +34,10 @@ class NavigateToPose(State):
         x = userdata['x']
         y = userdata['y']
         theta = userdata['theta']
-        collision_aware = userdata['collision_aware']
-        if collision_aware == None:
+        try:
+            collision_aware = userdata['collision_aware']
+        except KeyError:
+            rospy.loginfo("setting missing input collision_aware to True")
             collision_aware = True
         
         #switch global and local planners and costmap params for move_base to be collision-aware or not
