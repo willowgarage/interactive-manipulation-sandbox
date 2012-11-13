@@ -15,8 +15,32 @@ function( Ember, DS, App, ROS, Action) {
     image: DS.attr('string'),
     state: DS.attr('number'),     //  Coming from the mid-tier, currently unused
     service_url: DS.attr('string'),
-    camera_url: DS.attr('string'),
-    forearm_camera_url: DS.attr('string'),
+    camera_base_url: DS.attr('string'),
+    cameras: DS.attr('string'),
+
+    //  Convenience pseudo-attribute function to get to the head camera
+    camera_url: function() {
+        return this.getCameraUrl('head');
+    }.property('cameras'),
+
+    //  Convenience pseudo-attribute function to get to the forearm
+    forearm_camera_url: function() {
+        return this.getCameraUrl('forearm');
+    }.property('cameras'),
+
+    //  This method parses the camera URLs every time they change
+    //  and makes them available to be queried by other helper methods
+    camerasChanged: function() {
+        var cameras = this.get('cameras');
+        cameras.forEach(function(camera){
+            cameras[camera.name] = camera;
+        });
+    }.observes('cameras'),
+
+    //  Helper method to get the URL for a given camera name
+    getCameraUrl: function(name) {
+        return this.get('camera_base_url') + this.get('cameras')[name].url;
+    },
 
     status_code: 0,            //  Calculated in the client
     status: function() {
