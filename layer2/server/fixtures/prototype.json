@@ -56,16 +56,16 @@
     "model": "world.place", 
     "fields": {
       "map_height": 33, 
-      "description": "Brandon Alexander javascript web framework", 
+      "description": "", 
       "map_width": 28, 
       "tags": "", 
-      "pose_x": 4.907, 
-      "pose_y": 23.903, 
+      "pose_x": 5.818, 
+      "pose_y": 23.091, 
       "image": "static/images/IMG_20120913_185023.jpg", 
-      "pose_angle": 2.652, 
+      "pose_angle": 2.415, 
       "map_x": 341, 
       "map_y": 339, 
-      "name": "Brandon's office"
+      "name": "Brandon/Binney/Adam's office"
     }
   }, 
   {
@@ -157,16 +157,16 @@
     "pk": 9, 
     "model": "world.place", 
     "fields": {
-      "map_height": null, 
+      "map_height": 28, 
       "description": "", 
-      "map_width": null, 
+      "map_width": 34, 
       "tags": "stefan nusser", 
       "pose_x": 39.553, 
       "pose_y": 50.261, 
       "image": "static/images/IMG_20120926_182001.jpg", 
       "pose_angle": 1.017, 
-      "map_x": null, 
-      "map_y": null, 
+      "map_x": 2, 
+      "map_y": 121, 
       "name": "Stefan's office"
     }
   }, 
@@ -174,16 +174,16 @@
     "pk": 10, 
     "model": "world.place", 
     "fields": {
-      "map_height": null, 
+      "map_height": 29, 
       "description": "", 
-      "map_width": null, 
+      "map_width": 33, 
       "tags": "leila takayama", 
       "pose_x": 43.915, 
       "pose_y": 48.195, 
       "image": "static/images/IMG_20120926_182006.jpg", 
       "pose_angle": 0.972, 
-      "map_x": null, 
-      "map_y": null, 
+      "map_x": 2, 
+      "map_y": 90, 
       "name": "Leila's office"
     }
   }, 
@@ -191,16 +191,16 @@
     "pk": 11, 
     "model": "world.place", 
     "fields": {
-      "map_height": null, 
+      "map_height": 39, 
       "description": "", 
-      "map_width": null, 
+      "map_width": 37, 
       "tags": "steve cousins ceo", 
       "pose_x": 47.376, 
       "pose_y": 46.716, 
       "image": "", 
       "pose_angle": 1.165, 
-      "map_x": null, 
-      "map_y": null, 
+      "map_x": 2, 
+      "map_y": 50, 
       "name": "Steve's office"
     }
   }, 
@@ -208,17 +208,17 @@
     "pk": 12, 
     "model": "world.place", 
     "fields": {
-      "map_height": null, 
+      "map_height": 34, 
       "description": "", 
-      "map_width": null, 
+      "map_width": 23, 
       "tags": "kaijen matei", 
-      "pose_x": 0.0, 
-      "pose_y": 0.0, 
+      "pose_x": 50.604, 
+      "pose_y": 42.586, 
       "image": "static/images/IMG_20120926_182016.jpg", 
-      "pose_angle": null, 
-      "map_x": null, 
-      "map_y": null, 
-      "name": "Kaijen's office"
+      "pose_angle": -0.504, 
+      "map_x": 66, 
+      "map_y": 4, 
+      "name": "Kaijen/Matei's office"
     }
   }, 
   {
@@ -235,7 +235,7 @@
       "pose_angle": 2.709, 
       "map_x": 280, 
       "map_y": 200, 
-      "name": "power outlet"
+      "name": "power outlet #2"
     }
   }, 
   {
@@ -252,7 +252,126 @@
       "pose_angle": 1.092, 
       "map_x": 300, 
       "map_y": 305, 
-      "name": "power outlet"
+      "name": "power outlet #1"
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 33, 
+      "description": "", 
+      "map_width": 28, 
+      "tags": "", 
+      "pose_x": 7.437,
+      "pose_y": 29.459,
+      "image": "static/images/IMG_20120926_175655.jpg", 
+      "pose_angle": 2.969,
+      "map_x": 310, 
+      "map_y": 338, 
+      "name": "Julius/David's office"
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 27, 
+      "description": "", 
+      "map_width": 38, 
+      "tags": "weights treadmill", 
+      "pose_x": 31.956,
+      "pose_y": 53.580,
+      "image": "", 
+      "pose_angle": 1.235,
+      "map_x": 2, 
+      "map_y": 222, 
+      "name": "Exercise room"
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 32, 
+      "description": "", 
+      "map_width": 63, 
+      "tags": "conference room fishtank", 
+      "pose_x": 43.069,
+      "pose_y": 23.482,
+      "image": "", 
+      "pose_angle": -0.228,
+      "map_x": 184, 
+      "map_y": 4, 
+      "name": "Tank"
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 40, 
+      "description": "", 
+      "map_width": 49, 
+      "tags": "bicycles", 
+      "pose_x": 17.107,
+      "pose_y": 55.021,
+      "image": "", 
+      "pose_angle": 2.058,
+      "map_x": 43, 
+      "map_y": 331, 
+      "name": "Bike racks"
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 23, 
+      "description": "", 
+      "map_width": 28, 
+      "tags": "", 
+      "pose_x": 9.878,
+      "pose_y": 37.502,
+      "image": "", 
+      "pose_angle": 1.204,
+      "map_x": 220, 
+      "map_y": 348, 
+      "name": "Office #132"
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 24, 
+      "description": "", 
+      "map_width": 30, 
+      "tags": "", 
+      "pose_x": 12.681,
+      "pose_y": 44.087,
+      "image": "", 
+      "pose_angle": 0.436,
+      "map_x": 154, 
+      "map_y": 312, 
+      "name": "Office #124"
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 32, 
+      "description": "", 
+      "map_width": 29, 
+      "tags": "", 
+      "pose_x": 38.827,
+      "pose_y": 13.746,
+      "image": "", 
+      "pose_angle": -1.977,
+      "map_x": 300, 
+      "map_y": 4, 
+      "name": "Suzanne/Jef's office"
     }
   }, 
   {
@@ -343,6 +462,21 @@
       "service_url": "ws://blh.willowgarage.com:9099/", 
       "public": true, 
       "name": "SimPR2 on BLH"
+    }
+  },
+  {
+    "pk": 7, 
+    "model": "world.robot", 
+    "fields": {
+      "camera_url": "http://localhost:8080/stream?topic=/wide_stereo_throttled/image", 
+      "description": "Simulated PR-2 robot running on localhost", 
+      "forearm_camera_url": "http://localhost:8080/stream?topic=/r_forearm_cam_throttled/image", 
+      "tags": "", 
+      "image": "static/images/screenshot1.png", 
+      "state": 0, 
+      "service_url": "ws://localhost:9099/", 
+      "public": true, 
+      "name": "SimPR2 on localhost"
     }
   } 
 ]

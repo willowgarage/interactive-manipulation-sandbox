@@ -36,7 +36,7 @@ class ExecuterServer:
             }
 
         self.sm = None
-
+        
     def start(self):
         rospy.loginfo('Starting Executer server')
         self.actionlib_server.start()
