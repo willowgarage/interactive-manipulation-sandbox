@@ -53,8 +53,6 @@ class NavigateToPose(State):
             
             costmap_config = '''/local_costmap "{'max_obstacle_height': 0.36, 'inflation_radius': 0.01 }" '''
 
-        rospy.loginfo("call string: " + reconfig_str + move_base_config)
-        rospy.loginfo("call string2: " + reconfig_str + costmap_config)
         error = subprocess.call(reconfig_str + move_base_config, shell=True)
         if error:
             rospy.logerr("navigate_to_pose: dynamic reconfigure for move_base_node failed!")
