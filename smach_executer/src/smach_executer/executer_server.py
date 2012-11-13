@@ -28,7 +28,6 @@ class ExecuterServer:
         self.actions = {
             'Dummy': Dummy,
             'NavigateToPose': NavigateToPose,
-            'MoveBase': MoveBase,
             'PlugIn': PlugIn,
             'Unplug': Unplug,
             'TuckArms': TuckArms,

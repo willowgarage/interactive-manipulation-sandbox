@@ -212,9 +212,11 @@ function( Ember, DS, App, ROS, Action) {
         App.get('router').send("navigate", _this);
       });
   
+      // Actually send the navigation command
       action.inputs.x        = place.get('pose_x');
       action.inputs.y        = place.get('pose_y');
       action.inputs.theta    = place.get('pose_angle');
+      action.inputs.collision_aware    = true;
       action.inputs.frame_id = '/map';
       console.log("Sending navigation action:", action.inputs);
       action.execute();
@@ -311,7 +313,7 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.pointing_y          = 0.0;
       action.inputs.pointing_z          = 1.0;
       action.execute();
-      console.log('Calling PointHead action');
+      console.log('Calling PointHead action', action.inputs);
     },
 
     pointHead: function(x, y, z) {
@@ -330,7 +332,7 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.pointing_y          = 0;
       action.inputs.pointing_z          = 0;
       action.execute();
-      console.log('Calling PointHead action with ' + x + '/' + y + '/' + z);
+      console.log('Calling PointHead action', action.inputs);
     },
 
     plugIn: function() {
@@ -372,40 +374,49 @@ function( Ember, DS, App, ROS, Action) {
       this.set('progress_update', 'Moving forward');
       var action = new Action({
         ros: this.ros,
-        name: 'MoveBase'
+        name: 'NavigateToPose'
       });
 
-      action.inputs.x        = 1.0;
-      action.inputs.y        = 0.0;
-      action.inputs.theta    = 0.0;
+      action.inputs.x                  = 2.0;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = 0.0;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
       action.execute();
-      console.log('Calling MoveBase action');
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
     moveBack: function() {
       this.set('progress_update', 'Moving backward');
       var action = new Action({
         ros: this.ros,
-        name: 'MoveBase'
+        name: 'NavigateToPose'
       });
 
-      action.inputs.x        = -1.0;
-      action.inputs.y        = 0.0;
-      action.inputs.theta    = 0.0;
+      action.inputs.x                  = -2.0;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = 0.0;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
       action.execute();
-      console.log('Calling MoveBase action');
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
     turnLeft: function() {
       this.set('progress_update', 'Turning left');
       var action = new Action({
         ros: this.ros,
-        name: 'MoveBase'
+        name: 'NavigateToPose'
       });
 
-      action.inputs.x        = 0.0;
-      action.inputs.y        = 0.0;
-      action.inputs.theta    = -1.0;
+      action.inputs.x                  = 0.0;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = 0.60;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
       action.execute();
-      console.log('Calling MoveBase action');
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
     turnRight: function() {
       this.set('progress_update', 'Turning right');
@@ -414,11 +425,14 @@ function( Ember, DS, App, ROS, Action) {
         name: 'MoveBase'
       });
 
-      action.inputs.x        = 0.0;
-      action.inputs.y        = 0.0;
-      action.inputs.theta    = 1.0;
+      action.inputs.x                  = 0.0;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = -0.60;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
       action.execute();
-      console.log('Calling MoveBase action');
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
 
   });
