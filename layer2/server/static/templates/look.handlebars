@@ -11,36 +11,51 @@
   </div>
 
 	<div id="main-container">
-	    Click in the image to look there...<br>
+	    {{#if isConnected}}
 
-            <table>
-              <tr>
-                <td>
-	          <img width=400 height=300 {{bindAttr src="camera_url"}} {{action pointHeadClick target="controller"}}><br>
-                </td>
+		<table>
+		  <tr>
+		    <td>
+			View from the camera in the robot's
+			{{view Ember.Select
+			    contentBinding="content.cameras"
+			    selectionBinding="content.selected_camera"
+			    optionLabelPath="content.name"
+			    optionValuePath="content.url"
+			    class="dropdown"}}:
+			{{#if selectedCameraIsHead}}
+			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
+			    Click in the image to look around<br>
+			{{else}}
+			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
+			{{/if}}
+		    </td>
 
-                <td>
-		  Move base
-                  <table class="joypad">
-                    <tr>
-                      <td></td>
-                      <td><img src="static/img/go-forward.jpg" {{action moveForward target="controller"}}></div></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td><img src="static/img/turn-left.jpg" {{action turnLeft target="controller"}}></div></td>
-                      <td></td>
-                      <td><img src="static/img/turn-right.jpg" {{action turnRight target="controller"}}></div></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td><img src="static/img/go-backwards.jpg" {{action moveBack target="controller"}}></div></td>
-                      <td></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
+		    <td align="center">
+		      Move base
+		      <table class="joypad">
+			<tr>
+			  <td></td>
+			  <td><img src="static/img/go-forward.jpg" {{action moveForward target="controller"}}></div></td>
+			  <td></td>
+			</tr>
+			<tr>
+			  <td><img src="static/img/turn-left.jpg" {{action turnLeft target="controller"}}></div></td>
+			  <td></td>
+			  <td><img src="static/img/turn-right.jpg" {{action turnRight target="controller"}}></div></td>
+			</tr>
+			<tr>
+			  <td></td>
+			  <td><img src="static/img/go-backwards.jpg" {{action moveBack target="controller"}}></div></td>
+			  <td></td>
+			</tr>
+		      </table>
+		    </td>
+		  </tr>
+		</table>
+	    {{else}}
+	    Robot not connected; no controls available
+	    {{/if}}
 
 	</div>
 </div>

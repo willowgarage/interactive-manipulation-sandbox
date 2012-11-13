@@ -18,6 +18,17 @@ function( Ember, DS, App, ROS, Action) {
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
 
+    // Attributes for keeping track of which camera the user wants to look through
+    selected_camera: null,
+    selectedCameraIsHead: function() {
+      console.log('checking whether selected camera is head', this.get('selected_camera'));
+      if (this.get('selected_camera') && this.get('selected_camera').name == "head") {
+        return true;
+      } else {
+        return false;
+      }
+    }.property('selected_camera'),
+
     //  Convenience pseudo-attribute function to get to the head camera
     camera_url: function() {
         return this.getCameraUrl('head');
@@ -32,14 +43,16 @@ function( Ember, DS, App, ROS, Action) {
     //  and makes them available to be queried by other helper methods
     camerasChanged: function() {
         var cameras = this.get('cameras');
+        var camera_base_url = this.get('camera_base_url');
         cameras && cameras.forEach(function(camera){
             cameras[camera.name] = camera;
+            camera.url = camera_base_url + camera.url;
         });
     }.observes('cameras'),
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
-        return this.get('camera_base_url') + (this.get('cameras') && this.get('cameras')[name].url);
+        return (this.get('cameras') && this.get('cameras')[name].url);
     },
 
     status_code: 0,            //  Calculated in the client
