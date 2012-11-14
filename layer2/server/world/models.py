@@ -15,6 +15,12 @@ class Place(models.Model):
     map_width = models.IntegerField(blank=True,null=True)
     map_height = models.IntegerField(blank=True,null=True)
 
+class Camera(models.Model):
+    name = models.CharField(max_length=64)
+    url = models.CharField(max_length=512)
+    def __unicode__(self):
+        return self.url
+
 class Robot(models.Model):
     name = models.TextField()
     tags = models.TextField(blank=True,null=True)
@@ -32,8 +38,10 @@ class Robot(models.Model):
     #service_url = models.URLField(verify_exists=False)     # URL to robot's rosbridge instance
     #camera_url = models.URLField(verify_exists=False)      # URL to mjpeg output for Robot's camera
     service_url = models.CharField(max_length=512)     # URL to robot's rosbridge instance
-    camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's camera
-    forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera
+#    camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's camera
+#    forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera
+    camera_base_url = models.CharField(max_length=128)
+    cameras = models.ManyToManyField(Camera)
 
 class Client(models.Model):
     '''Represents a client (browser) connected to the server and it's state'''
