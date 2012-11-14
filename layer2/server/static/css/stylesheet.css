@@ -198,7 +198,9 @@ a {
 {
    background-color: #f2f2f2;
    padding: 20px 10px;
-   overflow: auto;
+   /* TL: this causes extra right-margin space inside the tab box, I don't
+	* know why */
+/*   overflow: auto; */
 }
 #tab-container
 {
