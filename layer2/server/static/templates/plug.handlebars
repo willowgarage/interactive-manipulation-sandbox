@@ -31,13 +31,15 @@
         </tr>
       </table>
 
-      {{#if is_plugging_in}}
-      {{else}}
-        {{#if plugged_in}}
-        <div class="mybutton" {{action unplug target="controller"}}>Unplug</div>
-        {{else}}
-        <div class="mybutton" {{action plugIn target="controller"}}>Plug in</div>
-        {{/if}}
+      {{#if isConnected}}
+	{{#if is_plugging_in}}
+	{{else}}
+	  {{#if plugged_in}}
+	  <div class="mybutton" {{action unplug target="controller"}}>Unplug</div>
+	  {{else}}
+	  <div class="mybutton" {{action plugIn target="controller"}}>Plug in</div>
+	  {{/if}}
+	{{/if}}
       {{/if}}
 
     </div>
