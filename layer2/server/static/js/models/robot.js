@@ -21,7 +21,6 @@ function( Ember, DS, App, ROS, Action) {
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
     selectedCameraIsHead: function() {
-      console.log('checking whether selected camera is head', this.get('selected_camera'));
       if (this.get('selected_camera') && this.get('selected_camera').name == "head") {
         return true;
       } else {
