@@ -42,6 +42,7 @@ function(
   ApplicationView,
   NavigatingView,
   RobotsView,
+  MapView,
   RobotView,
   PlugView,
   NavigateView,
