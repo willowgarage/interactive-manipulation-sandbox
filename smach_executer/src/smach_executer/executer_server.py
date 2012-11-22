@@ -57,7 +57,7 @@ class ExecuterServer:
         try:
             action_dict = json.loads(goal.action)
         except KeyError as e:
-            rospy.logerr('Unable to parse json string (%s)' % (str(e),))
+            rospy.logerr('Unable to parse json string (%s)' % str(e))
             result = ExecuteResult()
             result.retval = result.RETVAL_PARSE_ERROR
             result.error_string = str(e)
@@ -66,7 +66,7 @@ class ExecuterServer:
 
         # execute the action
         try:
-            outcome = self.execute_action(action_dict)
+            (outcome, outputs) = self.execute_action(action_dict)
         except ValueError as e:
             rospy.logerr('Runtime error while executing state machine: %s' % str(e))
             traceback.print_exc()
@@ -83,7 +83,11 @@ class ExecuterServer:
         # finished successfully (even though the action itself may have failed)
         result = ExecuteResult()
         result.retval = result.RETVAL_SUCCESS
-        result.outcome = outcome
+        try:
+            result.outcome = json.dumps(outcome)
+        except Exception as e:
+            rospy.logerr("Unable to dump outcome to json string: %s"%str(e))
+        result.outputs = outputs
         self.actionlib_server.set_succeeded(result)
         return
             
@@ -96,7 +100,10 @@ class ExecuterServer:
         sis = smach_ros.IntrospectionServer('executer_server_introspection', self.sm, '/EXECUTER_SERVER')
         sis.start()
         outcome = self.sm.execute()
-
+        outputs = ""
+        if "outputs" in sm.get_registered_output_keys():
+            outputs = sm.userdata.outputs
+            
         # state machine executed successfully; return outcome
         rospy.loginfo('State machine executed successfully with outcome: %s' % outcome)
-        return outcome
+        return (outcome, outputs)
