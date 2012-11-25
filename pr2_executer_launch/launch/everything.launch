@@ -1,9 +1,11 @@
 <launch>
   <arg name="throttle_cameras" default="true" />
   <arg name="run_sim" default="false" />
+  <arg name="im" default="false" />
 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="run_sim" value="$(arg run_sim)" />
+	<arg name="im" value="$(arg im)" />
   </include>
 
   <!-- rosbridge and mjpeg_server -->
