@@ -1,20 +1,28 @@
 <launch>
-    <!-- assumes Kinect frame names end in _rgb_optical_frame and _ir_optical_frame -->
-    <arg name="kinect_frame_prefix" default="/head_mount_kinect" />  
-    <arg name="kinect_camera_name" default="head_mount_kinect" />
-    <arg name="stereo" default="false"/>
     <arg name="run_sim" default="false" />
+    <arg name="im" default="false" />
 
     <!-- executer server -->
     <node pkg="smach_executer" type="executer" name="executer"/>
 
     <!-- PR2 plugs -->
-    <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
-    <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
-        <arg name="run_sim" value="$(arg run_sim)" />
-    </include>
+    <group unless="$(arg run_sim)">
+        <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
+        <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
+            <arg name="run_sim" value="$(arg run_sim)" />
+        </include>	 
+    </group>
 
-    <group>
+    <group if="$(arg im)">
+         <include file="$(find pr2_interactive_manipulation)/launch/pr2_interactive_manipulation_robot.launch">
+              <arg name="sim" value="$(arg run_sim)" />
+              <arg name="throttle_cameras" value="false" />
+              <arg name="nav" value="true" />
+              <arg name="plugs" value="false" />
+         </include>
+    </group>
+
+    <group unless="$(arg im)">
         <!-- navigation with a map -->
         <include file="$(find pr2_2dnav)/pr2_2dnav.launch"/>
 
