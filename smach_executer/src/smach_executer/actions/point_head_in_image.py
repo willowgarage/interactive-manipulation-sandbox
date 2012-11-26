@@ -44,8 +44,8 @@ class PointHeadInImage(State):
         v = y * camera_info.height
         point = Point()
         point.z = 1.0
-        point.x = (u - cx) * point.z / fx;
-        point.y = (v - cy) * point.z / fy;
+        point.x = (u - cx) * point.z / fx
+        point.y = (v - cy) * point.z / fy
         return point
                        
     def execute(self, userdata):

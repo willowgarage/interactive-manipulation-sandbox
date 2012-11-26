@@ -86,10 +86,10 @@ class ExecuterServer:
         result = ExecuteResult()
         result.retval = result.RETVAL_SUCCESS
         try:
-            result.outcome = json.dumps(outcome)
+            result.outputs = json.dumps(outputs)
         except Exception as e:
-            rospy.logerr("Unable to dump outcome to json string: %s"%str(e))
-        result.outputs = outputs
+            rospy.logerr("Unable to dump outputs to json string: %s"%str(e))
+        result.outcome = outcome
         self.actionlib_server.set_succeeded(result)
         return
             
@@ -103,9 +103,13 @@ class ExecuterServer:
         sis.start()
         outcome = self.sm.execute()
         outputs = ""
-        if "outputs" in sm.get_registered_output_keys():
-            outputs = sm.userdata.outputs
-            
+        registered_output_keys = self.sm.get_registered_output_keys()
+        rospy.loginfo("registered output keys: %s"%str(registered_output_keys))
+        if "outputs" in self.sm.get_registered_output_keys():
+            outputs = self.sm.userdata.outputs
+        else:
+            rospy.loginfo("no outputs in state's registered output keys")
+
         # state machine executed successfully; return outcome
         rospy.loginfo('State machine executed successfully with outcome: %s' % outcome)
         return (outcome, outputs)
