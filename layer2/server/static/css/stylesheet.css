@@ -59,10 +59,10 @@ a {
     opacity: 1;
 }
 .outlet:hover {
-    outline: gray solid;
+	outline: solid medium gray;
 }
 .outlet.selected {
-    outline: gray solid;
+	outline: solid medium gray;
 }
 
 /* To draw robots in the map */
@@ -229,7 +229,7 @@ a {
    color: #666;
    display: block;
    /* This controls the height of the navbar tabs */
-   padding: 40px 5px;
+   padding: 30px 5px;
 }
 #tab-container ul li:hover
 {
