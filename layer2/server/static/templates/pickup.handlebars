@@ -1,0 +1,28 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li><a {{action navigate content}}> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+        <li><a {{action look content}}> Look </a></li>
+        <li class="tabselected"><a> Pick up </a></li>
+        <li><a {{action markers content}}> Markers </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
+    <div class="content">
+
+	<table>
+	    <tr>
+              <td><img src="/static/img/noImageFound.png"></td>
+	      <td> Please wait, detecting objects...<br>
+              (not implemented yet)
+	    </tr>
+	</table>
+
+    </div>
+  </div>
+
+</div>

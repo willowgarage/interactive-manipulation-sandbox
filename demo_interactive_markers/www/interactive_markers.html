@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Interactive Marker Demo</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+			
+			.info {
+				position: absolute;
+				background-color: black;
+				opacity: 0.8;
+				color: white;
+				text-align: center;
+				top: 0px;
+				width: 100%;
+			}
+			
+			.info a {
+				color: #00ffff;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container"></div>
+
+    <script src="include/ros_bundle.js"></script>
+    <script src="include/three.js"></script>
+	
+    <script src="helpers/RosAxisHelper.js"></script>
+    <script src="helpers/RosOrbitControls.js"></script>
+    
+    <script src="interact3d/interact3d.js"></script>
+    <script src="interact3d/MouseHandler.js"></script>
+
+    <!-- <script src="interactive_markers/Client.js"></script>            -->
+    <!-- <script src="interactive_markers/InteractiveMarker.js"></script> -->
+    
+    <script src="markers/MarkerHelper.js"></script>
+    <script src="markers/ArrowMarkerHelper.js"></script>
+    <script src="markers/TriangleListMarkerHelper.js"></script>
+    
+    <script src="interactive_markers_threejs/InteractiveMarkerManager.js"></script>
+    <script src="interactive_markers_threejs/InteractiveMarker.js"></script>
+    <script src="interactive_markers_threejs/InteractiveMarkerControl.js"></script>
+    
+    <script src="InteractiveMarkers.js"></script>
+		<script src="interactive_marker_demo.js"></script>
+
+	</body>
+</html>
+

@@ -1,5 +1,11 @@
 # Django settings for layer project.
 
+# NOTE: The settings you configure here are going to be deployed on babylon1
+# If you want to change a setting in your own local development environment
+# or on a test server you're running, please create a file named
+# local_settings.py in the layer/ directory and override any settings you
+# need in that file
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -17,7 +23,7 @@ DATABASES = {
         'NAME': 'rwt',                     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': 'babylon1.willowgarage.com', # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -29,13 +35,13 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Los_Angeles'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
+SITE_ID = "506384d49932933347a03820"
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -52,7 +58,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -74,6 +80,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    "/home/rwt/layer/static/",
 )
 
 # List of finder classes that know how to find static files in
@@ -108,7 +115,31 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    '/home/rwt/layer/templates'
 )
+
+AUTHENTICATION_BACKENDS = (
+    'layer.auth.HackedOpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+OPENID_UPDATE_DETAILS_FROM_SREG = True
+OPENID_CREATE_USERS = True
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
+# The actual URL for authentication using Google Apps (Willow Garage Domain, not Google or any other)
+# is the following one:
+# OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=willowgarage.com'
+# but it fails in the underlying python-openid layer with:
+# 
+#   Error attempting to use stored discovery information: <openid.consumer.consumer.TypeURIMismatch: Required type http://specs.openid.net/auth/2.0/signon not found in ['http://specs.openid.net/auth/2.0/server', 'http://openid.net/srv/ax/1.0', 'http://specs.openid.net/extensions/ui/1.0/mode/popup', 'http://specs.openid.net/extensions/ui/1.0/icon', 'http://specs.openid.net/extensions/pape/1.0'] for endpoint <openid.consumer.discover.OpenIDServiceEndpoint server_url='https://www.google.com/a/willowgarage.com/o8/ud?be=o8' claimed_id=None local_id=None canonicalID=None used_yadis=True >>
+#   Attempting discovery to verify endpoint
+#   Performing discovery on http://willowgarage.com/openid?id=117302733910584657424
+#
+# and then it times out
+#
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -118,9 +149,19 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_mongodb_engine',
+
+    # Other dependencies
+    'djangorestframework',
+    'django_openid_auth',
+    'ember',
+
+    # Layer applications
+    'layer.world',
+    'layer.robotman',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -145,3 +186,12 @@ LOGGING = {
         },
     }
 }
+
+from django.template import add_to_builtins
+add_to_builtins('ember.templatetags.ember')
+
+try:
+    from layer.local_settings import *
+    print "Using settings from local_settings.py"
+except ImportError:
+    print "Local settings not found.\nNOTE: If you want to override django settings for this particular computer, please create a local_settings.py file in your root django directory and perform any desired configuration there"

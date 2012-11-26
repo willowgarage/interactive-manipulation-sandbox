@@ -1,0 +1,25 @@
+<table width="90%">
+<tr>
+<td> <div class="chart" id="floorplan-div"></div> </td>
+
+<td class="chart_column">
+    <div id="navigation_panel">
+      <div>Robot closest to:<br>
+        <span id="closest">&nbsp;</span></div>
+      <div class="placeinfo">Selected location:<br>
+        <span id="placename">&nbsp;</span></div>
+      <div class="placeinfo">Estimated time:</b><br>
+        <span class="tbd" id="distance">unknown</span></div>
+
+	
+      {{#if robot.isConnected}}
+	  {{#if robot.plugged_in}}
+	    <div class="navigate_button button" {{action plug robot}}>Unplug</div>
+	  {{else}}
+	    <div class="navigate_button button" {{action navigateTo}}>Go!</div>
+	  {{/if}}
+      {{/if}}
+    </div>
+</td>
+</tr>
+</table>
