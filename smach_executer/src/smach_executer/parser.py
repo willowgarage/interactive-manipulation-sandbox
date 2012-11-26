@@ -27,10 +27,11 @@ def create_state_machine_from_action_dict(action_dict, actions):
 
     # create state machine wrapper and set inputs
     outcomes = action.get_registered_outcomes()
+    outputs = action.get_registered_output_keys()
     sm = smach.StateMachine(outcomes)
     for input_name in action_inputs:
         sm.userdata[input_name] = action_inputs[input_name]
-
+    sm.register_output_keys(outputs)
     # add this one action to the wrapper state machine
 
     transitions = {}
