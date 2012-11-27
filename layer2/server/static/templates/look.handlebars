@@ -23,12 +23,12 @@
 			    selectionBinding="content.selected_camera"
 			    optionLabelPath="content.name"
 			    optionValuePath="content.url"
-			    class="dropdown"}}:
+			    class="dropdown"}}:<br>
 			{{#if selectedCameraIsHead}}
-			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
+			  <video width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
 			    Click in the image to look around<br>
 			{{else}}
-			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
+			  <video width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
 			{{/if}}
 		    </td>
 
