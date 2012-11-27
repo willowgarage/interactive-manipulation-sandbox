@@ -35,7 +35,7 @@ function( Ember, DS, App, ROS, Action) {
 
     //  Convenience pseudo-attribute function to get to the forearm
     forearm_camera_url: function() {
-        return this.getCameraUrl('forearm');
+        return this.getCameraUrl('right arm');
     }.property('cameras'),
 
     //  This method parses the camera URLs every time they change
@@ -299,7 +299,7 @@ function( Ember, DS, App, ROS, Action) {
           // Unplug worked, now tuck arms
           _this._tuckArms(function() {
             _this._pointHeadForward(function() {
-              this.set('progress_update', 'Unplugging successful');
+              _this.set('progress_update', 'Unplugging successful');
               _this.set('is_plugging_in', false);
             });
           }, onError);
@@ -538,6 +538,30 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
       console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
+
+		// ----------------------------------------------------------------------
+		// Manipulating objects in the world
+
+		segmentAndRecognize: function(pickupController) {
+      this.set('progress_update', 'Identifying objects in view');
+      var action = new Action({
+        ros: this.ros,
+        name: 'SegmentAndRecognize'
+      });
+
+      var _this = this;
+      action.on("result", function(result) {
+				console.log("Result from SegmentAndRecognize:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Failed to identify objects');
+        }
+      });
+
+      action.execute();
+		},
 
   });
 });

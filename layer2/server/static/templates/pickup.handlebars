@@ -16,9 +16,11 @@
 
 	<table>
 	    <tr>
-              <td><img src="/static/img/noImageFound.png"></td>
-	      <td> Please wait, detecting objects...<br>
-              (not implemented yet)
+              <td>
+		What the robot sees:<br>
+		<video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="camera_url"}}></video><br>
+	      </td>
+	      <td> <div class="button" {{action segmentAndRecognize target="controller"}}>Find objects</div>
 	    </tr>
 	</table>
 
