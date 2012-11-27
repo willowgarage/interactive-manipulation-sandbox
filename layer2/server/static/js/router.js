@@ -117,7 +117,6 @@ function(
 
         /* Initialize the "navigate" state */
         connectOutlets: function(router, context) {
-		  console.log("### In Navigate state");
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
@@ -164,7 +163,6 @@ function(
         pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
-		  console.log("### In Plug state");
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
@@ -194,7 +192,6 @@ function(
         pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
-		  console.log("### In Look state");
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
@@ -262,19 +259,15 @@ function(
         pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
-		  console.log("### In Markers state");
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
               id = App.router.currentState.client.get('id');
-			  console.log("id:", id);
               App.store.get("_adapter").find(App.store,App.Client,id);
             }, 1000*10);
           }
 
-		  console.log("setting up views");
-		  var robot = App.Robot.find(context.id);
-		  console.log("Robot:", robot);
+          this.client = App.Client.find('robot:'+context.id);
           router.get('applicationController')
             .connectOutlet('content', 'robot', App.Robot.find(context.id));
           router.get('robotController').
@@ -294,7 +287,6 @@ function(
         markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
-		  console.log("### In Pickup state");
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
