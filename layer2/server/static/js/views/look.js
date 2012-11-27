@@ -5,7 +5,8 @@ define([
 ], function( Ember, App, lookHtml) {
 
     App.LookView = Ember.View.extend({
-        template: Ember.Handlebars.compile(lookHtml)
+      template: Ember.Handlebars.compile(lookHtml)
+
     });
 
 });
