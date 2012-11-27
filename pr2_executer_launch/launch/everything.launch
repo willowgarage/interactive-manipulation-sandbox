@@ -1,9 +1,11 @@
 <launch>
   <arg name="throttle_cameras" default="true" />
   <arg name="run_sim" default="false" />
+  <arg name="im" default="false" />
 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="run_sim" value="$(arg run_sim)" />
+	<arg name="im" value="$(arg im)" />
   </include>
 
   <!-- rosbridge and mjpeg_server -->
@@ -24,8 +26,10 @@
   </node>
 
   <!-- run image_rotate for both forearm camera images -->
-  <node type="image_rotate" name="l_forearm_image_rotate" pkg="image_rotate" args="image:=l_forearm_cam/image_color rotated/image:=l_forearm_cam/image_color_rotated"/>
-  <node type="image_rotate" name="r_forearm_image_rotate" pkg="image_rotate" args="image:=r_forearm_cam/image_color rotated/image:=r_forearm_cam/image_color_rotated"/>
+  <group unless="$(arg im)">
+      <node type="image_rotate" name="l_forearm_image_rotate" pkg="image_rotate" args="image:=l_forearm_cam/image_color rotated/image:=l_forearm_cam/image_color_rotated"/>
+      <node type="image_rotate" name="r_forearm_image_rotate" pkg="image_rotate" args="image:=r_forearm_cam/image_color rotated/image:=r_forearm_cam/image_color_rotated"/>
+  </group>
 
   <!-- camera throttling -->
   <group if="$(arg throttle_cameras)">

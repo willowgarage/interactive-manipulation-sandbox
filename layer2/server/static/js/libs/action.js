@@ -15,7 +15,7 @@
 
     action.execute = function() {
 
-      var actionClient = new ActionClient({
+      action.actionClient = new ActionClient({
         ros        : action.ros,
         actionName : 'executer_actions/ExecuteAction',
         serverName : '/executer/execute'
@@ -26,23 +26,41 @@
         inputs : action.inputs
       };
       var serializedData = JSON.stringify(data);
-      var goal = new actionClient.Goal({
+      action.goal = new action.actionClient.Goal({
         action : serializedData
       });
 
-      goal.on('result', function(result) {
+      action.goal.on('result', function(result) {
         action.emit('result', result);
       });
 
-      goal.on('status', function(status) {
+      action.goal.on('status', function(status) {
         action.emit('status', status);
       });
 
-      goal.on('feedback', function(feedback) {
+      action.goal.on('feedback', function(feedback) {
         action.emit('feedback', feedback);
       });
 
-      goal.send();
+      action.goal.send();
+    },
+
+    action.cancel = function() {
+      if (action.goal) {
+        action.goal.cancel();
+      } else {
+        action.cancelAll();
+      }
+    },
+
+    action.cancelAll = function() {
+      var actionClient = new ActionClient({
+        ros         : action.ros,
+        actionName : 'executer_actions/ExecuteAction',
+        serverName : '/executer/execute'
+      });
+
+      actionClient.cancel();
     }
   };
   Action.prototype.__proto__ = EventEmitter2.prototype;

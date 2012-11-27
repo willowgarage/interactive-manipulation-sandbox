@@ -1,5 +1,6 @@
 body {
    font-family: Helvetica, Arial, Sans-Serif;
+   margin-top: 0px;
 }
 
 a {
@@ -58,10 +59,10 @@ a {
     opacity: 1;
 }
 .outlet:hover {
-    outline: gray solid;
+	outline: solid medium gray;
 }
 .outlet.selected {
-    outline: gray solid;
+	outline: solid medium gray;
 }
 
 /* To draw robots in the map */
@@ -123,7 +124,7 @@ a {
 }
 
 .robot_map {
-	margin: 0px 50px 0px 50px;
+	margin: 0px 0px 0px 50px;
 }
 
 /* The brown robot info box at the top right of the screen */
@@ -197,7 +198,9 @@ a {
 {
    background-color: #f2f2f2;
    padding: 20px 10px;
-   overflow: auto;
+   /* TL: this causes extra right-margin space inside the tab box, I don't
+	* know why */
+/*   overflow: auto; */
 }
 #tab-container
 {
@@ -226,7 +229,7 @@ a {
    color: #666;
    display: block;
    /* This controls the height of the navbar tabs */
-   padding: 40px 5px;
+   padding: 30px 5px;
 }
 #tab-container ul li:hover
 {
@@ -289,6 +292,7 @@ a {
 	border: 1px solid;
 	text-align: center;
 	padding: 10px;
+	margin-bottom: 10px;
 }
 
 .progress_update {

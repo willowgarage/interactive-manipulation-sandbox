@@ -1,114 +1,131 @@
-(function (THREE) {
+(function(THREE) {
 
-var container;
-var camera, controls, scene0, scene1, renderer;
-var pickingData = [], pickingTexture, pickingScene;
-var objects = [];
-var highlightBox;
+  var container;
+  var camera, cameraControls, scene0, scene1, hoverScene, renderer;
+  var pickingData = [], pickingTexture, pickingScene;
+  var objects = [];
+  var highlightBox;
 
-var directionalLight;
+  var directionalLight;
 
-var mouse = new THREE.Vector2(), offset = new THREE.Vector3(10, 10, 10);
+  var mouseHandler;
 
-init();
-animate();
+  var mouse = new THREE.Vector2(), offset = new THREE.Vector3(10, 10, 10);
 
-function init() {
+  init();
+  animate();
 
-  //////////////////////////////////////////////////
+  var INTERSECTED, INTERSECTION, DRAGGING;
 
-  container = document.getElementById("container");
+  var imc, imm;
 
-  // setup camera
-  camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
-  camera.position.x = 3;
-  camera.position.y = 3;
-  camera.position.z = 3;
+  var hoverObjs = [];
 
-  // setup camera mouse control
-  controls = new THREE.RosOrbitControls(camera);
+  function init() {
 
-  // setup scene
-  scene0 = new THREE.Scene();
-  scene1 = new THREE.Scene();
+    // ////////////////////////////////////////////////
 
-  //scene0.eulerOrder = 'YXZ';
+    container = document.getElementById("container");
 
-  //scene0.scale.x=-1;
-  //scene0.scale.y=-1;
-  
-  scene0.add( directionalLight );
+    // setup camera
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
+    camera.position.x = 3;
+    camera.position.y = 3;
+    camera.position.z = 3;
 
-  // add lights
-  //scene0.add(new THREE.AmbientLight(0x555555));
-  directionalLight = new THREE.DirectionalLight( 0xffffff );
-  
-  // attach light to camera
-  scene0.add( directionalLight );
+    projector = new THREE.Projector();
 
-  var numCells=50;
-  var gridGeom = new THREE.PlaneGeometry( numCells, numCells, numCells, numCells );
-  var gridMaterial = new THREE.MeshBasicMaterial({ color: 0x999999 });
-  gridMaterial.wireframe=true;
-  gridMaterial.wireframeLinewidth=1;
-  var gridObj = new THREE.Mesh( gridGeom, gridMaterial );
-  scene0.add( gridObj );
-  
-  // add coordinate frame visualization
-  //axes = new THREE.AxisHelper();
-  //axes.scale.x=axes.scale.y=axes.scale.z=0.01;
-  //scene1.add(axes);
-  axes = new THREE.Axes();
-  scene0.add(axes);
+    // setup scene
+    scene0 = new THREE.Scene();
+    scene1 = new THREE.Scene();
 
-  imc = new THREE.InteractiveMarkerClient( 'ws://localhost:9090', '/basic_controls' );
-  scene0.add(imc);
+    // setup camera mouse control
+    cameraControls = new THREE.RosOrbitControls(camera);
 
-  renderer = new THREE.WebGLRenderer({
-    antialias : false
-  });
+    // add lights
+    scene0.add(new THREE.AmbientLight(0x555555));
+    directionalLight = new THREE.DirectionalLight(0xffffff);
 
-  renderer.setClearColorHex( 0x333333, 1.0 );  
-  renderer.sortObjects = false;
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMapEnabled = false;
-  renderer.autoClear = false;
-  renderer.setFaceCulling( 0 );
-  
-  container.appendChild(renderer.domElement);
-  renderer.domElement.addEventListener('mousemove', onMouseMove);
+    // attach light to camera
+    scene0.add(directionalLight);
 
-  // here you add your objects
-  THREE.Object3D._threexDomEvent.camera(camera);
-  
-  //THREEx.DomEvent = function(camera, container);
-}
+    var numCells = 50;
+    var gridGeom = new THREE.PlaneGeometry(numCells, numCells, numCells, numCells);
+    var gridMaterial = new THREE.MeshBasicMaterial({
+      color : 0x999999
+    });
 
-//
+    gridMaterial.wireframe = true;
+    gridMaterial.wireframeLinewidth = 1;
+    gridMaterial.transparent = true;
+    var gridObj = new THREE.Mesh(gridGeom, gridMaterial);
+    scene1.add(gridObj);
 
-function onMouseMove(e) {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-}
+    // add coordinate frame visualization
+    // axes = new THREE.AxisHelper();
+    // axes.scale.x=axes.scale.y=axes.scale.z=0.01;
+    // scene1.add(axes);
+    axes = new THREE.Axes();
+    scene1.add(axes);
 
-function animate() {
-  requestAnimationFrame(animate);
-  render();
-}
+    var ros = new ROS('ws://localhost:9090');
 
-function render() {
-  controls.update();
 
-  // put light to the top-left of the camera
-  directionalLight.position = camera.localToWorld(new THREE.Vector3(-1,1,0));
-  directionalLight.position.normalize();
+    imc = new InteractiveMarkers.Client(ros);
+    imm = new THREE.InteractiveMarkerManager(scene0, imc);
+    imc.subscribe('/basic_controls');
 
-  // clear & render regular scene
-  renderer.clear( true, true, true );
-  renderer.render(scene0, camera);
-  // clear depth & stencil & render overlay scene
-  renderer.clear( false, true, true );
-  renderer.render(scene1, camera);
-}
+    renderer = new THREE.WebGLRenderer({
+      antialias : true
+    });
+
+    renderer.setClearColorHex(0x333333, 1.0);
+    renderer.sortObjects = false;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMapEnabled = false;
+    renderer.autoClear = false;
+    renderer.setFaceCulling(0);
+
+    container.appendChild(renderer.domElement);
+
+    renderer.domElement.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+    }, false);
+
+    mouseHandler = new THREE.MouseHandler(renderer, camera, scene0, cameraControls);
+
+    mouseHandler.addEventListener("mouseover", onMouseOver);
+    mouseHandler.addEventListener("mouseout", onMouseOut);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    render();
+  }
+
+  function onMouseOver(event) {
+    hoverObjs.push(event.currentTarget);
+  }
+
+  function onMouseOut(event) {
+    hoverObjs.splice(hoverObjs.indexOf(event.currentTarget), 1);
+  }
+
+  function render() {
+    cameraControls.update();
+
+    // put light to the top-left of the camera
+    directionalLight.position = camera.localToWorld(new THREE.Vector3(-1, 1, 0));
+    directionalLight.position.normalize();
+
+    renderer.clear(true, true, true);
+    renderer.render(scene0, camera);
+
+    INTERACT3D.renderHighlight(renderer, scene0, camera, hoverObjs);
+
+    // clear depth & stencil & render overlay scene
+    //renderer.clear(false, true, true);
+    renderer.render(scene1, camera);
+  }
 
 })(THREE);

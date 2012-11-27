@@ -9,3 +9,5 @@ layer/static/images
 layer2/server/server.db
 layer2/server/server/local_settings.py
 msg_gen
+layer2/server/server.*.db
+layer2/server/world.*.json

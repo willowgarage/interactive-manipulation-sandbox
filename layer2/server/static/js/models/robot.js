@@ -1,4 +1,4 @@
-var myApp;
+var MyApp;
 define([
   'ember',
   'emberdata',
@@ -7,7 +7,7 @@ define([
   'action',
 ],
 function( Ember, DS, App, ROS, Action) {
-  myApp = App;
+  MyApp = App;
   App.Robot = DS.Model.extend({
     name: DS.attr('string'),
     description: DS.attr('string'),
@@ -15,8 +15,44 @@ function( Ember, DS, App, ROS, Action) {
     image: DS.attr('string'),
     state: DS.attr('number'),     //  Coming from the mid-tier, currently unused
     service_url: DS.attr('string'),
-    camera_url: DS.attr('string'),
-    forearm_camera_url: DS.attr('string'),
+    camera_base_url: DS.attr('string'),
+    cameras: DS.attr('string'),
+
+    // Attributes for keeping track of which camera the user wants to look through
+    selected_camera: null,
+    selectedCameraIsHead: function() {
+      if (this.get('selected_camera') && this.get('selected_camera').name == "head") {
+        return true;
+      } else {
+        return false;
+      }
+    }.property('selected_camera'),
+
+    //  Convenience pseudo-attribute function to get to the head camera
+    camera_url: function() {
+        return this.getCameraUrl('head');
+    }.property('cameras'),
+
+    //  Convenience pseudo-attribute function to get to the forearm
+    forearm_camera_url: function() {
+        return this.getCameraUrl('forearm');
+    }.property('cameras'),
+
+    //  This method parses the camera URLs every time they change
+    //  and makes them available to be queried by other helper methods
+    camerasChanged: function() {
+        var cameras = this.get('cameras');
+        var camera_base_url = this.get('camera_base_url');
+        cameras && cameras.forEach(function(camera){
+            cameras[camera.name] = camera;
+            camera.url = camera_base_url + camera.url;
+        });
+    }.observes('cameras'),
+
+    //  Helper method to get the URL for a given camera name
+    getCameraUrl: function(name) {
+        return (this.get('cameras') && this.get('cameras')[name].url);
+    },
 
     status_code: 0,            //  Calculated in the client
     status: function() {
@@ -187,7 +223,9 @@ function( Ember, DS, App, ROS, Action) {
         _this.set('progress_update', 'Tucking arms ' + result.outcome);
         if (result.outcome == "succeeded") {
           // Tuckarms worked, now go
-          _this._navigateTo2(place);
+          _this._pointHeadForward(function() {
+            _this._navigateTo2(place);
+          });
         } else {
           _this.set('progress_update', 'Arms not tucked, navigating anyway');
         }
@@ -212,12 +250,26 @@ function( Ember, DS, App, ROS, Action) {
         App.get('router').send("navigate", _this);
       });
   
+      // Actually send the navigation command
       action.inputs.x        = place.get('pose_x');
       action.inputs.y        = place.get('pose_y');
       action.inputs.theta    = place.get('pose_angle');
+      action.inputs.collision_aware    = true;
       action.inputs.frame_id = '/map';
       console.log("Sending navigation action:", action.inputs);
       action.execute();
+    },
+
+    /* Sending a Cancel goal (ExecuteAction is currently a SimpleActionState, 
+     * so that should cancel any previous goals) */ 
+    cancelAllGoals: function() {
+      this.set('progress_update', 'Cancelling all goals');
+
+      var action = new Action({
+        ros: this.ros
+      });
+      action.cancelAll();
+      console.log("Cancelling all goals");
     },
 
     /* Unplugging has three steps: remove the plug from the wall, tuck your
@@ -234,23 +286,33 @@ function( Ember, DS, App, ROS, Action) {
       })
 
       var _this = this;
+
+      var onError = function() {
+        _this.set('progress_update', 'Unplugging failed');
+        _this.set('is_plugging_in', false);
+      };
+
       action.on("result", function(result) {
         console.log("unplug result: " + result.outcome);
         _this.set('progress_update', 'Unplugging ' + result.outcome);
         if (result.outcome == "succeeded") {
           // Unplug worked, now tuck arms
-          _this._tuckArms();
+          _this._tuckArms(function() {
+            _this._pointHeadForward(function() {
+              this.set('progress_update', 'Unplugging successful');
+              _this.set('is_plugging_in', false);
+            });
+          }, onError);
+
         } else {
-          // TODO: notify the user that unplugging failed
-          // Point the head forwards
-          _this._pointHeadForward();
+          _this.set('is_plugging_in', false);
         }
       });
       action.execute();
       console.log("Calling Unplug action");
     },
 
-    _tuckArms: function() {
+    _tuckArms: function(nextStep, onError) {
       this.set('progress_update', 'Tucking arms...');
       this.set('is_plugging_in', true);
 
@@ -265,17 +327,18 @@ function( Ember, DS, App, ROS, Action) {
         _this.set('progress_update', 'Tucking arms ' + result.outcome);
         if (result.outcome == "succeeded") {
           // Tuckarms worked, now move head forward
-          _this._pointHeadForward();
+          if (nextStep) nextStep();
         } else {
           // TODO: Notify user that unplugging failed
-          _this.set('is_plugging_in', false);
+          if (onError) onError();
         }
       });
       action.execute();
       console.log("Calling TuckArms action");
     },
 
-    _pointHeadForward: function() {
+    _pointHeadForward: function(nextStep, onError) {
+      console.log("in _pointHeadForward, nextStep: ", nextStep);
       this.set('progress_update', 'Looking forward...');
       var action = new Action({
         ros: this.ros,
@@ -287,7 +350,11 @@ function( Ember, DS, App, ROS, Action) {
       action.on("result", function(result) {
         _this.set('progress_update', 'Look forward ' + result.outcome);
         // Regardless of outcome, tell the UI to say that plugging is done
-        _this.set('is_plugging_in', false);
+        if (result.outcome == "succeeded") {
+          if (nextStep) nextStep();
+        } else {
+          if (onError) onError();
+        }
       });
   
       action.inputs.target_frame        = 'torso_lift_link';
@@ -299,26 +366,34 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.pointing_y          = 0.0;
       action.inputs.pointing_z          = 1.0;
       action.execute();
-      console.log('Calling PointHead action');
+      console.log('Calling PointHead action', action.inputs);
     },
 
-    pointHead: function(x, y, z) {
-      this.set('progress_update', 'Looking ...');
+    // Point the head at a location in the camera view
+    pointHeadClick: function(fracX, fracY) {
+      this.set('progress_update', 'Looking where you clicked ...');
       var action = new Action({
         ros: this.ros,
-        name: 'PointHead'
+        name: 'PointHeadInImage'
       });
 
-      action.inputs.target_frame        = 'wide_stereo_link';
-      action.inputs.target_x            = x;
-      action.inputs.target_y            = y;
-      action.inputs.target_z            = z;
-      action.inputs.pointing_frame      = 'wide_stereo_link';
-      action.inputs.pointing_x          = 1.0;
-      action.inputs.pointing_y          = 0;
-      action.inputs.pointing_z          = 0;
+      action.inputs.target_x            = fracX;
+      action.inputs.target_y            = fracY;
+      action.inputs.camera_info_topic   = '/wide_stereo/left/camera_info';
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Pointing the head failed');
+        }
+      });
+
       action.execute();
-      console.log('Calling PointHead action with ' + x + '/' + y + '/' + z);
+      console.log('Calling PointHeadInImage', action.inputs);
+
     },
 
     plugIn: function() {
@@ -345,13 +420,125 @@ function( Ember, DS, App, ROS, Action) {
         } else {
           // TODO: notify the user that plugging in failed
           // and point our head forwards
-          _this._pointHeadForward();
+          _this._pointHeadForward(function() {
+            _this.set('is_plugging_in', false);
+          });
+
         }
 
       });
       action.execute();
       console.log("Calling PlugIn action");
-    }
+    },
+
+    // ----------------------------------------------------------------------
+    // Move the base using open-loop control
+
+    moveForward: function() {
+      this.set('progress_update', 'Moving forward');
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+
+      action.inputs.x                  = 0.2;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = 0.0;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
+
+      action.execute();
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+    },
+    moveBack: function() {
+      this.set('progress_update', 'Moving backward');
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+
+      action.inputs.x                  = -0.2;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = 0.0;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
+
+      action.execute();
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+    },
+    turnLeft: function() {
+      this.set('progress_update', 'Turning left');
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+
+      action.inputs.x                  = 0.0;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = 0.60;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
+
+      action.execute();
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+    },
+    turnRight: function() {
+      this.set('progress_update', 'Turning right');
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+
+      action.inputs.x                  = 0.0;
+      action.inputs.y                  = 0.0;
+      action.inputs.theta              = -0.60;
+      action.inputs.collision_aware    = false;
+      action.inputs.frame_id           = "/base_footprint";
+
+      var _this = this;
+      action.on("result", function(result) {
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', '');
+        } else {
+          _this.set('progress_update', 'Move action failed');
+        }
+      });
+
+      action.execute();
+      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+    },
+
   });
 });
 function myDebugEvents( source, id, events) {

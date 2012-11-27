@@ -5,24 +5,29 @@ define([
 
   App.LookController = Ember.ObjectController.extend({
 
-    pointHeadForward: function() {
-      this.get('content')._pointHeadForward();
+    pointHeadClick: function(arg) {
+      if(typeof arg.offsetX === "undefined" || typeof arg.offsetY === "undefined") {
+        var targetOffset = $(arg.target).offset();
+        arg.offsetX = arg.pageX - targetOffset.left;
+        arg.offsetY = arg.pageY - targetOffset.top;
+      }
+
+      var fracX = arg.offsetX / arg.target.clientWidth;
+      var fracY = arg.offsetY / arg.target.clientHeight;
+      this.get('content').pointHeadClick(fracX, fracY);
     },
 
-    pointHeadUp: function() {
-      this.get('content').pointHead(1, 0, 0.1);
+    moveForward: function() {
+      this.get('content').moveForward();
     },
-
-    pointHeadDown: function() {
-      this.get('content').pointHead(1, 0, -0.1);
+    moveBack: function() {
+      this.get('content').moveBack();
     },
-
-    pointHeadLeft: function() {
-      this.get('content').pointHead(1, 0.1, 0);
+    turnLeft: function() {
+      this.get('content').turnLeft();
     },
-
-    pointHeadRight: function() {
-      this.get('content').pointHead(1, -0.1, 0);
+    turnRight: function() {
+      this.get('content').turnRight();
     },
 
   });

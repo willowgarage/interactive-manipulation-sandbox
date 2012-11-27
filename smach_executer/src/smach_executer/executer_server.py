@@ -14,6 +14,8 @@ from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
 from smach_executer.actions.tuck_arms import TuckArms
 from smach_executer.actions.point_head import PointHead
+from smach_executer.actions.point_head_in_image import PointHeadInImage
+from smach_executer.actions.segment_and_recognize import SegmentAndRecognize
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -30,11 +32,13 @@ class ExecuterServer:
             'PlugIn': PlugIn,
             'Unplug': Unplug,
             'TuckArms': TuckArms,
-            'PointHead': PointHead
+            'PointHead': PointHead,
+            'PointHeadInImage': PointHeadInImage,
+            'SegmentAndRecognize': SegmentAndRecognize
             }
 
         self.sm = None
-
+        
     def start(self):
         rospy.loginfo('Starting Executer server')
         self.actionlib_server.start()
@@ -43,7 +47,10 @@ class ExecuterServer:
          rospy.loginfo("Executer Server: got preempt")
          if self.sm:
              self.sm.request_preempt()
-         self.actionlib_server.set_preempted()
+         result = ExecuteResult()
+         result.retval = result.RETVAL_SUCCESS
+         result.outcome = 'preempted'
+         self.actionlib_server.set_preempted(result)
 
     def execute(self, goal):
         rospy.loginfo('Got goal:\n %s' % str(goal))
@@ -52,7 +59,7 @@ class ExecuterServer:
         try:
             action_dict = json.loads(goal.action)
         except KeyError as e:
-            rospy.logerr('Unable to parse json string (%s)' % (str(e),))
+            rospy.logerr('Unable to parse json string (%s)' % str(e))
             result = ExecuteResult()
             result.retval = result.RETVAL_PARSE_ERROR
             result.error_string = str(e)
@@ -61,7 +68,7 @@ class ExecuterServer:
 
         # execute the action
         try:
-            outcome = self.execute_action(action_dict)
+            (outcome, outputs) = self.execute_action(action_dict)
         except ValueError as e:
             rospy.logerr('Runtime error while executing state machine: %s' % str(e))
             traceback.print_exc()
@@ -71,9 +78,17 @@ class ExecuterServer:
             self.actionlib_server.set_succeeded(result)
             return
 
+        # set_preempted is done in the preempted callback function
+        if self.actionlib_server.is_preempt_requested():
+            return
+
         # finished successfully (even though the action itself may have failed)
         result = ExecuteResult()
         result.retval = result.RETVAL_SUCCESS
+        try:
+            result.outputs = json.dumps(outputs)
+        except Exception as e:
+            rospy.logerr("Unable to dump outputs to json string: %s"%str(e))
         result.outcome = outcome
         self.actionlib_server.set_succeeded(result)
         return
@@ -83,16 +98,18 @@ class ExecuterServer:
         self.sm = parser.create_state_machine_from_action_dict(action_dict, self.actions)
         
         # execute the state machine
-        if self.sm:
-            rospy.loginfo('Executing state machine')
-            sis = smach_ros.IntrospectionServer('executer_server_introspection', self.sm, '/EXECUTER_SERVER')
-            sis.start()
-            outcome = self.sm.execute()
-
+        rospy.loginfo('Executing state machine')
+        sis = smach_ros.IntrospectionServer('executer_server_introspection', self.sm, '/EXECUTER_SERVER')
+        sis.start()
+        outcome = self.sm.execute()
+        outputs = ""
+        registered_output_keys = self.sm.get_registered_output_keys()
+        rospy.loginfo("registered output keys: %s"%str(registered_output_keys))
+        if "outputs" in self.sm.get_registered_output_keys():
+            outputs = self.sm.userdata.outputs
         else:
-            rospy.loginfo("Received cancel request")
-            return "succeeded"
+            rospy.loginfo("no outputs in state's registered output keys")
 
         # state machine executed successfully; return outcome
         rospy.loginfo('State machine executed successfully with outcome: %s' % outcome)
-        return outcome
+        return (outcome, outputs)
