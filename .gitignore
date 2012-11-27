@@ -8,3 +8,4 @@ layer/static/images
 .vagrant
 layer2/server/server.db
 layer2/server/server/local_settings.py
+msg_gen
