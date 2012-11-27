@@ -25,10 +25,10 @@
 			    optionValuePath="content.url"
 			    class="dropdown"}}:<br>
 			{{#if selectedCameraIsHead}}
-			  <video width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
+			  <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
 			    Click in the image to look around<br>
 			{{else}}
-			  <video width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
+			  <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
 			{{/if}}
 		    </td>
 
