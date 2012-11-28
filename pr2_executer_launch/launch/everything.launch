@@ -1,7 +1,8 @@
 <launch>
   <arg name="throttle_cameras" default="true" />
   <arg name="run_sim" default="false" />
-
+ <arg name="kinect_frame_prefix" default="/head_mount_kinect" />
+ 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="run_sim" value="$(arg run_sim)" />
   </include>
@@ -12,7 +13,7 @@
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
-  <include file="$(find openni_launch)/launch/openni.launch">
+   <include file="$(find openni_launch)/launch/openni.launch">
     <arg name="depth_registration" value="true"/>
     <arg name="camera" value="head_mount_kinect"/>
     <arg name="rgb_frame_id" value="$(arg kinect_frame_prefix)_rgb_optical_frame"/>
