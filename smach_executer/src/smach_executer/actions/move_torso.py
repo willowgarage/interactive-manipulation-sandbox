@@ -12,7 +12,7 @@ class MoveTorso(State):
     """
     Moves the PR2 torso to a specified position.
 
-    position: the torso position.  0 is down, 0.195 is up.
+    position: the torso position.  0 is down, 0.295 is up.
     
     * 'succeeded'  Torso made it to the desired position.
     * 'preempted'  Someone preempted the action.
