@@ -375,10 +375,27 @@
     }
   },
   {
+    "pk": 22, 
+    "model": "world.place", 
+    "fields": {
+      "map_height": 20, 
+      "description": "", 
+      "map_width": 20, 
+      "tags": "table", 
+      "pose_x": 6.390,
+      "pose_y": 24.731,
+      "image": "", 
+      "pose_angle": 0.199,
+      "map_x": 344, 
+      "map_y": 328, 
+      "name": "Table"
+    }
+  },
+  {
     "pk": 1,
     "model": "world.camera",
     "fields": {
-      "url": "/stream?topic=/wide_stereo_throttled/image",
+      "url": "/streams/wide_stereo/right/image_rect_color",
       "name": "head"
     }
   },
@@ -386,8 +403,16 @@
     "pk": 2,
     "model": "world.camera",
     "fields": {
-      "url": "/stream?topic=/r_forearm_cam_throttled/image",
-      "name": "forearm"
+      "url": "/streams/r_forearm_cam/image_color_rotated",
+      "name": "right arm"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "world.camera",
+    "fields": {
+      "url": "/streams/l_forearm_cam/image_color_rotated",
+      "name": "left arm"
     }
   },
   {
@@ -409,13 +434,14 @@
     "pk": 2, 
     "model": "world.robot", 
     "fields": {
-      "camera_base_url": "http://prq1.willowgarage.com:8080", 
+      "camera_base_url": "http://prq1.willowgarage.com:9999", 
       "description": "PR2 in Pool Room", 
       "tags": "", 
       "image": "static/images/IMG_20120914_134832.jpg", 
       "cameras": [
         1, 
-        2
+        2,
+	3
       ], 
       "state": 0, 
       "service_url": "ws://prq1:11311/", 
@@ -427,13 +453,14 @@
     "pk": 3, 
     "model": "world.robot", 
     "fields": {
-      "camera_base_url": "http://prm1.willowgarage.com:8080", 
+      "camera_base_url": "http://prm1.willowgarage.com:9999", 
       "description": "PR2 for continuous ops", 
       "tags": "", 
       "image": "static/images/IMG_20120925_180649.jpg", 
       "cameras": [
         1, 
-        2
+        2,
+	3
       ], 
       "state": 0, 
       "service_url": "ws://prm1:9099", 
@@ -445,13 +472,14 @@
     "pk": 4, 
     "model": "world.robot", 
     "fields": {
-      "camera_base_url": "http://prn1.willowgarage.com:8080", 
+      "camera_base_url": "http://prn1.willowgarage.com:9999", 
       "description": "Robot tested with plug-in functionality", 
       "tags": "", 
       "image": "static/images/IMG_20120914_134917.jpg", 
       "cameras": [
         1, 
-        2
+        2,
+	3
       ], 
       "state": 0, 
       "service_url": "ws://prn1.willowgarage.com:9099/", 
@@ -463,13 +491,14 @@
     "pk": 5, 
     "model": "world.robot", 
     "fields": {
-      "camera_base_url": "http://prl1.willowgarage.com:8080", 
+      "camera_base_url": "http://prl1.willowgarage.com:9999", 
       "description": "PR2 in Green Room", 
       "tags": "", 
       "image": "static/images/IMG_20120925_180649.jpg", 
       "cameras": [
         1, 
-        2
+        2,
+	3
       ], 
       "state": 0, 
       "service_url": "ws://prl1.willowgarage.com:9099/", 
@@ -481,13 +510,14 @@
     "pk": 6, 
     "model": "world.robot", 
     "fields": {
-      "camera_base_url": "http://blh.willowgarage.com:8080", 
+      "camera_base_url": "http://blh.willowgarage.com:9999", 
       "description": "Simulated PR-2 robot running on blh.willowgarage.com", 
       "tags": "", 
       "image": "static/images/screenshot1.png", 
       "cameras": [
         1, 
-        2
+        2,
+	3
       ], 
       "state": 0, 
       "service_url": "ws://blh.willowgarage.com:9099/", 
@@ -499,13 +529,14 @@
     "pk": 7, 
     "model": "world.robot", 
     "fields": {
-      "camera_base_url": "http://localhost:8080", 
+      "camera_base_url": "http://localhost:9999", 
       "description": "Simulated PR-2 robot running on localhost", 
       "tags": "", 
       "image": "static/images/screenshot1.png", 
       "cameras": [
         1,
-        2
+        2,
+	3
       ],
       "state": 0, 
       "service_url": "ws://localhost:9099/", 
