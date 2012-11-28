@@ -16,6 +16,7 @@ from smach_executer.actions.tuck_arms import TuckArms
 from smach_executer.actions.point_head import PointHead
 from smach_executer.actions.point_head_in_image import PointHeadInImage
 from smach_executer.actions.segment_and_recognize import SegmentAndRecognize
+from smach_executer.actions.pickup_object import PickupObject
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -34,7 +35,8 @@ class ExecuterServer:
             'TuckArms': TuckArms,
             'PointHead': PointHead,
             'PointHeadInImage': PointHeadInImage,
-            'SegmentAndRecognize': SegmentAndRecognize
+            'SegmentAndRecognize': SegmentAndRecognize,
+            'PickupObject': PickupObject
             }
 
         self.sm = None
