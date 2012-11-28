@@ -179,8 +179,9 @@ define([
         return;
       }
 
-      var rooms = places.filter( function(p) { return !p.get('isOutlet'); });
+      var rooms = places.filter( function(p) { return (!p.get('isOutlet') && !p.get('isTable')); });
       var outlets = places.filter( function(p) { return p.get('isOutlet'); });
+      var tables = places.filter( function(p) { return p.get('isTable'); });
       var map = d3.select("#mapsvg");
 
       /* When the user clicks on a room, update "Selected location" and
@@ -215,6 +216,18 @@ define([
         .enter().append("svg:image")
           .attr("class", "outlet")
           .attr("xlink:href", "/static/img/outlet.jpg")
+          .attr("x", function(d) { return d.get('map_x'); })
+          .attr("y", function(d) { return d.get('map_y'); })
+          .attr("width", 20)
+          .attr("height", 20)
+          .on("click", nodeSelected);
+
+      /* Draw Tables */
+      map.selectAll(".table")
+        .data(tables.toArray())
+        .enter().append("svg:image")
+          .attr("class", "table")
+          .attr("xlink:href", "/static/img/table.png")
           .attr("x", function(d) { return d.get('map_x'); })
           .attr("y", function(d) { return d.get('map_y'); })
           .attr("width", 20)

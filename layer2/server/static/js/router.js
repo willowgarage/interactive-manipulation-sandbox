@@ -182,7 +182,7 @@ function(
         }
       }),
 
-      look : Ember.Route.extend({
+      look: Ember.Route.extend({
         route: '/robots/:id/look',
         showAllRobots: Ember.Route.transitionTo('robots'),
 
@@ -204,7 +204,7 @@ function(
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery','client',this.client);
           router.get('robotController')
             .connectOutlet('main', 'look', App.Robot.find(context.id));
         }
@@ -251,7 +251,7 @@ function(
       }),
 
       markers: Ember.Route.extend({
-        route: '/robots/:robot_id/markers',
+        route: '/robots/:id/markers',
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
@@ -267,10 +267,11 @@ function(
             }, 1000*10);
           }
 
+          this.client = App.Client.find('robot:'+context.id);
           router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+            .connectOutlet('content', 'robot', App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery', 'client', App.Client.find('robot:'+context.id));
           router.get('robotController')
             .connectOutlet('main', 'markers', App.Robot.find(context.id));
         }
@@ -279,8 +280,9 @@ function(
       pickup: Ember.Route.extend({
         route: '/robots/:id/pickup',
         showAllRobots: Ember.Route.transitionTo('robots'),
-        plug: Ember.Route.transitionTo('plug'),
+
         navigate: Ember.Route.transitionTo('navigate'),
+        plug: Ember.Route.transitionTo('plug'),
         look: Ember.Route.transitionTo('look'),
         markers: Ember.Route.transitionTo('markers'),
 
@@ -293,13 +295,16 @@ function(
             }, 1000*10);
           }
 
-          router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+          this.client = App.Client.find('robot:'+context.id);
+          // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
+          router.get('applicationController').
+            connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery','client', this.client);
           router.get('robotController')
             .connectOutlet('main', 'pickup', App.Robot.find(context.id));
         }
+
       })
     })
   });
