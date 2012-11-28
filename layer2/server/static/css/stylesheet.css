@@ -65,6 +65,17 @@ a {
 	outline: solid medium gray;
 }
 
+/* To draw tables in the map */
+.table {
+    opacity: 1;
+}
+.table:hover {
+	outline: solid medium gray;
+}
+.table.selected {
+	outline: solid medium gray;
+}
+
 /* To draw robots in the map */
 .chart .robot {
 	fill: #0000ff;

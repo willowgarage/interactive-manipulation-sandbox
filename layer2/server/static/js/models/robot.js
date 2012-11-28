@@ -495,7 +495,7 @@ function( Ember, DS, App, ROS, Action) {
 
       action.inputs.x                  = 0.0;
       action.inputs.y                  = 0.0;
-      action.inputs.theta              = 0.60;
+      action.inputs.theta              = 0.20;
       action.inputs.collision_aware    = false;
       action.inputs.frame_id           = "/base_footprint";
 
@@ -521,7 +521,7 @@ function( Ember, DS, App, ROS, Action) {
 
       action.inputs.x                  = 0.0;
       action.inputs.y                  = 0.0;
-      action.inputs.theta              = -0.60;
+      action.inputs.theta              = -0.20;
       action.inputs.collision_aware    = false;
       action.inputs.frame_id           = "/base_footprint";
 
