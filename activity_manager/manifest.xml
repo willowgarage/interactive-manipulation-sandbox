@@ -15,6 +15,7 @@
   <depend package="activity_msgs"/>
   <depend package="rostopic"/>
   <depend package="rosbridge_library"/>
+  <depend package="tf2"/>
 
 </package>
 
