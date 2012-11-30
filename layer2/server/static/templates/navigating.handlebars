@@ -21,7 +21,7 @@
 			{{outlet}}
 		  </td>
 		  <td>
-			<img {{bindAttr src="robot.camera_url"}} width="300" height="225">
+                    <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="robot.camera_url"}}></video>
 		  </td>
 		</tr>
 	  </table>
