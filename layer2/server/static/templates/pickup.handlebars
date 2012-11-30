@@ -1,0 +1,30 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li><a {{action navigate content}}> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+        <li><a {{action look content}}> Look </a></li>
+        <li class="tabselected"><a> Pick up </a></li>
+        <li><a {{action markers content}}> Markers </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
+    <div class="content">
+
+	<table>
+	    <tr>
+              <td>
+		What the robot sees:<br>
+		<video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="camera_url"}}></video><br>
+	      </td>
+	      <td> <div class="button" {{action segmentAndRecognize target="controller"}}>Find objects</div>
+	    </tr>
+	</table>
+
+    </div>
+  </div>
+
+</div>

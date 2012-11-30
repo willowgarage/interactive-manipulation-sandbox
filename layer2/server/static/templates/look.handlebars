@@ -6,6 +6,7 @@
         <li><a {{action navigate content}}> Navigate </a></li>
         <li><a {{action plug content}}> Plug </a></li>
         <li class="tabselected"><a> Look </a></li>
+        <li><a {{action pickup content}}> Pick up </a></li>
         <li><a {{action markers content}}> Markers </a></li>
       </ul>
   </div>
@@ -22,12 +23,12 @@
 			    selectionBinding="content.selected_camera"
 			    optionLabelPath="content.name"
 			    optionValuePath="content.url"
-			    class="dropdown"}}:
+			    class="dropdown"}}:<br>
 			{{#if selectedCameraIsHead}}
-			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}><br>
+			  <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}></video><br>
 			    Click in the image to look around<br>
 			{{else}}
-			  <img width=400 height=300 {{bindAttr src="selected_camera.url"}}><br>
+			  <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}}></video><br>
 			{{/if}}
 		    </td>
 

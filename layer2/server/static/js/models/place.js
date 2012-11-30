@@ -23,6 +23,9 @@ function(
     map_height: DS.attr('number'),
     isOutlet: function() {
       return (this.get('tags') == "outlet");
+    }.property(),
+    isTable: function() {
+      return (this.get('tags') == "table");
     }.property()
   });
 });

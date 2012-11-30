@@ -11,6 +11,7 @@ define([
   'controllers/look',
   'controllers/client',
   'controllers/markers',
+  'controllers/pickup',
   'views/application',
   'views/navigating',
   'views/robots',
@@ -21,6 +22,7 @@ define([
   'views/look',
   'views/client',
   'views/markers',
+  'views/pickup',
   'models/robot',
   'models/place',
   'models/client',
@@ -39,15 +41,18 @@ function(
   LookController,
   ClientController,
   MarkersController,
+  PickupController,
   ApplicationView,
   NavigatingView,
   RobotsView,
+  MapView,
   RobotView,
   PlugView,
   NavigateView,
   LookView,
   ClientView,
   MarkersView,
+  PickupView,
   Robot,
   Place,
   Client,
@@ -99,6 +104,7 @@ function(
         plug: Ember.Route.transitionTo('plug'),
         look: Ember.Route.transitionTo('look'),
         markers: Ember.Route.transitionTo('markers'),
+        pickup: Ember.Route.transitionTo('pickup'),
 
         // TODO: Clean-up
         navigateTo: function( router, context) {
@@ -154,6 +160,7 @@ function(
         navigate: Ember.Route.transitionTo('navigate'),
         look: Ember.Route.transitionTo('look'),
         markers: Ember.Route.transitionTo('markers'),
+        pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
           // HACK: Set-up periodic refreshing of client state
@@ -175,13 +182,14 @@ function(
         }
       }),
 
-      look : Ember.Route.extend({
+      look: Ember.Route.extend({
         route: '/robots/:id/look',
         showAllRobots: Ember.Route.transitionTo('robots'),
 
         navigate: Ember.Route.transitionTo('navigate'),
         plug: Ember.Route.transitionTo('plug'),
         markers: Ember.Route.transitionTo('markers'),
+        pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
           // HACK: Set-up periodic refreshing of client state
@@ -196,19 +204,20 @@ function(
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery','client',this.client);
           router.get('robotController')
             .connectOutlet('main', 'look', App.Robot.find(context.id));
         }
       }),
 
       navigating: Ember.Route.extend({
-        route: '/navigating/:robot_id/:place_id',
+        route: '/robots/:robot_id/navigating/:place_id',
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
         look: Ember.Route.transitionTo('look'),
         markers: Ember.Route.transitionTo('markers'),
+        pickup: Ember.Route.transitionTo('pickup'),
 
         cancelAllGoals: function(router) {
           this.robot.cancelAllGoals();
@@ -242,12 +251,12 @@ function(
       }),
 
       markers: Ember.Route.extend({
-        route: '/markers/:robot_id',
+        route: '/robots/:id/markers',
         showAllRobots: Ember.Route.transitionTo('robots'),
         plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
         look: Ember.Route.transitionTo('look'),
-
+        pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
           // HACK: Set-up periodic refreshing of client state
@@ -258,13 +267,44 @@ function(
             }, 1000*10);
           }
 
+          this.client = App.Client.find('robot:'+context.id);
           router.get('applicationController')
-            .connectOutlet('robot', App.Robot.find(context.id));
+            .connectOutlet('content', 'robot', App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery', 'client', App.Client.find('robot:'+context.id));
           router.get('robotController')
             .connectOutlet('main', 'markers', App.Robot.find(context.id));
         }
+      }),
+
+      pickup: Ember.Route.extend({
+        route: '/robots/:id/pickup',
+        showAllRobots: Ember.Route.transitionTo('robots'),
+
+        navigate: Ember.Route.transitionTo('navigate'),
+        plug: Ember.Route.transitionTo('plug'),
+        look: Ember.Route.transitionTo('look'),
+        markers: Ember.Route.transitionTo('markers'),
+
+        connectOutlets: function(router, context) {
+          // HACK: Set-up periodic refreshing of client state
+          if(! App.interval) {
+            App.interval = setInterval(function(){
+              id = App.router.currentState.client.get('id');
+              App.store.get("_adapter").find(App.store,App.Client,id);
+            }, 1000*10);
+          }
+
+          this.client = App.Client.find('robot:'+context.id);
+          // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
+          router.get('applicationController').
+            connectOutlet('content','robot',App.Robot.find(context.id));
+          router.get('robotController').
+            connectOutlet('periphery','client', this.client);
+          router.get('robotController')
+            .connectOutlet('main', 'pickup', App.Robot.find(context.id));
+        }
+
       })
     })
   });
