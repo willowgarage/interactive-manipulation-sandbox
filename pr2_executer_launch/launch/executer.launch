@@ -6,11 +6,13 @@
     <node pkg="smach_executer" type="executer" name="executer"/>
 
     <!-- PR2 plugs -->
-    <group unless="$(arg run_sim)">
-        <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
-        <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
-            <arg name="run_sim" value="$(arg run_sim)" />
-        </include>	 
+    <group unless="$(arg im)">
+        <group unless="$(arg run_sim)">
+            <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
+            <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
+                <arg name="run_sim" value="$(arg run_sim)" />
+            </include>	 
+        </group>
     </group>
 
     <group if="$(arg im)">
@@ -18,7 +20,8 @@
               <arg name="sim" value="$(arg run_sim)" />
               <arg name="throttle_cameras" value="false" />
               <arg name="nav" value="true" />
-              <arg name="plugs" value="false" />
+              <arg name="plugs" value="true" />
+	      <arg name="wg" value="true" />
          </include>
     </group>
 

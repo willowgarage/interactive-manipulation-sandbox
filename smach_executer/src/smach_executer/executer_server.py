@@ -89,10 +89,11 @@ class ExecuterServer:
         # finished successfully (even though the action itself may have failed)
         result = ExecuteResult()
         result.retval = result.RETVAL_SUCCESS
-        try:
-            result.outputs = json.dumps(outputs)
-        except Exception as e:
-            rospy.logerr("Unable to dump outputs to json string: %s"%str(e))
+        if result.outputs:
+            try:
+                result.outputs = json.dumps(outputs)
+            except Exception as e:
+                rospy.logerr("Unable to dump outputs to json string: %s"%str(e))
         result.outcome = outcome
         self.actionlib_server.set_succeeded(result)
         return
