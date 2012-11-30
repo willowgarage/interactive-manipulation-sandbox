@@ -1,0 +1,22 @@
+<package>
+  <description brief="activity_manager">
+
+     action_manager
+
+  </description>
+  <author>Jonathan Binney</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/activity_manager</url>
+
+  <depend package="rospy" />
+  <depend package="actionlib"/>
+  <depend package="actionlib_msgs"/>
+  <depend package="activity_msgs"/>
+  <depend package="rostopic"/>
+  <depend package="rosbridge_library"/>
+  <depend package="tf2"/>
+
+</package>
+
+
