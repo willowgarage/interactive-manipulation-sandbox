@@ -65,8 +65,10 @@ class SegmentAndRecognize(State):
                 return 'preempted'
             state = self.detection_client.get_state()
             if state == GoalStatus.SUCCEEDED:
+                rospy.loginfo("segment and recognize goal succeeded")
                 return 'succeeded'
             elif state not in [GoalStatus.PENDING, GoalStatus.ACTIVE]:
+                rospy.loginfo("segment and recognize returned state %d"%state)
                 return 'failed'
             r.sleep()
 
@@ -108,6 +110,7 @@ class SegmentAndRecognize(State):
                     return 'failed'
                 if self.state == "done":
                     userdata.outputs = self.outputs
+                    rospy.loginfo("returning outputs: %s"%str(self.outputs))
                     return 'succeeded'
         
 
