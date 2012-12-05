@@ -18,7 +18,9 @@ class Place(models.Model):
 class Camera(models.Model):
     name = models.CharField(max_length=64)
     url = models.CharField(max_length=512)
-    is_displayable = models.BooleanField(default=True)
+
+    # Collection of tags, naming which features this camera is available for.
+    features = models.CharField(max_length=512, blank=True, null=False)
 
     def __unicode__(self):
         return self.url
@@ -46,9 +48,9 @@ class Robot(models.Model):
     cameras = models.ManyToManyField(Camera)
 
     @property
-    def user_cameras(self):
-        """Return a QuerySet of Camera instances accessible to the user."""
-        return self.cameras.filter(is_displayable=True)
+    def look_cameras(self):
+        """Return a list of Camera instances accessible to the 'look' feature."""
+        return [camera for camera in self.cameras.all() if 'look' in camera.features.split()]
 
 class Client(models.Model):
     '''Represents a client (browser) connected to the server and it's state'''

@@ -397,7 +397,7 @@
     "fields": {
       "url": "/streams/wide_stereo/right/image_rect_color",
       "name": "head",
-      "is_displayable": true
+      "features": "look"
     }
   },
   {
@@ -406,7 +406,7 @@
     "fields": {
       "url": "/streams/r_forearm_cam/image_color_rotated",
       "name": "right arm",
-      "is_displayable": true
+      "features": "look"
     }
   },
   {
@@ -415,7 +415,7 @@
     "fields": {
       "url": "/streams/l_forearm_cam/image_color_rotated",
       "name": "left arm",
-      "is_displayable": true
+      "features": "look"
     }
   },
   {
@@ -424,7 +424,7 @@
     "fields": {
       "url": "",
       "name": "grasp",
-      "is_displayable": false
+      "features": ""
     }
   },
   {

@@ -17,7 +17,7 @@ function( Ember, DS, App, ROS, Action) {
     service_url: DS.attr('string'),
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
-    user_cameras: DS.attr('string'),
+    look_cameras: DS.attr('string'),
 
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
