@@ -16,6 +16,7 @@
   <depend package="rostopic"/>
   <depend package="rosbridge_library"/>
   <depend package="tf"/>
+  <depend package="pr2_msgs"/>
 
 </package>
 
