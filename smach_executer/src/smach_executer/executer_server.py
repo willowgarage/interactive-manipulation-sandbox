@@ -81,6 +81,14 @@ class ExecuterServer:
             result.error_string = str(e)
             self.actionlib_server.set_succeeded(result)
             return
+	except Exception as e:
+            rospy.logerr('General error while executing state machine: %s' % str(e))
+            traceback.print_exc()
+            result = ExecuteResult()
+            result.retval = result.RETVAL_RUNTIME_ERROR
+            result.error_string = str(e)
+            self.actionlib_server.set_aborted(result)
+            return
 
         # set_preempted is done in the preempted callback function
         if self.actionlib_server.is_preempt_requested():
