@@ -15,9 +15,10 @@ class PrivateView(generics.ListAPIView):
 class CameraSerializer(serializers.ModelSerializer):
     class Meta:
         model = Camera
-        exclude = ('id',)
+        exclude = ('id', 'is_displayable',)
 
 class RobotSerializer(serializers.ModelSerializer):
+    user_cameras = CameraSerializer(source='user_cameras')
     class Meta:
         model = Robot
 

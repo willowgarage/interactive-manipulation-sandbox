@@ -17,6 +17,7 @@ function( Ember, DS, App, ROS, Action) {
     service_url: DS.attr('string'),
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
+    user_cameras: DS.attr('string'),
 
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
@@ -249,7 +250,7 @@ function( Ember, DS, App, ROS, Action) {
         // Return to navigation view
         App.get('router').send("navigate", _this);
       });
-  
+
       // Actually send the navigation command
       action.inputs.x        = place.get('pose_x');
       action.inputs.y        = place.get('pose_y');
@@ -260,8 +261,8 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
     },
 
-    /* Sending a Cancel goal (ExecuteAction is currently a SimpleActionState, 
-     * so that should cancel any previous goals) */ 
+    /* Sending a Cancel goal (ExecuteAction is currently a SimpleActionState,
+     * so that should cancel any previous goals) */
     cancelAllGoals: function() {
       this.set('progress_update', 'Cancelling all goals');
 
@@ -356,7 +357,7 @@ function( Ember, DS, App, ROS, Action) {
           if (onError) onError();
         }
       });
-  
+
       action.inputs.target_frame        = 'torso_lift_link';
       action.inputs.target_x            = 1.0;
       action.inputs.target_y            = 0;
@@ -571,4 +572,3 @@ function myDebugEvents( source, id, events) {
     source.on(events[i], f);
   }
 };
-
