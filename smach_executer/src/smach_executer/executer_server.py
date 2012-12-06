@@ -13,6 +13,7 @@ from smach_executer.actions.navigate_to_pose import NavigateToPose
 from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
 from smach_executer.actions.tuck_arms import TuckArms
+from smach_executer.actions.untuck_arms import UntuckArms
 from smach_executer.actions.point_head import PointHead
 from smach_executer.actions.point_head_in_image import PointHeadInImage
 from smach_executer.actions.segment_and_recognize import SegmentAndRecognize
@@ -34,6 +35,7 @@ class ExecuterServer:
             'PlugIn': PlugIn,
             'Unplug': Unplug,
             'TuckArms': TuckArms,
+            'UntuckArms': UntuckArms,
             'PointHead': PointHead,
             'PointHeadInImage': PointHeadInImage,
             'SegmentAndRecognize': SegmentAndRecognize,
@@ -81,6 +83,14 @@ class ExecuterServer:
             result.error_string = str(e)
             self.actionlib_server.set_succeeded(result)
             return
+	except Exception as e:
+            rospy.logerr('General error while executing state machine: %s' % str(e))
+            traceback.print_exc()
+            result = ExecuteResult()
+            result.retval = result.RETVAL_RUNTIME_ERROR
+            result.error_string = str(e)
+            self.actionlib_server.set_aborted(result)
+            return
 
         # set_preempted is done in the preempted callback function
         if self.actionlib_server.is_preempt_requested():
@@ -89,10 +99,11 @@ class ExecuterServer:
         # finished successfully (even though the action itself may have failed)
         result = ExecuteResult()
         result.retval = result.RETVAL_SUCCESS
-        try:
-            result.outputs = json.dumps(outputs)
-        except Exception as e:
-            rospy.logerr("Unable to dump outputs to json string: %s"%str(e))
+        if outputs:
+            try:
+                result.outputs = json.dumps(outputs)
+            except Exception as e:
+                rospy.logerr("Unable to dump outputs to json string: %s"%str(e))
         result.outcome = outcome
         self.actionlib_server.set_succeeded(result)
         return

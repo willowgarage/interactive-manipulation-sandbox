@@ -31,6 +31,9 @@
       });
 
       action.goal.on('result', function(result) {
+			  if (result.outputs.length > 0) {
+					result.outputs = JSON.parse(result.outputs);
+				}
         action.emit('result', result);
       });
 
