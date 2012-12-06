@@ -19,7 +19,8 @@ class Camera(models.Model):
     name = models.CharField(max_length=64)
     url = models.CharField(max_length=512)
 
-    # Collection of tags, naming which features this camera is available for.
+    # Features this camera is available for. It consists of a string of single
+    # space separated words, each a feature identifier (e.g. "look pick-up").
     features = models.CharField(max_length=512, blank=True, null=False)
 
     def __unicode__(self):
