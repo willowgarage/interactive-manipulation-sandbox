@@ -18,6 +18,11 @@ class Place(models.Model):
 class Camera(models.Model):
     name = models.CharField(max_length=64)
     url = models.CharField(max_length=512)
+
+    # Features this camera is available for. It consists of a string of single
+    # space separated words, each a feature identifier (e.g. "look pick-up").
+    features = models.CharField(max_length=512, blank=True, null=False)
+
     def __unicode__(self):
         return self.url
 
@@ -42,6 +47,11 @@ class Robot(models.Model):
 #    forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera
     camera_base_url = models.CharField(max_length=128)
     cameras = models.ManyToManyField(Camera)
+
+    @property
+    def look_cameras(self):
+        """Return a list of Camera instances accessible to the 'look' feature."""
+        return [camera for camera in self.cameras.all() if 'look' in camera.features.split()]
 
 class Client(models.Model):
     '''Represents a client (browser) connected to the server and it's state'''
