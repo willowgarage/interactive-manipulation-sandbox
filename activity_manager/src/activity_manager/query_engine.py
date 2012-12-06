@@ -47,6 +47,9 @@ class QueryEngine:
             'and' : QueryFunction(self.logical_and, [bool, bool]),
             'or' : QueryFunction(self.logical_or, [bool, bool])
             }
+        
+    def get_query_functions(self):
+        return self._query_functions
 
     def evaluate_query(self, query, args):
         rospy.loginfo('Query: "%s"' % query)
