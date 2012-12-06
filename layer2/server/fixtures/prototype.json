@@ -416,6 +416,14 @@
     }
   },
   {
+    "pk": 4,
+    "model": "world.camera",
+    "fields": {
+      "url": "/streams/l_forearm_cam/image_color_rotated",
+      "name": "left arm"
+    }
+  },
+  {
     "pk": 1, 
     "model": "world.robot", 
     "fields": {
