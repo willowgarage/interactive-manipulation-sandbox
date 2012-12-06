@@ -65,9 +65,12 @@ class SegmentAndRecognize(State):
                 return 'preempted'
             state = self.detection_client.get_state()
             if state == GoalStatus.SUCCEEDED:
-                break
+                rospy.loginfo("segment and recognize goal succeeded")
+                return 'succeeded'
+            elif state not in [GoalStatus.PENDING, GoalStatus.ACTIVE]:
+                rospy.loginfo("segment and recognize returned state %d"%state)
+                return 'failed'
             r.sleep()
-        return 'succeeded'
 
   
     def execute(self, userdata):
@@ -90,7 +93,8 @@ class SegmentAndRecognize(State):
             self.state = "recognizing"
         result = self.send_goal_and_wait(goal, self.recognition_timeout)
         if result != 'succeeded':
-            return result
+            with self.lock:
+                self.state = "done"
 
         #check if we're done processing the results
         r = rospy.Rate(10)
@@ -98,12 +102,15 @@ class SegmentAndRecognize(State):
             if self.preempt_requested():
                 rospy.loginfo("segment and recognize goal preempted after recognition!")
                 self.service_preempt()
+                userdata.outputs = None
                 return 'preempted'
             with self.lock:
                 if self.state == "error":
+                    userdata.outputs = None
                     return 'failed'
                 if self.state == "done":
                     userdata.outputs = self.outputs
+                    rospy.loginfo("returning outputs: %s"%str(self.outputs))
                     return 'succeeded'
         
 
