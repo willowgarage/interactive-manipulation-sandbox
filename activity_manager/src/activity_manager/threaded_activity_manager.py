@@ -8,6 +8,7 @@ from rosbridge_library.internal import message_conversion
 
 from activity_manager.activity_handle import ActivityHandle
 from activity_manager.activity_loader import ActivityLoader
+from activity_manager.query_engine import QueryEngine
 
 def generate_unique_id(current_ids, desired_id=None):
     '''
@@ -37,6 +38,9 @@ class ThreadedActivityManager:
 
         # loads the activity implementations
         self._activity_loader = ActivityLoader()
+
+        # answers queries about robot state
+        self._query_engine = QueryEngine()
 
         # dictionary mapping ActivityID to (activity_handle, activity_object)
         self._running_activities = {}
@@ -97,3 +101,5 @@ class ThreadedActivityManager:
                     # the thread for this activity completed
                     del self._running_activities[activity_id] 
 
+    def evaluate_query(self, query, args):
+        return self._query_engine.evaluate_query(query, args)

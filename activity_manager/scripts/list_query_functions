@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+import roslib; roslib.load_manifest('activity_manager')
+import sys
+import rospy
+import actionlib
+
+from activity_manager.query_engine import QueryEngine
+
+rospy.init_node('list_query_functions', anonymous=True)
+
+qe = QueryEngine()
+funcs_dict = qe.get_query_functions()
+print 'Query functions:'
+for func_name in sorted(funcs_dict):
+   
+    print '    (%s %s)' % (func_name, ' '.join([str(arg_t) for arg_t in funcs_dict[func_name].arg_types]))
