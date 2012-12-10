@@ -4,6 +4,7 @@ import actionlib
 
 from activity_msgs.msg import StartActivityAction, StartActivityResult, StopActivityAction, StopActivityResult, ActivityErrorCode
 from activity_msgs.msg import ListRunningActivitiesAction, ListRunningActivitiesResult
+from activity_msgs.msg import EvaluateQueryAction, EvaluateQueryResult
 from activity_manager.threaded_activity_manager import ThreadedActivityManager
 
 class ActivityServer:
@@ -22,9 +23,14 @@ class ActivityServer:
         self._list_activities_as = actionlib.SimpleActionServer(
             list_activities_topic, ListRunningActivitiesAction, self.list_running_activities_cb, False)
 
+        evaluate_query_topic = '%s/evaluate_query' % base_topic
+        self._evaluate_query_as = actionlib.SimpleActionServer(
+            evaluate_query_topic, EvaluateQueryAction, self.evaluate_query_cb, False)
+
         self._start_activity_as.start()
         self._stop_activity_as.start()
         self._list_activities_as.start()
+        self._evaluate_query_as.start()
 
     def start_activity_cb(self, goal):
         rospy.loginfo('Starting activity: %s' % goal.activity_type)
@@ -57,6 +63,14 @@ class ActivityServer:
         result.running_activities = self._activity_manager.get_running_activities()
         self._list_activities_as.set_succeeded(result)
         return
+
+    def evaluate_query_cb(self, goal):
+        rospy.loginfo('Evaluating query')
+        res = self._activity_manager.evaluate_query(goal.query.query, goal.query.args)
+        result = EvaluateQueryResult()
+        result.result = res
+        self._evaluate_query_as.set_succeeded(result)
+        return        
 
     def run(self):
         while not rospy.is_shutdown():
