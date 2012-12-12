@@ -9,8 +9,8 @@ define([
 
     segmentAndRecognize: function() {
 			var robot = this.get('content');
-			robot.segmentAndRecognize(this);
-    },
+			robot.segmentAndRecognize();
+    }
 
   });
 
