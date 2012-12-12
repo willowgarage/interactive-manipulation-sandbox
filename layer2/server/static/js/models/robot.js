@@ -543,6 +543,8 @@ function( Ember, DS, App, ROS, Action) {
 		// ----------------------------------------------------------------------
 		// Manipulating objects in the world
 
+		recognized_objects: [],
+
 		segmentAndRecognize: function(pickupController) {
       this.set('progress_update', 'Identifying objects in view');
       var action = new Action({
@@ -556,13 +558,17 @@ function( Ember, DS, App, ROS, Action) {
         if (result.outcome == "succeeded") {
           // It worked!
           _this.set('progress_update', '');
+					_this.set('recognized_objects', result.outputs);
         } else {
           _this.set('progress_update', 'Failed to identify objects');
+					_this.set('recognized_objects', []);
         }
       });
 
       action.execute();
 		},
+
+
 
   });
 });
