@@ -231,6 +231,9 @@ function( Ember, DS, App, ROS, Action) {
           _this.set('progress_update', 'Arms not tucked, navigating anyway');
         }
       });
+
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
       console.log("Sending TuckArm action");
       action.execute();
     },
