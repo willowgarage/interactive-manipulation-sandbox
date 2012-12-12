@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+PACKAGE_NAME='mros'
+import roslib; roslib.load_manifest(PACKAGE_NAME)
+import sys
+import rospy
+
+from mros.ros_interface import RosInterface
+
+rospy.init_node('ros_interface', anonymous=True)
+
+ri = RosInterface()
+ri.update_ros_graph()
+d = ri.get_ros_graph()
+for t in d:
+    print d[t]

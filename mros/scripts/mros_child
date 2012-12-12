@@ -4,11 +4,10 @@ import roslib; roslib.load_manifest(PACKAGE_NAME)
 import sys
 import rospy
 
-import mros
+from mros.mros_child import MRosChild
 
 if __name__ == '__main__':
     rospy.init_node('mros', anonymous=True)
     config_socket_uri = sys.argv[1]
-    data_socket_uri = sys.argv[2]    
-    mr = mros.MRos(data_socket_uri=data_socket_uri, config_socket_uri=config_socket_uri, is_parent=False)
+    mr = MRosChild(config_socket_uri=config_socket_uri)
     mr.run()
