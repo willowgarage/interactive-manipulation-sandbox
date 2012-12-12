@@ -20,8 +20,10 @@
               <arg name="sim" value="$(arg run_sim)" />
               <arg name="throttle_cameras" value="false" />
               <arg name="nav" value="true" />
-              <arg name="plugs" value="true" />
-	      <arg name="wg" value="true" />
+              <arg unless="$(arg run_sim)" name="plugs" value="true" />
+              <arg if="$(arg run_sim)" name="plugs" value="false" />
+              <arg name="wg" value="true" />
+			  <!--arg name="im_debug" value="true" /-->
          </include>
     </group>
 
