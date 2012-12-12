@@ -1,3 +1,13 @@
+Installation
+==========
+
+```bash
+sudo apt-get install python-zmq
+```
+
+Description
+==========
+
 Forwards ROS messages between two ROS systems.
 
 mros consists of two processes, the mros_child and the
@@ -13,6 +23,9 @@ subscribe to (and forward to the parent).
 After mros_parent configures mros_child, the two each wait for
 incoming ROS messages on their ROS system, and forward them to each
 other over two ZeroMQ pub/sub connections.
+
+Use
+=======
 
 For now, both processes are launched and configured by a single script
 called mros_pair. This means that they actually run on the same
