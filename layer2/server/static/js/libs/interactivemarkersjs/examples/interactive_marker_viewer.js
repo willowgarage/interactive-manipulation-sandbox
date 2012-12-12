@@ -1,19 +1,7 @@
-define([
-  'ember',
-  'app',
-  'three',
-  'ROS',
-  'libs/interactivemarkersjs/improxy',
-  'libs/interactivemarkersjs/imthree',
-  'libs/interactivemarkersjs/markersthree',
-  'libs/interactivemarkersjs/threeinteraction',
-  'libs/interactivemarkersjs/examples/include/helpers/RosAxisHelper',
-  'libs/interactivemarkersjs/examples/include/helpers/RosOrbitControls',
-  'text!templates/markers.handlebars'
-], function(Ember, App, THREE, ROS, ImProxy, ImThree, MarkersThree, ThreeInteraction, RosAxes, RosOrbit, markersHtml) {
+InteractiveMarkerDisplay=new (function(THREE) {
 
   var camera, cameraControls, scene, renderer;
-
+  
   var selectableObjs;
 
   var directionalLight;
@@ -22,12 +10,13 @@ define([
 
   var imClient, imViewer;
 
-  function init(ros) {
+  init();
+  animate();
 
-    var w=640;
-    var h=480;
+  function init() {
+
     // setup camera
-    camera = new THREE.PerspectiveCamera(40, w/h, 0.01, 1000);
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
     camera.position.x = 3;
     camera.position.y = 3;
     camera.position.z = 3;
@@ -68,7 +57,7 @@ define([
     });
     renderer.setClearColorHex(0x333333, 1.0);
     renderer.sortObjects = false;
-    renderer.setSize(w,h);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = false;
     renderer.autoClear = false;
 
@@ -81,20 +70,21 @@ define([
     // highlights the receiver of mouse events
     highlighter = new ThreeInteraction.Highlighter(mouseHandler);
 
-    var meshBaseUrl = 'http://blh:8000/resources/';
+    // connect to rosbridge
+    var ros = new ROS('ws://localhost:9090');
+    
+    var meshBaseUrl = 'http://localhost:8000/resources/';
 
     // show interactive markers
     imClient = new ImProxy.Client(ros);
     imViewer = new ImThree.Viewer(selectableObjs, camera, imClient, meshBaseUrl);
-
-    subscribe('/pr2_marker_control');
   }
-
-  subscribe = function( topic ) {
+  
+  this.subscribe = function( topic ) {
     imClient.subscribe(topic);
   }
 
-  unsubscribe = function( topic ) {
+  this.unsubscribe = function( topic ) {
     imClient.unsubscribe();
   }
 
@@ -114,13 +104,4 @@ define([
     requestAnimationFrame(animate);
   }
 
-  App.MarkersView = Ember.View.extend({
-    template: Ember.Handlebars.compile(markersHtml),
-    didInsertElement : function() {
-      var content = this.get('controller').get('content');
-      init(content.ros);
-      animate();
-    }
-  });
-
-});
+})(THREE);

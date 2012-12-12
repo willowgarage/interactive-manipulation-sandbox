@@ -5,6 +5,9 @@ requirejs.config({
   paths: {
     jquery       : 'libs/jquery',
     d3           : 'libs/d3',
+    // Three
+    three        : 'libs/interactivemarkersjs/examples/include/three',
+    colladaloader: 'libs/interactivemarkersjs/examples/include/ColladaLoader',
     // Ember
     handlebars   : 'libs/handlebars',
     ember        : 'libs/ember',
@@ -23,6 +26,9 @@ requirejs.config({
   shim: {
     'd3': {
       exports: 'd3'
+    },
+    'three': {
+      exports: 'THREE'
     },
     'handlebars': {
       exports: 'Handlebars'
