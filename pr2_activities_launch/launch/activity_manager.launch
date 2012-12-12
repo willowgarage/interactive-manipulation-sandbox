@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="activity_manager" type="activity_manager_server" name="activity_manager_server"/>
+</launch>
+

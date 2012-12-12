@@ -18,6 +18,7 @@ class CameraSerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 class RobotSerializer(serializers.ModelSerializer):
+    look_cameras = CameraSerializer(source='look_cameras')
     class Meta:
         model = Robot
 

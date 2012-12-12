@@ -2,6 +2,7 @@
   <arg name="throttle_cameras" default="true" />
   <arg name="run_sim" default="false" />
   <arg name="im" default="false" />
+  <arg name="kinect_frame_prefix" default="/head_kinect" />
 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="run_sim" value="$(arg run_sim)" />
@@ -14,14 +15,15 @@
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
-   <include file="$(find openni_launch)/launch/openni.launch">
-    <arg name="depth_registration" value="true"/>
-    <arg name="camera" value="head_mount_kinect"/>
-    <arg name="rgb_frame_id" value="$(arg kinect_frame_prefix)_rgb_optical_frame"/>
-    <arg name="depth_frame_id" value="$(arg kinect_frame_prefix)_depth_optical_frame"/>
-    <arg name="publish_tf" value="false"/>
-  </include>
-
+  <group unless="$(arg im)">
+    <include file="$(find openni_launch)/launch/openni.launch">
+      <arg name="depth_registration" value="true"/>
+      <arg name="camera" value="head_mount_kinect"/>
+      <arg name="rgb_frame_id" value="$(arg kinect_frame_prefix)_rgb_optical_frame"/>
+      <arg name="depth_frame_id" value="$(arg kinect_frame_prefix)_depth_optical_frame"/>
+      <arg name="publish_tf" value="false"/>
+    </include>
+  </group>
 
   <!-- http image topic video streamer -->
   <node name="ros_http_video_streamer" pkg="ros_http_video_streamer" type="ros_http_video_streamer" >
