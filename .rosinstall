@@ -1,0 +1,28 @@
+# THIS IS A FILE WHICH IS MODIFIED BY rosinstall
+# IT IS UNLIKELY YOU WANT TO EDIT THIS FILE BY HAND,
+# UNLESS FOR REMOVING ENTRIES.
+# IF YOU WANT TO CHANGE THE ROS ENVIRONMENT VARIABLES
+# USE THE rosinstall TOOL INSTEAD.
+# IF YOU CHANGE IT, USE rosinstall FOR THE CHANGES TO TAKE EFFECT
+- other: {local-name: /opt/ros/fuerte/share/ros}
+- other: {local-name: /opt/ros/fuerte/share}
+- other: {local-name: /opt/ros/fuerte/stacks}
+- setup-file: {local-name: /opt/ros/fuerte/setup.sh}
+
+# Manipulation
+- git: {local-name: src/object_manipulation, uri: 'git@github.com:ros-interactive-manipulation/object_manipulation.git'}
+- git: {local-name: src/pr2_object_manipulation, uri: 'git@github.com:ros-interactive-manipulation/pr2_object_manipulation.git'}
+
+# Activities
+- hg: {local-name: src/pr2_plugs, uri: 'https://kforge.ros.org/plugs/hg'}
+- hg: {local-name: src/smach, uri: 'https://kforge.ros.org/smach/executive_smach'}
+
+# Web
+- git: {local-name: src/interactive-manipulation-sandbox, uri: 'git@github.com:willowgarage/interactive-manipulation-sandbox.git'}
+- git: {local-name: src/rosbridge_suite, uri: 'https://github.com/RobotWebTools/rosbridge_suite'}
+- git: {local-name: src/ros_http_video_streamer, uri: 'git@github.com:ros-interactive-manipulation/ros_http_video_streamer.git'}
+
+# Interactive Markers
+- git: {local-name: src/interactive_markers, uri: 'git@github.com:ros-interactive-manipulation/interactive_markers.git', version: fuerte-devel}
+- git: {local-name: src/interactive_marker_proxy, uri: 'git@github.com:dgossow/interactive_marker_proxy.git', version: master}
+
