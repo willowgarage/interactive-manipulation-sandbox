@@ -86,7 +86,7 @@ define([
       // Show interactive markers
       var content = this.get('controller').get('content');
       var imClient = new ImProxy.Client(content.ros);
-      var meshBaseUrl = 'http://blh:8000/resources/';
+      var meshBaseUrl = 'http://blh.willowgarage.com:8000/resources/';
       var imViewer = new ImThree.Viewer(selectableObjects, camera, imClient, meshBaseUrl);
 
       imClient.subscribe('/pr2_marker_control');
