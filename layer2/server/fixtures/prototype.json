@@ -422,8 +422,8 @@
     "pk": 4,
     "model": "world.camera",
     "fields": {
-      "url": "",
-      "name": "grasp",
+      "url": "/streams/head_mount_kinect/rgb/image_color",
+      "name": "kinect",
       "features": ""
     }
   },

@@ -19,6 +19,9 @@ function( Ember, DS, App, ROS, Action) {
     cameras: DS.attr('string'),
     look_cameras: DS.attr('string'), // Subset of this.cameras which share the "look" feature.
 
+    // TL: used for testing the Pickup tab without having to do a full segment_and_recognize
+    test_objects: {"0":{"xmin":0.34422243192144925,"ymin":0.4637337219076444,"ymax":0.6817042037682622,"xmax":0.40844968855057406},"1":{"xmin":0.5093700733340171,"ymin":0.5337361612434626,"ymax":0.694115453916135,"xmax":0.5653736815220065},"2":{"xmin":0.6635228555365372,"ymin":0.6004678931372165,"ymax":0.7484530318871222,"xmax":0.725233314557502}},
+
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
     selectedCameraIsHead: function() {
@@ -37,6 +40,11 @@ function( Ember, DS, App, ROS, Action) {
     //  Convenience pseudo-attribute function to get to the forearm
     forearm_camera_url: function() {
         return this.getCameraUrl('right arm');
+    }.property('cameras'),
+
+    //  Convenience pseudo-attribute function to get to the kinect camera for pickup
+    pickup_camera_url: function() {
+        return this.getCameraUrl('kinect');
     }.property('cameras'),
 
     //  This method parses the camera URLs every time they change
@@ -60,7 +68,8 @@ function( Ember, DS, App, ROS, Action) {
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
-        return (this.get('cameras') && this.get('cameras')[name].url);
+        return (this.get('cameras') && this.get('cameras')[name] && 
+          this.get('cameras')[name].url);
     },
 
     status_code: 0,            //  Calculated in the client
@@ -551,12 +560,12 @@ function( Ember, DS, App, ROS, Action) {
       console.log('Calling NavigateToPose action with parameters: ', action.inputs);
     },
 
-		// ----------------------------------------------------------------------
-		// Manipulating objects in the world
+    // ----------------------------------------------------------------------
+    // Manipulating objects in the world
 
-		recognized_objects: [],
+    recognized_objects: {},
 
-		segmentAndRecognize: function(pickupController) {
+    segmentAndRecognize: function(pickupController) {
       this.set('progress_update', 'Identifying objects in view');
       var action = new Action({
         ros: this.ros,
@@ -565,19 +574,19 @@ function( Ember, DS, App, ROS, Action) {
 
       var _this = this;
       action.on("result", function(result) {
-				console.log("Result from SegmentAndRecognize:", result);
+        console.log("Result from SegmentAndRecognize:", result);
         if (result.outcome == "succeeded") {
           // It worked!
           _this.set('progress_update', '');
-					_this.set('recognized_objects', result.outputs);
+          _this.set('recognized_objects', result.outputs);
         } else {
           _this.set('progress_update', 'Failed to identify objects');
-					_this.set('recognized_objects', []);
+          _this.set('recognized_objects', {});
         }
       });
 
       action.execute();
-		},
+    },
 
 
 
