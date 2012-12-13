@@ -17,7 +17,7 @@ function( Ember, DS, App, ROS, Action) {
     service_url: DS.attr('string'),
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
-    look_cameras: DS.attr('string'),
+    look_cameras: DS.attr('string'), // Subset of this.cameras which share the "look" feature.
 
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
@@ -49,6 +49,14 @@ function( Ember, DS, App, ROS, Action) {
             camera.url = camera_base_url + camera.url;
         });
     }.observes('cameras'),
+    look_camerasChanged: function() {
+        var look_cameras = this.get('look_cameras');
+        var camera_base_url = this.get('camera_base_url');
+        look_cameras && look_cameras.forEach(function(camera){
+            look_cameras[camera.name] = camera;
+            camera.url = camera_base_url + camera.url;
+        });
+    }.observes('look_cameras'),
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
