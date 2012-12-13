@@ -1,46 +1,46 @@
 body {
-   font-family: Helvetica, Arial, Sans-Serif;
-   margin-top: 0px;
+    font-family: Helvetica, Arial, Sans-Serif;
+    margin-top: 0px;
 }
 
 a {
-	color: #0000ff;
-	text-decoration: underline;
-	font-weight: bold;
+    color: #0000ff;
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 /* For clickable buttons */
 .button {
-   border-top: 1px solid #96d1f8;
-   background: #65a9d7;
-   background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
-   background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
-   background: -moz-linear-gradient(top, #3e779d, #65a9d7);
-   background: -ms-linear-gradient(top, #3e779d, #65a9d7);
-   background: -o-linear-gradient(top, #3e779d, #65a9d7);
-   padding: 5px 10px;
-   -webkit-border-radius: 8px;
-   -moz-border-radius: 8px;
-   border-radius: 8px;
-   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
-   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
-   box-shadow: rgba(0,0,0,1) 0 1px 0;
-   text-shadow: rgba(0,0,0,.4) 0 1px 0;
-   color: white;
-   font-size: 14px;
-   font-family: Helvetica, Arial, Sans-Serif;
-   text-decoration: none;
-   vertical-align: middle;
-   }
+    border-top: 1px solid #96d1f8;
+    background: #65a9d7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+    background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
+    background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+    background: -ms-linear-gradient(top, #3e779d, #65a9d7);
+    background: -o-linear-gradient(top, #3e779d, #65a9d7);
+    padding: 5px 10px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+    box-shadow: rgba(0,0,0,1) 0 1px 0;
+    text-shadow: rgba(0,0,0,.4) 0 1px 0;
+    color: white;
+    font-size: 14px;
+    font-family: Helvetica, Arial, Sans-Serif;
+    text-decoration: none;
+    vertical-align: middle;
+}
 .button:hover {
-   border-top-color: #28597a;
-   background: #28597a;
-   color: #ccc;
-   }
+    border-top-color: #28597a;
+    background: #28597a;
+    color: #ccc;
+}
 .button:active {
-   border-top-color: #1b435e;
-   background: #1b435e;
-   }
+    border-top-color: #1b435e;
+    background: #1b435e;
+}
 
 /* To draw rooms in the map */
 .room {
@@ -51,7 +51,7 @@ a {
     fill: #0000ff;
 }
 .room.selected {
-	fill: #ff0000;
+    fill: #ff0000;
 }
 
 /* To draw outlets in the map */
@@ -59,10 +59,10 @@ a {
     opacity: 1;
 }
 .outlet:hover {
-	outline: solid medium gray;
+    outline: solid medium gray;
 }
 .outlet.selected {
-	outline: solid medium gray;
+    outline: solid medium gray;
 }
 
 /* To draw tables in the map */
@@ -70,246 +70,245 @@ a {
     opacity: 1;
 }
 .table:hover {
-	outline: solid medium gray;
+    outline: solid medium gray;
 }
 .table.selected {
-	outline: solid medium gray;
+    outline: solid medium gray;
 }
 
 /* To draw robots in the map */
 .chart .robot {
-	fill: #0000ff;
-	stroke: black;
+    fill: #0000ff;
+    stroke: black;
 }
 
 /* Robot Lobby styles */
 .heading {
-	font-size: 30pt;
-	text-align: center;
-	margin-bottom: 30px;
-	margin-top: 8px;
+    font-size: 30pt;
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 8px;
 }
 
 .headingimg {
-	/* The willow garage logo in the page header */
-	margin-top: 8px;
-	margin-left: 8px;
-	margin-right: 10px;
-	vertical-align: middle;
+    /* The willow garage logo in the page header */
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .content_heading {
-	font-size: 20pt;
+    font-size: 20pt;
 }
 
 .robot_list {
-	width: 100%;
+    width: 100%;
 }
 
 .robot {
-	text-align: center;
-	margin: 20px 20px 20px 20px;
-	padding: 10px 10px 10px 10px;
-	background: #b3ddf2;
-	border-radius: 15px;
-	width: 120px;
-	float: left;
+    text-align: center;
+    margin: 20px 20px 20px 20px;
+    padding: 10px 10px 10px 10px;
+    background: #b3ddf2;
+    border-radius: 15px;
+    width: 120px;
+    float: left;
 }
 
 .robot .name {
-	font-size: 12pt;
-	font-weight: bold;
+    font-size: 12pt;
+    font-weight: bold;
 }
 
 .robot .status {
-	font-size: 10pt;
+    font-size: 10pt;
 }
 
 .loading {
-	margin: 20px 20px 20px 20px;
+    margin: 20px 20px 20px 20px;
 }
 
 /* Single robot view */
 .header {
-	position: relative;
+    position: relative;
 }
 
 .robot_map {
-	margin: 0px 0px 0px 50px;
+    margin: 0px 0px 0px 50px;
 }
 
 /* The brown robot info box at the top right of the screen */
 .robot_info_container {
-	position: absolute;
-	top: 0px;
-	right: 20px;
+    position: absolute;
+    top: 0px;
+    right: 20px;
 }
 .robot_info {
-	background: #ebdc9d;
-	border-radius: 0px 0px 10px 10px;
+    background: #ebdc9d;
+    border-radius: 0px 0px 10px 10px;
 }
 .robot_info table {
-	margin: 0px 20px 10px 20px;
+    margin: 0px 20px 10px 20px;
 }
 .robot_info table td {
-	padding-left: 20px;
-	padding-right: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .robot_info .warning {
-	background-color: red;
-	padding: 20px;
-	display: block;
-	border-radius: 0px 0px 10px 10px;
+    background-color: red;
+    padding: 20px;
+    display: block;
+    border-radius: 0px 0px 10px 10px;
 }
 
 /* The login panel */
 #login-logout-link {
-	float: right;
-	margin: 0px;
+    float: right;
+    margin: 0px;
 }
 #concurrency {
-	float: right;
-	margin-right: 25px;
+    float: right;
+    margin-right: 25px;
 }
 
 .tbd {
-	font-style: italic;
-	color: red;
+    font-style: italic;
+    color: red;
 }
 
 .robot .ready,
 .robot_info .ready {
-	color: green;
+    color: green;
 }
 .robot .disabled,
 .robot_info .disbled {
-	font-style: italic;
-	color: gray;
+    font-style: italic;
+    color: gray;
 }
 
 .placeinfo {
-	margin-top: 50px;
+    margin-top: 50px;
 }
 
 .chart {
-	margin: 20px 20px 20px 20px;
+    margin: 20px 20px 20px 20px;
 }
 
 .chart_column {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .navigation_button {
-	float: right;
-	width: 40px;
+    float: right;
+    width: 40px;
 }
 
 /* For the left navigation bar */
 #content
 {
-   background-color: #f2f2f2;
-   padding: 20px 10px;
-   /* TL: this causes extra right-margin space inside the tab box, I don't
-	* know why */
-/*   overflow: auto; */
+    background-color: #f2f2f2;
+    padding: 20px 10px;
+    /* TL: this causes extra right-margin space inside the tab box, I don't know why */
+    /*   overflow: auto; */
 }
 #tab-container
 {
-   float: left;
-   margin: 0;
-   width: 126px;
+    float: left;
+    margin: 0;
+    width: 126px;
 }
 #tab-container ul
 {
-   list-style: none;
-   text-align: center;
+    list-style: none;
+    text-align: center;
 }
 #tab-container ul li
 {
-   border-top: 1px solid #666;
-   border-right: 1px solid #666;
-   border-bottom: 1px solid #666;
-   border-left: 8px solid #666;
-   background-color: #ddd;
-   margin: 8px 0;
+    border-top: 1px solid #666;
+    border-right: 1px solid #666;
+    border-bottom: 1px solid #666;
+    border-left: 8px solid #666;
+    background-color: #ddd;
+    margin: 8px 0;
 }
 #tab-container ul li a,
 #tab-container ul li a:visited
 {
-   text-decoration: none;
-   color: #666;
-   display: block;
-   /* This controls the height of the navbar tabs */
-   padding: 30px 5px;
+    text-decoration: none;
+    color: #666;
+    display: block;
+    /* This controls the height of the navbar tabs */
+    padding: 30px 5px;
 }
 #tab-container ul li:hover
 {
-   border-left: 8px solid #333;
+    border-left: 8px solid #333;
 }
 #tab-container ul li a:hover
 {
-   color: #000;
+    color: #000;
 }
 #tab-container ul li.tabselected
 {
-   border-right: none;
-   background-color: #fff;
-   border-left: 8px solid #08750C;
+    border-right: none;
+    background-color: #fff;
+    border-left: 8px solid #08750C;
 }
 #main-container
 {
-   min-height: 400px;
-   margin: 0 0 0 125px;
-   padding: 20px;
-   background-color: #fff;
-   border: 1px solid #888;
+    min-height: 400px;
+    margin: 0 0 0 125px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #888;
 }
 
 
 /* Old left navbar */
 
 .plugcontent {
-	text-align: center;
-	font-size: 36pt;
+    text-align: center;
+    font-size: 36pt;
 }
 
 .navigate_button {
-	margin-top: 50px;
-	height: 60px;
-	padding-top: 50px;
-	text-align: center;
+    margin-top: 50px;
+    height: 60px;
+    padding-top: 50px;
+    text-align: center;
 }
 
 .mybutton {
-	margin: 20px;
-	padding: 10px;
-	background: blue;
-	color: white;
-	border-radius: 25px;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+    margin: 20px;
+    padding: 10px;
+    background: blue;
+    color: white;
+    border-radius: 25px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .mybutton.disabled {
-	background: gray;
+    background: gray;
 }
 
 /* Warnings and notices */
 .notice {
-	border: 1px solid;
-	text-align: center;
-	padding: 10px;
-	margin-bottom: 10px;
+    border: 1px solid;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
 .progress_update {
-	text-align: right;
-	background: #f2f2f2;
-	padding: 2px;
+    text-align: right;
+    background: #f2f2f2;
+    padding: 2px;
 }
 
 /* For an on/off switch */
@@ -373,6 +372,19 @@ a {
 
 /* For the arrow-key keypad */
 .joypad .mybutton {
-	margin: 10px;
-	padding: 5px;
+    margin: 10px;
+    padding: 5px;
+}
+
+/* For the pickup tab */
+.recognized_object {
+    stroke: #00ff00;
+    stroke-width: 2;
+    stroke-dasharray: 10, 10;
+    fill: #00ff00;
+    fill-opacity: 0.0;
+}
+
+.recognized_object.selected {
+    stroke-dasharray: 1, 0;
 }

@@ -25,6 +25,20 @@ define([
       },
 
       drawObjects: function(robot) {
+        /* When the user clicks on an object, update "Selected object" and
+         * store this object id in our controller */
+        function objSelected(d) {
+          console.log("in objSelected, obj:", d);
+
+          // Remove old selection
+          d3.select(".selected").classed("selected", false);
+          // Add new selection
+          d3.select(d3.event.target).classed("selected", true);
+
+          // Store this object id in our controller
+          _this.get('controller').set('selected_object', d.id);
+        }
+
         var robot = this.get('controller').get('content');
         var objects = robot.get('recognized_objects');
 
@@ -46,7 +60,7 @@ define([
           .attr("y", function(d) { return d.ymin * _this.height; })
           .attr("width", function(d) { return (d.xmax - d.xmin) * _this.width; })
           .attr("height", function(d) { return (d.ymax - d.ymin) * _this.height; })
-          .attr("style", "stroke: #00FF00; fill: none; stroke-width: 2;");
+          .on("click", objSelected);
 
       }
 
