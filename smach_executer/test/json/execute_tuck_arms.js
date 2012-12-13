@@ -1,7 +1,11 @@
 {
     "type": "action"
   , "name": "TuckArms"
-  , "inputs": {}
+  , "inputs": 
+	{
+		"tuck_left": true,
+		"tuck_right": true
+	}
 }
 
 
