@@ -12,115 +12,105 @@ define([
   'text!templates/markers.handlebars'
 ], function(Ember, App, THREE, ROS, ImProxy, ImThree, MarkersThree, ThreeInteraction, RosAxes, RosOrbit, markersHtml) {
 
-  var camera, cameraControls, scene, renderer;
-
-  var selectableObjs;
-
-  var directionalLight;
-
-  var mouseHandler, highlighter;
-
-  var imClient, imViewer;
-
-  function init(ros) {
-
-    var w=640;
-    var h=480;
-    // setup camera
-    camera = new THREE.PerspectiveCamera(40, w/h, 0.01, 1000);
-    camera.position.x = 3;
-    camera.position.y = 3;
-    camera.position.z = 3;
-
-    // setup scene
-    scene = new THREE.Scene();
-
-    // setup camera mouse control
-    cameraControls = new THREE.RosOrbitControls(camera);
-
-    // add node to host selectable objects
-    selectableObjs = new THREE.Object3D;
-    scene.add(selectableObjs);
-
-    // add lights
-    scene.add(new THREE.AmbientLight(0x555555));
-    directionalLight = new THREE.DirectionalLight(0xffffff);
-    scene.add(directionalLight);
-
-    // add x/y grid
-    var numCells = 50;
-    var gridGeom = new THREE.PlaneGeometry(numCells, numCells, numCells, numCells);
-    var gridMaterial = new THREE.MeshBasicMaterial({
-      color : 0x999999,
-      wireframe : true,
-      wireframeLinewidth : 1,
-      transparent : true
-    });
-    var gridObj = new THREE.Mesh(gridGeom, gridMaterial);
-    scene.add(gridObj);
-
-    // add coordinate frame visualization
-    axes = new THREE.Axes();
-    scene.add(axes);
-
-    renderer = new THREE.WebGLRenderer({
-      antialias : true
-    });
-    renderer.setClearColorHex(0x333333, 1.0);
-    renderer.sortObjects = false;
-    renderer.setSize(w,h);
-    renderer.shadowMapEnabled = false;
-    renderer.autoClear = false;
-
-    var container = document.getElementById("container");
-    container.appendChild(renderer.domElement);
-
-    // propagates mouse events to three.js objects
-    mouseHandler = new ThreeInteraction.MouseHandler(renderer, camera, selectableObjs, cameraControls);
-
-    // highlights the receiver of mouse events
-    highlighter = new ThreeInteraction.Highlighter(mouseHandler);
-
-    var meshBaseUrl = 'http://blh:8000/resources/';
-
-    // show interactive markers
-    imClient = new ImProxy.Client(ros);
-    imViewer = new ImThree.Viewer(selectableObjs, camera, imClient, meshBaseUrl);
-
-    subscribe('/pr2_marker_control');
-  }
-
-  subscribe = function( topic ) {
-    imClient.subscribe(topic);
-  }
-
-  unsubscribe = function( topic ) {
-    imClient.unsubscribe();
-  }
-
-  function animate() {
-
-    cameraControls.update();
-
-    // put light to the top-left of the camera
-    directionalLight.position = camera.localToWorld(new THREE.Vector3(-1, 1, 0));
-    directionalLight.position.normalize();
-
-    renderer.clear(true, true, true);
-    renderer.render(scene, camera);
-
-    highlighter.renderHighlight(renderer, scene, camera);
-
-    requestAnimationFrame(animate);
-  }
-
   App.MarkersView = Ember.View.extend({
     template: Ember.Handlebars.compile(markersHtml),
     didInsertElement : function() {
+      this.start();
+      this.animate();
+    },
+    start : function() {
+      var width  = 640;
+      var height = 480;
+
+      // Setup camera
+      var camera = new THREE.PerspectiveCamera(40, width/height, 0.01, 1000);
+      camera.position.x = 3;
+      camera.position.y = 3;
+      camera.position.z = 3;
+      this.set('camera', camera);
+
+      // Setup scene
+      var scene = new THREE.Scene();
+      this.set('scene', scene);
+
+      // Setup camera mouse control
+      var cameraControls = new THREE.RosOrbitControls(camera);
+      this.set('cameraControls', cameraControls);
+
+      // Add node to host selectable objects
+      var selectableObjects = new THREE.Object3D();
+      scene.add(selectableObjects);
+
+      // Add lights
+      scene.add(new THREE.AmbientLight(0x555555));
+      var directionalLight = new THREE.DirectionalLight(0xffffff);
+      this.set('directionalLight', directionalLight);
+      scene.add(directionalLight);
+
+      // Add x/y grid
+      var cellCount = 50;
+      var gridGeometry = new THREE.PlaneGeometry(cellCount, cellCount, cellCount, cellCount);
+      var gridMaterial = new THREE.MeshBasicMaterial({
+        color : 0x999999,
+        wireframe : true,
+        wireframeLinewidth : 1,
+        transparent : true
+      });
+      var gridMesh = new THREE.Mesh(gridGeometry, gridMaterial);
+      scene.add(gridMesh);
+
+      // Add coordinate frame visualization
+      var axes = new THREE.Axes();
+      scene.add(axes);
+
+      var renderer = new THREE.WebGLRenderer({
+        antialias : true
+      });
+      renderer.setClearColorHex(0x333333, 1.0);
+      renderer.sortObjects = false;
+      renderer.setSize(width, height);
+      renderer.shadowMapEnabled = false;
+      renderer.autoClear = false;
+      this.set('renderer', renderer);
+
+      var container = document.getElementById("container");
+      container.appendChild(renderer.domElement);
+
+      // Propagates mouse events to three.js objects
+      var mouseHandler = new ThreeInteraction.MouseHandler(renderer, camera, selectableObjects, cameraControls);
+
+      // Highlights the receiver of mouse events
+      var highlighter = new ThreeInteraction.Highlighter(mouseHandler);
+      this.set('highlighter', highlighter);
+
+      // Show interactive markers
       var content = this.get('controller').get('content');
-      init(content.ros);
-      animate();
+      var imClient = new ImProxy.Client(content.ros);
+      var meshBaseUrl = 'http://blh:8000/resources/';
+      var imViewer = new ImThree.Viewer(selectableObjects, camera, imClient, meshBaseUrl);
+
+      imClient.subscribe('/pr2_marker_control');
+    },
+    animate : function() {
+      var camera = this.get('camera');
+      var cameraControls = this.get('cameraControls');
+      cameraControls.update();
+
+      // Put light to the top-left of the camera
+      var directionalLight = this.get('directionalLight');
+      directionalLight.position = camera.localToWorld(new THREE.Vector3(-1, 1, 0));
+      directionalLight.position.normalize();
+
+      var renderer = this.get('renderer');
+      var scene = this.get('scene');
+      renderer.clear(true, true, true);
+      renderer.render(scene, camera);
+
+      var highlighter = this.get('highlighter');
+      highlighter.renderHighlight(renderer, scene, camera);
+
+      requestAnimationFrame(this.animate.bind(this));
     }
   });
-
 });
+
