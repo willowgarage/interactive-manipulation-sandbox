@@ -13,12 +13,12 @@ from smach_executer.actions.navigate_to_pose import NavigateToPose
 from smach_executer.actions.plug_in import PlugIn
 from smach_executer.actions.unplug import Unplug
 from smach_executer.actions.tuck_arms import TuckArms
-from smach_executer.actions.untuck_arms import UntuckArms
 from smach_executer.actions.point_head import PointHead
 from smach_executer.actions.point_head_in_image import PointHeadInImage
 from smach_executer.actions.segment_and_recognize import SegmentAndRecognize
 from smach_executer.actions.pickup_object import PickupObject
 from smach_executer.actions.move_torso import MoveTorso
+from smach_executer.actions.interactive_gripper import InteractiveGripper
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -35,12 +35,12 @@ class ExecuterServer:
             'PlugIn': PlugIn,
             'Unplug': Unplug,
             'TuckArms': TuckArms,
-            'UntuckArms': UntuckArms,
             'PointHead': PointHead,
             'PointHeadInImage': PointHeadInImage,
             'SegmentAndRecognize': SegmentAndRecognize,
             'PickupObject': PickupObject,
-            'MoveTorso': MoveTorso
+            'MoveTorso': MoveTorso,
+            'InteractiveGripper': InteractiveGripper
             }
 
         self.sm = None
