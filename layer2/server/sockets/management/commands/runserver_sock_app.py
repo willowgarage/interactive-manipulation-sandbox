@@ -17,8 +17,10 @@ class WithSocketIO(object):
 
     def __call__(self, environ, start_response):
         path = environ['PATH_INFO'].strip('/')
+        print path  # DEBUG
 
         if path.startswith('socket.io'):
+            print "SOCKET.IO REQUEST RECEIVED."  # DEBUG
             socketio_manage(environ)
         else:
             return self.app(environ, start_response)

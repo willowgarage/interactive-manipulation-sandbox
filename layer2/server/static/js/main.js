@@ -4,6 +4,7 @@ requirejs.config({
 
   paths: {
     jquery       : 'libs/jquery',
+    blockUI      : 'libs/jquery.blockUI',
     d3           : 'libs/d3',
     // Ember
     handlebars   : 'libs/handlebars',
@@ -16,11 +17,19 @@ requirejs.config({
     ROS           : 'libs/ros',
     actionclient  : 'libs/actionclient',
     action        : 'libs/action',
+    // socket.io
+    socketio      : 'libs/socket.io',
     // Templates
     templates     : '../templates'
   },
 
   shim: {
+    'jquery': {
+      deps: ['blockUI'],
+    },
+    'socketio': {
+      exports: 'socketio'
+    },
     'd3': {
       exports: 'd3'
     },
@@ -46,4 +55,3 @@ function( App, Router) {
   $(".loading").remove();
   App.initialize();
 });
-
