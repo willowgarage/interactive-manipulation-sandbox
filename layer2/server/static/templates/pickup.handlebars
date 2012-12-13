@@ -14,15 +14,18 @@
   <div id="main-container">
     <div class="content">
 
-	<table>
-	    <tr>
+        <table>
+            <tr>
               <td>
-		What the robot sees:<br>
-		<video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="camera_url"}}></video><br>
-	      </td>
-	      <td> <div class="button" {{action segmentAndRecognize target="controller"}}>Find objects</div>
-	    </tr>
-	</table>
+                What the robot sees:<br>
+                <div style="position: relative;">
+                  <canvas id="canvas" width="400" height="300" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+                  <video id="video" preload="none" autoplay="true" width=400 height=300 {{bindAttr src="camera_url"}}></video><br>
+                </div>
+              </td>
+              <td> <div class="button" {{action segmentAndRecognize target="controller"}}>Find objects</div>
+            </tr>
+        </table>
 
     </div>
   </div>
