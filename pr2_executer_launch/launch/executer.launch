@@ -23,6 +23,11 @@
               <arg name="plugs" value="true" />
 	      <arg name="wg" value="true" />
          </include>
+
+	 <node pkg="interactive_marker_proxy" type="proxy" name="im_proxy">
+              <param name="topic_ns" value="/pr2_marker_control" />
+              <param name="target_frame" value="/base_link" />
+         </node>
     </group>
 
     <group unless="$(arg im)">
