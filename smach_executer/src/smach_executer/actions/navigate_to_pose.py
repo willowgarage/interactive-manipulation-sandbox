@@ -9,6 +9,7 @@ import move_base_msgs.msg as mbm
 from smach import State
 from actionlib_msgs.msg import GoalStatus
 import subprocess
+import math
 
 class NavigateToPose(State):
     """
@@ -27,6 +28,7 @@ class NavigateToPose(State):
         rospy.loginfo("waiting for move base server")
         self.move_base_client.wait_for_server()
         rospy.loginfo("move base server found")
+        self.cmd_vel_pub = rospy.Publisher("base_controller/command", gm.Twist)
         State.__init__(self, outcomes = ['succeeded', 'failed', 'preempted', 'error'], input_keys = input_keys)
 
     def execute(self, userdata):
@@ -47,43 +49,66 @@ class NavigateToPose(State):
             move_base_config = ''' "{'base_global_planner': 'navfn/NavfnROS', 'base_local_planner': 'dwa_local_planner/DWAPlannerROS'}" '''
             
             costmap_config = '''/local_costmap "{'max_obstacle_height': 2.0, 'inflation_radius': 0.55 }" '''
-        else:
-            rospy.loginfo("navigate_to_pose: switching to NON-collision-aware nav planners")
-            move_base_config = ''' "{'base_global_planner': 'pr2_navigation_controllers/GoalPasser', 'base_local_planner': 'pr2_navigation_controllers/PoseFollower'}" '''
-            
-            costmap_config = '''/local_costmap "{'max_obstacle_height': 0.36, 'inflation_radius': 0.01 }" '''
+            error = subprocess.call(reconfig_str + move_base_config, shell=True)
+            if error:
+                rospy.logerr("navigate_to_pose: dynamic reconfigure for move_base_node failed!")
+                return 'error'
+            error = subprocess.call(reconfig_str + costmap_config, shell=True)
+            if error:
+                rospy.logerr("navigate_to_pose: dynamic reconfigure for costmap_config failed!")
+                return 'error'
 
-        error = subprocess.call(reconfig_str + move_base_config, shell=True)
-        if error:
-            rospy.logerr("navigate_to_pose: dynamic reconfigure for move_base_node failed!")
-            return 'error'
-        error = subprocess.call(reconfig_str + costmap_config, shell=True)
-        if error:
-            rospy.logerr("navigate_to_pose: dynamic reconfigure for costmap_config failed!")
-            return 'error'
+            goal = mbm.MoveBaseGoal()
+            goal.target_pose.header.stamp = rospy.Time.now()
+            goal.target_pose.header.frame_id = frame_id
+            goal.target_pose.pose = _to_pose(x, y, theta)
 
-        goal = mbm.MoveBaseGoal()
-        goal.target_pose.header.stamp = rospy.Time.now()
-        goal.target_pose.header.frame_id = frame_id
-        goal.target_pose.pose = _to_pose(x, y, theta)
+            rospy.loginfo("Sending base goal (%f, %f, %f) and waiting for result" % (x, y, theta))
+            self.move_base_client.send_goal(goal)
 
-        rospy.loginfo("Sending base goal (%f, %f, %f) and waiting for result" % (x, y, theta))
-        self.move_base_client.send_goal(goal)
+            r = rospy.Rate(10)
+            while not rospy.is_shutdown():
+                if self.preempt_requested():
+                    self.move_base_client.cancel_goal()
+                    self.service_preempt()
+                    return 'preempted'
+                state = self.move_base_client.get_state()
+                if state == GoalStatus.SUCCEEDED:
+                    rospy.loginfo("navigation succeeded")
+                    return 'succeeded'
+                elif state not in [GoalStatus.PENDING, GoalStatus.ACTIVE]:
+                    rospy.loginfo("state was:"+str(state))
+                    return 'failed'
+                r.sleep()
 
-        r = rospy.Rate(10)
-        while not rospy.is_shutdown():
-            if self.preempt_requested():
-                self.move_base_client.cancel_goal()
-                self.service_preempt()
-                return 'preempted'
-            state = self.move_base_client.get_state()
-            if state == GoalStatus.SUCCEEDED:
-                rospy.loginfo("navigation succeeded")
-                return 'succeeded'
-            elif state not in [GoalStatus.PENDING, GoalStatus.ACTIVE]:
-                rospy.loginfo("state was:"+str(state))
+        #non-collision-aware version just sends commands to the base controller for awhile
+        else: 
+            #only use for small, base-relative commands!  
+            if frame_id not in ['base_link', 'base_footprint', '/base_link', '/base_footprint']:
+                rospy.logerr("non-collision-aware commands should be in base_link or base_footprint!")
                 return 'failed'
-            r.sleep()
+            if abs(x) > 0.5:
+                rospy.logerr("x was too large, clipping to 0.5 m")
+                x = 0.5*x/abs(x)
+            if abs(y) > 0.5:
+                rospy.logerr("y was too large, clipping to 0.5 m")
+                y = 0.5*y/abs(y)
+
+            #send constant-speed commands until (in theory) we could have traveled that far
+            time = max([abs(x)/.2, abs(y)/.2, abs(theta)/.25])
+            r = rospy.Rate(10)
+            steps = int(math.floor(time*10))
+            for i in range(steps):
+                if self.preempt_requested():
+                    return 'preempted'
+                base_cmd = gm.Twist()
+                base_cmd.linear.x = 10.*x/steps
+                base_cmd.linear.y = 10.*y/steps
+                base_cmd.angular.z = 10.*theta/steps
+                self.cmd_vel_pub.publish(base_cmd)
+                r.sleep()
+
+            return 'succeeded'
 
     def request_preempt(self):
          State.request_preempt(self)

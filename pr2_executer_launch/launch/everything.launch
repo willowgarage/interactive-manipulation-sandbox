@@ -1,12 +1,14 @@
 <launch>
   <arg name="throttle_cameras" default="true" />
   <arg name="run_sim" default="false" />
-  <arg name="im" default="false" />
+  <arg name="im" default="true" />
   <arg name="kinect_frame_prefix" default="/head_kinect" />
+
+  <arg name="http_streamer" default="false" />
 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="run_sim" value="$(arg run_sim)" />
-	<arg name="im" value="$(arg im)" />
+    <arg name="im" value="$(arg im)" />
   </include>
 
   <!-- rosbridge and mjpeg_server -->
@@ -25,13 +27,15 @@
     </include>
   </group>
 
-  <!-- http image topic video streamer -->
-  <node name="ros_http_video_streamer" pkg="ros_http_video_streamer" type="ros_http_video_streamer" >
-    <param name="port" value="9999"/>
-    <param name="host" value="prn.willowgarage.com"/>
-    <param name="framerate" value="15"/>
-    <param name="bitrate" value="250000"/>
-  </node>
+  <group unless="$(arg http_streamer)">
+    <!-- http image topic video streamer -->
+    <node name="ros_http_video_streamer" pkg="ros_http_video_streamer" type="ros_http_video_streamer" >
+      <param name="port" value="9999"/>
+      <param name="host" value="prn.willowgarage.com"/>
+      <param name="framerate" value="15"/>
+      <param name="bitrate" value="250000"/>
+    </node>
+  </group>
 
   <!-- TF2 Buffer Server -->
   <node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen">
