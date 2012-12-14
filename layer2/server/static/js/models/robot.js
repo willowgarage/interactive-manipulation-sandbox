@@ -17,6 +17,7 @@ function( Ember, DS, App, ROS, Action) {
     service_url: DS.attr('string'),
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
+    look_cameras: DS.attr('string'), // Subset of this.cameras which share the "look" feature.
 
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
@@ -48,6 +49,14 @@ function( Ember, DS, App, ROS, Action) {
             camera.url = camera_base_url + camera.url;
         });
     }.observes('cameras'),
+    look_camerasChanged: function() {
+        var look_cameras = this.get('look_cameras');
+        var camera_base_url = this.get('camera_base_url');
+        look_cameras && look_cameras.forEach(function(camera){
+            look_cameras[camera.name] = camera;
+            camera.url = camera_base_url + camera.url;
+        });
+    }.observes('look_cameras'),
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
@@ -230,6 +239,9 @@ function( Ember, DS, App, ROS, Action) {
           _this.set('progress_update', 'Arms not tucked, navigating anyway');
         }
       });
+
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
       console.log("Sending TuckArm action");
       action.execute();
     },
@@ -249,7 +261,7 @@ function( Ember, DS, App, ROS, Action) {
         // Return to navigation view
         App.get('router').send("navigate", _this);
       });
-  
+
       // Actually send the navigation command
       action.inputs.x        = place.get('pose_x');
       action.inputs.y        = place.get('pose_y');
@@ -260,8 +272,8 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
     },
 
-    /* Sending a Cancel goal (ExecuteAction is currently a SimpleActionState, 
-     * so that should cancel any previous goals) */ 
+    /* Sending a Cancel goal (ExecuteAction is currently a SimpleActionState,
+     * so that should cancel any previous goals) */
     cancelAllGoals: function() {
       this.set('progress_update', 'Cancelling all goals');
 
@@ -356,7 +368,7 @@ function( Ember, DS, App, ROS, Action) {
           if (onError) onError();
         }
       });
-  
+
       action.inputs.target_frame        = 'torso_lift_link';
       action.inputs.target_x            = 1.0;
       action.inputs.target_y            = 0;
@@ -542,6 +554,8 @@ function( Ember, DS, App, ROS, Action) {
 		// ----------------------------------------------------------------------
 		// Manipulating objects in the world
 
+		recognized_objects: [],
+
 		segmentAndRecognize: function(pickupController) {
       this.set('progress_update', 'Identifying objects in view');
       var action = new Action({
@@ -555,13 +569,17 @@ function( Ember, DS, App, ROS, Action) {
         if (result.outcome == "succeeded") {
           // It worked!
           _this.set('progress_update', '');
+					_this.set('recognized_objects', result.outputs);
         } else {
           _this.set('progress_update', 'Failed to identify objects');
+					_this.set('recognized_objects', []);
         }
       });
 
       action.execute();
 		},
+
+
 
   });
 });
@@ -571,4 +589,3 @@ function myDebugEvents( source, id, events) {
     source.on(events[i], f);
   }
 };
-
