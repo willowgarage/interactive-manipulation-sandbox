@@ -24,7 +24,7 @@ function(
 
       // Disconnect-reconnect routine.
       this.socket.on('disconnect', function(){
-        $.blockUI({ message: null });
+        $.blockUI({ message: '<h2>Connection to server lost...</h2><img src="/static/img/spinnerLarge.gif"/><h2>...trying to reconnect.</h2>'});
       });
       this.socket.on('reconnecting', function(){
         // Event fired inmediatly before an attempt to reach the server.
