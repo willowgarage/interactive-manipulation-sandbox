@@ -130,7 +130,7 @@ OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
 # is the following one:
 # OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=willowgarage.com'
 # but it fails in the underlying python-openid layer with:
-# 
+#
 #   Error attempting to use stored discovery information: <openid.consumer.consumer.TypeURIMismatch: Required type http://specs.openid.net/auth/2.0/signon not found in ['http://specs.openid.net/auth/2.0/server', 'http://openid.net/srv/ax/1.0', 'http://specs.openid.net/extensions/ui/1.0/mode/popup', 'http://specs.openid.net/extensions/ui/1.0/icon', 'http://specs.openid.net/extensions/pape/1.0'] for endpoint <openid.consumer.discover.OpenIDServiceEndpoint server_url='https://www.google.com/a/willowgarage.com/o8/ud?be=o8' claimed_id=None local_id=None canonicalID=None used_yadis=True >>
 #   Attempting discovery to verify endpoint
 #   Performing discovery on http://willowgarage.com/openid?id=117302733910584657424
@@ -155,6 +155,7 @@ INSTALLED_APPS = (
     'django_openid_auth',
 
     # Server applications
+    'sockets',
     'world',
 )
 
@@ -192,4 +193,3 @@ try:
     print "Using settings from local_settings.py"
 except ImportError:
     print "Local settings not found.\nNOTE: If you want to override django settings for this particular computer, please create a local_settings.py file in your root django directory and perform any desired configuration there"
-

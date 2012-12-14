@@ -5,6 +5,7 @@ requirejs.config({
   paths: {
     jquery       : 'libs/jquery',
     d3           : 'libs/d3',
+    blockUI      : 'libs/jquery.blockUI',
     // Three
     three        : 'libs/interactivemarkersjs/examples/include/three',
     colladaloader: 'libs/interactivemarkersjs/examples/include/ColladaLoader',
@@ -19,6 +20,8 @@ requirejs.config({
     ROS           : 'libs/ros',
     actionclient  : 'libs/actionclient',
     action        : 'libs/action',
+    // socket.io
+    socketio      : 'libs/socket.io',
     // Templates
     templates     : '../templates'
   },
@@ -34,7 +37,7 @@ requirejs.config({
       exports: 'Handlebars'
     },
     'ember': {
-      deps    : ['jquery', 'handlebars'],
+      deps    : ['jquery', 'blockUI', 'handlebars'],
       exports : 'Ember'
     },
     'emberdata': {
@@ -52,4 +55,3 @@ function( App, Router) {
   $(".loading").remove();
   App.initialize();
 });
-
