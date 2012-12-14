@@ -4,6 +4,7 @@ monkey.patch_all()
 from optparse import make_option
 
 from django.core.management.base import BaseCommand
+from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 
 from socketio import socketio_manage
@@ -83,8 +84,13 @@ class Command(BaseCommand):
         PROJECT_SETTINGS = "server.settings"
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", PROJECT_SETTINGS)
 
-        from django.core.wsgi import get_wsgi_application
         application = get_wsgi_application()
+
+        # If on a development environment, serve static files a-la 'runserver'.
+        if settings.DEBUG:
+            # Add another middleware to the stack, to detour static file requests.
+            from django.contrib.staticfiles.handlers import StaticFilesHandler
+            application = StaticFilesHandler(application)
 
         print
         print 'Listening on port %s:%s' % (options['host'], options['port'])
