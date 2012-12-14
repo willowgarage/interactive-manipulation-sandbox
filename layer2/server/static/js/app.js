@@ -1,19 +1,19 @@
 define([
-  'socketio',
   'ember',
-  'emberdata'
+  'emberdata',
+  'socketio'
 ],
 function(
-  io,
   Ember,
-  DS
+  DS,
+  io
 ) {
   var App = Ember.Application.create({
     autoinit: false,
 
     ready: function() {
       //  Create a master socket connection to server
-      this.socket = io.connect("/socket.io/", {
+      this.socket = io.connect("", {
 
         // Maximum number of milliseconds between reconnect attempts.
         'reconnection limit': 3000,

@@ -4,8 +4,8 @@ requirejs.config({
 
   paths: {
     jquery       : 'libs/jquery',
-    blockUI      : 'libs/jquery.blockUI',
     d3           : 'libs/d3',
+    blockUI      : 'libs/jquery.blockUI',
     // Ember
     handlebars   : 'libs/handlebars',
     ember        : 'libs/ember',
@@ -24,12 +24,6 @@ requirejs.config({
   },
 
   shim: {
-    'jquery': {
-      deps: ['blockUI'],
-    },
-    'socketio': {
-      exports: 'socketio'
-    },
     'd3': {
       exports: 'd3'
     },
@@ -37,7 +31,7 @@ requirejs.config({
       exports: 'Handlebars'
     },
     'ember': {
-      deps    : ['jquery', 'handlebars'],
+      deps    : ['jquery', 'blockUI', 'handlebars'],
       exports : 'Ember'
     },
     'emberdata': {
