@@ -19,11 +19,19 @@
               <td>
                 What the robot sees:<br>
                 <div style="position: relative;">
-                  <canvas id="canvas" width="400" height="300" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
-                  <video id="video" preload="none" autoplay="true" width=400 height=300 {{bindAttr src="camera_url"}}></video><br>
+                  <!-- This div will hold an svg element we create to draw overlays on the video -->
+                  <div id="canvas" style="position: absolute; left:0; top:0; z-index:1;"></div>
+                  <video id="video" preload="none" autoplay="true" width=400 height=300 {{bindAttr src="pickup_camera_url"}}></video><br>
                 </div>
               </td>
-              <td> <div class="button" {{action segmentAndRecognize target="controller"}}>Find objects</div>
+              <td>
+                <div class="mybutton" {{action segmentAndRecognize target="controller"}}>Find objects</div><br>
+                {{#if selected_object}}
+                  <div class="mybutton" {{action pickupObject target="controller"}}>Pick up object</div><br>
+                {{else}}
+                  <div class="mybutton disabled"}}>Pick up object</div><br>
+                {{/if}}
+              </td>
             </tr>
         </table>
 
