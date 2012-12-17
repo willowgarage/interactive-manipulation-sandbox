@@ -81,10 +81,10 @@ class MultiRosParent:
         rep = pickle.loads(self._zmq_config_socket.recv())
 
         while not rospy.is_shutdown():
-            rospy.loginfo('Parent waiting for messages from child')
+            rospy.logdebug('Parent waiting for messages from child')
             child_topic, msg = pickle.loads(self._zmq_pub_socket.recv())
             parent_topic = self.child_to_parent_topic(child_topic)
-            rospy.loginfo('Parent publishing message from child topic %s on topic %s' % (child_topic, parent_topic))
+            rospy.logdebug('Parent publishing message from child topic %s on topic %s' % (child_topic, parent_topic))
             with self._ros_interface_lock:
                 self._ros_interface.publish(parent_topic, msg)
 
@@ -153,5 +153,5 @@ class MultiRosParent:
         # TODO: throttle based on priority
         child_topic = self.parent_to_child_topic(parent_topic)
         with self._sub_socket_lock:
-            rospy.loginfo('Parent sending ROS message from topic %s to child for topic %s' % (parent_topic, child_topic))
+            rospy.logdebug('Parent sending ROS message from topic %s to child for topic %s' % (parent_topic, child_topic))
             self._zmq_sub_socket.send(pickle.dumps((child_topic, msg._buff)))

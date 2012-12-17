@@ -74,7 +74,7 @@ class MultiRosChild:
         '''
         if self._zmq_pub_socket is not None:
             with self._zmq_pub_lock:
-                rospy.loginfo('Child forwarding message from %s' % topic)
+                rospy.logdebug('Child forwarding message from %s' % topic)
                 self._zmq_pub_socket.send(pickle.dumps((topic, msg._buff)))
 
     def remote_message_thread_func(self):
@@ -85,5 +85,5 @@ class MultiRosChild:
         while not rospy.is_shutdown():
             msg_str = self._zmq_sub_socket.recv()
             topic, msg = pickle.loads(msg_str)
-            rospy.loginfo('Child publishing message received from parent to %s' % topic)
+            rospy.logdebug('Child publishing message received from parent to %s' % topic)
             self._ros_interface.publish(topic, msg)
