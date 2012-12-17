@@ -67,10 +67,8 @@
         - python-openid
         - django-openid-auth
         - pillow
-        - gevent
+        - south
         - git+https://github.com/abourget/gevent-socketio.git
-        - gevent-websocket
-        - greenlet
 #        - hg+https://bitbucket.org/wkornewald/djangotoolbox
 #        - git+https://github.com/django-nonrel/mongodb-engine
 #        - jinja2
