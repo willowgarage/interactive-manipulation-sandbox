@@ -169,7 +169,6 @@ class RosInterface:
             msg = topic_info.message_class()
             msg._buff = msg_data
 
-            rospy.loginfo('Publishing message on topic %s' % topic)
             self._topics[topic].publisher.publish(msg)
 
     def message_callback(self, msg, topic):
