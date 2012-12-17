@@ -79,4 +79,11 @@
     args="messages /move_base_node/NavfnROS/plan 0.20 /plan_throttled">
   </node>
 
+  <group if="$(arg im)">
+    <node output="screen" name="pr2_marker_control_proxy" pkg="interactive_marker_proxy" type="proxy">
+      <remap from="target_frame" to="/base_link"/>
+      <remap from="topic_ns" to="/pr2_marker_control"/>
+    </node>
+  </group>
+
 </launch>
