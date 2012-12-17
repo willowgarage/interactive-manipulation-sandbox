@@ -7,6 +7,7 @@ a {
     color: #0000ff;
     text-decoration: underline;
     font-weight: bold;
+	cursor: pointer;
 }
 
 /* For clickable buttons */
@@ -142,20 +143,20 @@ a {
 .robot_info_container {
     position: absolute;
     top: 0px;
-    right: 20px;
+    right: 0px;
 }
 .robot_info {
     background: #ebdc9d;
     border-radius: 0px 0px 10px 10px;
 }
 .robot_info table {
-    margin: 0px 20px 10px 20px;
+    margin: 0px;
 }
 .robot_info table td {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
-.robot_info .warning {
+.robot_info .disconnected {
     background-color: red;
     padding: 20px;
     display: block;
@@ -174,6 +175,11 @@ a {
 
 .tbd {
     font-style: italic;
+    color: red;
+}
+
+.warning {
+    font-style: bold italic;
     color: red;
 }
 
@@ -311,49 +317,46 @@ a {
     padding: 2px;
 }
 
+/* ---------------------------------------------------------------------- */
 /* For an on/off switch */
+
 .onoffswitch {
-    position: relative; width: 130px;
+    position: relative; width: 90px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
-
 .onoffswitch-checkbox {
     display: none;
 }
-
 .onoffswitch-label {
     display: block; overflow: hidden; cursor: pointer;
     border: 2px solid #666666; border-radius: 5px;
 }
-
 .onoffswitch-inner {
     width: 200%; margin-left: -100%;
     -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
     -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
 }
-
-.onoffswitch-inner > div {
+.onoffswitch-inner:before, .onoffswitch-inner:after {
     float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
-    font-size: 16px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    font-size: 14px; color: white; font-family: Arial, sans-serif; font-weight: normal;
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
-
-.onoffswitch-inner .onoffswitch-active {
+.onoffswitch-inner:before {
+    content: "Active";
     padding-left: 10px;
-    background-color: #25E883; color: #000000;
+    background-color: #8CED79; color: #000000;
 }
-
-.onoffswitch-inner .onoffswitch-inactive {
+.onoffswitch-inner:after {
+    content: "Halted";
     padding-right: 10px;
-    background-color: #FF0000; color: #000000;
+    background-color: #FF1C1C; color: #000000;
     text-align: right;
 }
-
 .onoffswitch-switch {
-    width: 35px; margin: 0px;
+    width: 19px; margin: 0px;
     background: #FFFFFF;
     border: 2px solid #666666; border-radius: 5px;
-    position: absolute; top: 0; bottom: 0; right: 91px;
+    position: absolute; top: 0; bottom: 0; right: 67px;
     -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
     -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
     background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
@@ -361,14 +364,14 @@ a {
     background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
 }
-
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
     margin-left: 0;
 }
-
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px; 
 }
+
+/* ---------------------------------------------------------------------- */
 
 /* For the arrow-key keypad */
 .joypad .mybutton {

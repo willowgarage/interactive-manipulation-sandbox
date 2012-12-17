@@ -14,35 +14,38 @@
               <tr>
                 <th> Battery </th>
                 <th> Location </th>
+                <th> Motors </th>
+                <th> Runstop </th>
               </tr>
               <tr>
                 <td><span id="battery">{{battery}}</span>%{{#if plugged_in}}<span>, charging</span>{{/if}}
                   </td>
                 <td><span>{{pose_display}}</span></td>
+               <td>
+                  <!-- Motor halt switch -->
+				  {{#if motors_not_halted}}
+					Active
+				  {{else}}
+					<span class="warning">Halted</span> (<a {{action "reset_motors" on="click" target="content"}}>Reset</a>)
+				  {{/if}}
+                </td>
+                <td>
+                  <!-- Runstops -->
+                  {{#if runstop_activated}}
+                      <span class="warning">Robot stopped</span>
+                  {{else}}
+                      Ready
+                  {{/if}}
+                </td>
               </tr>
             </table>
           </td>
 
-          <td>
-            <!-- Enabled/disabled switch -->
-            <div class="onoffswitch">
-                {{view Ember.Checkbox checkedBinding="enabled" class="onoffswitch-checkbox"
-                  id="myonoffswitch"}}
-                <label class="onoffswitch-label" for="myonoffswitch">
-                    <div class="onoffswitch-inner">
-                        <div class="onoffswitch-active">Enabled</div>
-                        <div class="onoffswitch-inactive">Disabled</div>
-                    </div>
-                    <div class="onoffswitch-switch"></div>
-                </label>
-            </div>
-            <i>(read-only for now)</i>
-          </td>
         </tr>
       </table>
 
   {{else}}
-    <span class="warning">WARNING: Connection to robot unavailable. Press reload to retry.</span>
+    <span class="disconnected">WARNING: Connection to robot unavailable. Press reload to retry.</span>
   {{/if}}
     </div>
   </div>

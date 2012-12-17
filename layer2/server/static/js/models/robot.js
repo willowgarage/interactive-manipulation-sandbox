@@ -94,7 +94,6 @@ function( Ember, DS, App, ROS, Action) {
     plugged_in_value: -1,
     // Whether the robot is ready to act. Enabled is false if the runstop
     // is pressed.
-    enabled: false,
     pose: { 'x': -1 , 'y': -1 },
     // TL: hack because I can't get Handlebars expressions to work
     pose_display: "",
@@ -145,6 +144,12 @@ function( Ember, DS, App, ROS, Action) {
     // Empty navigation plan
     navigation_plan: { poses: [] },
 
+    // Clear statuses
+    battery: null,
+    plugged_in_value: null,
+    runstop_activated: null,
+    motors_not_halted: null,
+
     serviceUrlChanged: function() {
       if(this.get('service_url')) {
         this.ros = new ROS();
@@ -166,12 +171,18 @@ function( Ember, DS, App, ROS, Action) {
             _this.set('plugged_in_value', message.power_state.AC_present);
             if (message.power_board_state) {
               if (message.power_board_state.wireless_stop && message.power_board_state.run_stop) {
-                _this.set('enabled', true);
+                _this.set('runstop_activated', false);
               } else {
-                _this.set('enabled', false);
+                _this.set('runstop_activated', true);
               }
             } else {
-              _this.set('enabled', false);
+              _this.set('runstop_activated', null);
+            }
+
+            if (message.motors_halted_valid) {
+              _this.set('motors_not_halted', !(message.motors_halted.data));
+            } else {
+              _this.set('motors_not_halted', null);
             }
           });
           _this.ros.on('close',function() {
@@ -211,6 +222,31 @@ function( Ember, DS, App, ROS, Action) {
         });
       }
     }.observes('service_url'),
+
+    // ----------------------------------------------------------------------
+    // Reset the motors
+
+    reset_motors: function(ev) {
+      // ros.Service provides an interface to calling ROS services.
+      // Creates a rospy_tutorials/AddTwoInts service client named /add_two_ints.
+      var reset_motors = new this.ros.Service({
+        name        : '/pr2_etherCAT/reset_motors',
+        serviceType : 'std_srvs/Empty'
+      });
+
+      // ros.ServiceRequest contains the data to send in the service call.
+      var request = new this.ros.ServiceRequest();
+
+      console.log("Sending reset_motors service call");
+      reset_motors.callService(request, function(result) {
+        // Callback when it finishes
+        console.log("Result for reset_motors call:", result);
+      });
+    },
+
+
+    // ----------------------------------------------------------------------
+    // Navigation
 
     navigateTo: function(place) {
       // Sanity checks to make sure we are navigating to a reasonable place
