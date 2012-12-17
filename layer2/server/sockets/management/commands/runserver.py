@@ -59,7 +59,7 @@ class WithSocketIO(object):
 
 naiveip_re = re.compile(r"""^(?:
 (?P<addr>
-(?P<ipv4>\d{1,3}(?:\.\d{1,3}){3}) | # IPv4 address
+(?P<ipv4>\d{1,3}(?:\.\d{1,3}){3}) |         # IPv4 address
 (?P<fqdn>[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*) # FQDN
 ):)?(?P<port>\d+)$""", re.X)
 
@@ -84,6 +84,8 @@ class Command(BaseCommand):
                 raise CommandError('"%s" is not a valid port number '
                                    'or address:port pair.' % addrport)
             self.host, _ipv4, _fqdn, self.port = m.groups()
+            if not self.host:
+                self.host = DEFAULT_ADDR
             if not self.port.isdigit():
                 raise CommandError("%r is not a valid port number." % self.port)
 
