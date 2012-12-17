@@ -5,6 +5,7 @@ from world.models import *
 from django.contrib.auth.models import User, AnonymousUser
 import json
 import datetime
+from django.utils.timezone import utc
 from django.conf import settings
 
 # Create your views here.
@@ -29,7 +30,7 @@ def context(request):
     # make use of this very dirty hack, I have to use it in this way
     id = request.path.split('/')[-1]
     print "Context = %s" % id
-    try: 
+    try:
         client = Client.objects.get(session_key=request.session.session_key)
         print "got existing"
     except Client.DoesNotExist:
@@ -45,13 +46,14 @@ def context(request):
     client.context = id
 
     # Record an update from this client
-    client.last_seen = datetime.datetime.now()
+    client.last_seen = datetime.datetime.utcnow().replace(tzinfo=utc)
 
     client.save()
 
     # Clean-up and remove stale client objects
     expire_minutes = getattr( settings, 'LAYER_EXPIRE_MINUTES', 1)
-    expire_datetime = datetime.datetime.now() - datetime.timedelta(minutes=expire_minutes)
+    expire_datetime = (datetime.datetime.utcnow().replace(tzinfo=utc)
+                       - datetime.timedelta(minutes=expire_minutes))
     expired = Client.objects.filter(last_seen__lte=expire_datetime)
     if len(expired) > 0:
         print "Deleting %d expired sessions" % len(expired)
@@ -70,7 +72,7 @@ def context(request):
     response_obj = make_user_json( request.user)
     response_obj['id'] = id
     response_obj['other_users'] = other_users
-    
+
     return HttpResponse(json.dumps(response_obj))
 
 def make_user_json( user):
@@ -86,4 +88,3 @@ def make_user_json( user):
             'first_name': user.first_name,
             'last_name': user.last_name
         }
-            
