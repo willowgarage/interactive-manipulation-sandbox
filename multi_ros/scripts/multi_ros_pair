@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-PACKAGE_NAME='mros'
+PACKAGE_NAME='multi_ros'
 import roslib; roslib.load_manifest(PACKAGE_NAME)
 import sys, os
 from multiprocessing import Process, Queue
 import json
 import rospy
 
-from mros.mros_parent import MRosParent
-from mros.mros_child import MRosChild
+from multi_ros.multi_ros_parent import MultiRosParent
+from multi_ros.multi_ros_child import MultiRosChild
 
 
 if __name__ == '__main__':
@@ -22,8 +22,8 @@ if __name__ == '__main__':
    pub_uri = 'tcp://127.0.0.1:5001'
    sub_uri = 'tcp://127.0.0.1:5002'
 
-   child = MRosChild(child_ros_master_uri, config_uri, pub_uri, sub_uri)
-   parent = MRosParent(parent_ros_master_uri, config_uri, pub_uri, sub_uri, config_dict)
+   child = MultiRosChild(child_ros_master_uri, config_uri, pub_uri, sub_uri)
+   parent = MultiRosParent(parent_ros_master_uri, config_uri, pub_uri, sub_uri, config_dict)
 
    # start the mros child in a new process
    print 'Starting child. master_uri: %s config_uri: %s pub_uri: %s sub_rui: %s' % (
