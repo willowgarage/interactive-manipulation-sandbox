@@ -3,9 +3,9 @@ import cPickle as pickle
 import zmq
 import rospy
 
-from mros.ros_interface import RosInterface
+from multi_ros.ros_interface import RosInterface
 
-class MRosChild:
+class MultiRosChild:
     def __init__(self, ros_master_uri, config_uri, pub_uri, sub_uri, poll_rate=1.0):
         self._ros_master_uri = ros_master_uri
         self._config_uri = config_uri

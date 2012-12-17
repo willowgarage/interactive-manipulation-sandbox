@@ -1,11 +1,11 @@
 import threading
 import cPickle as pickle
 import zmq
-import rospy, roslib
+import rospy, roslib, roslib.message
 
-from mros.ros_interface import RosInterface
+from multi_ros.ros_interface import RosInterface
 
-class MRosParent:
+class MultiRosParent:
     def __init__(self, ros_master_uri, config_uri, pub_uri, sub_uri, config_dict, prefix='', poll_rate=1.):
         self._ros_master_uri = ros_master_uri
         self._config_uri = config_uri
