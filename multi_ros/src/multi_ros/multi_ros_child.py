@@ -1,4 +1,4 @@
-import threading
+import threading, zlib
 import cPickle as pickle
 import zmq
 import rospy
@@ -12,8 +12,10 @@ class MultiRosChild:
         self._pub_uri = pub_uri
         self._sub_uri = sub_uri
         self._poll_rate = poll_rate        
-        self._topics = {}
-        self._topics_lock = threading.Lock()
+        self._pub_topics = {}
+        self._pub_topics_lock = threading.Lock()
+        self._sub_topics = {}
+        self._sub_topics_lock = threading.Lock()
 
     def initialize(self):
         # socket for configuration requests
@@ -53,14 +55,18 @@ class MultiRosChild:
                 local_topics = self._ros_interface.get_ros_graph()
                 self._zmq_config_socket.send(pickle.dumps(local_topics))
             elif cmd == 'ADVERTISE':
-                for topic, message_type, message_md5sum in msg[1:]:
+                for topic, message_type, message_md5sum, compression in msg[1:]:
                     rospy.loginfo('Child advertising %s' % topic)
                     self._ros_interface.advertise(topic, message_type, message_md5sum)
+                    with self._pub_topics_lock:
+                        self._pub_topics[topic] = {'compression':compression}
                 self._zmq_config_socket.send(pickle.dumps('OK'))
             elif cmd == 'SUBSCRIBE':
-                for topic, message_type, message_md5sum in msg[1:]:
+                for topic, message_type, message_md5sum, compression, rate in msg[1:]:
                     rospy.loginfo('Child subscribing to %s' % topic)
                     self._ros_interface.subscribe(topic, message_type, message_md5sum)
+                    with self._sub_topics_lock:
+                        self._sub_topics[topic] = {'compression':compression, 'rate':rate}
                 self._zmq_config_socket.send(pickle.dumps('OK'))
             else:
                 rospy.logerr('Unknown command %s' % cmd)
@@ -72,10 +78,26 @@ class MultiRosChild:
         '''
         Received a message on the local ROS system. Forward it to the remote system.
         '''
+        with self._sub_topics_lock:
+            if not topic in self._sub_topics:
+                rospy.logwarn('Message received on %s but no config info for this topic' % topic)
+                return
+            compression = self._sub_topics[topic]['compression']
+            rate = self._sub_topics[topic]['rate']
+            
         if self._zmq_pub_socket is not None:
             with self._zmq_pub_lock:
                 rospy.logdebug('Child forwarding message from %s' % topic)
-                self._zmq_pub_socket.send(pickle.dumps((topic, msg._buff)))
+                if compression is None:
+                    msg_buf = msg._buf
+                elif compression == 'zlib':
+                    msg_buf = zlib.compress(msg._buff)
+                else:
+                    rospy.logerr('Unknown compression type %s for topic %s' % (str(compression), topic))
+                    return
+                
+                rospy.loginfo('Topic: %s  Uncompressed: %d  Compressed: %d' % (topic, len(msg._buff), len(msg_buf)))
+                self._zmq_pub_socket.send(pickle.dumps((topic, msg_buf)))
 
     def remote_message_thread_func(self):
         '''

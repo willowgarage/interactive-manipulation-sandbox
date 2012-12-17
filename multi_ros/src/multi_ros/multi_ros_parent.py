@@ -1,4 +1,4 @@
-import threading
+import threading, zlib
 import cPickle as pickle
 import zmq
 import rospy, roslib, roslib.message
@@ -51,16 +51,26 @@ class MultiRosParent:
     def run(self):
         self.initialize()
 
-        child_topics = []
-        print self._config_dict
+        child_sub_topics = []
+        child_pub_topics = []        
+        rospy.loginfo('Config: %s' % str(self._config_dict))
         for child_topic in self._config_dict['topics']:
             parent_topic = self.child_to_parent_topic(child_topic)
             
             topic_dict = self._config_dict['topics'][child_topic]
             message_type = str(topic_dict['message_type'])
             message_class = roslib.message.get_message_class(message_type)
+            if 'compression' in topic_dict:
+                compression = topic_dict['compression']
+            else:
+                compresssion = None
+            if 'rate' in topic_dict:
+                rate = topic_dict['rate']
+            else:
+                rate = None
             md5sum = str(message_class._md5sum)
-            child_topics.append((child_topic, message_type, md5sum))
+            child_sub_topics.append((child_topic, message_type, md5sum, compression, rate))
+            child_pub_topics.append((child_topic, message_type, md5sum, compression))
 
             # subscribe to the topic on the local ROS system
             rospy.loginfo('Parent subscribing to %s' % parent_topic)
@@ -71,12 +81,12 @@ class MultiRosParent:
             self._ros_interface.advertise(parent_topic, message_type, md5sum)
 
         # tell the child to advertise each of the forwarded topics
-        command = ['ADVERTISE'] + child_topics
+        command = ['ADVERTISE'] + child_pub_topics
         self._zmq_config_socket.send(pickle.dumps(command))
         rep = pickle.loads(self._zmq_config_socket.recv())
 
         # tell the child to subscribe to each of the forwarded topics
-        command = ['SUBSCRIBE'] + child_topics
+        command = ['SUBSCRIBE'] + child_sub_topics
         self._zmq_config_socket.send(pickle.dumps(command))
         rep = pickle.loads(self._zmq_config_socket.recv())
 
@@ -144,10 +154,19 @@ class MultiRosParent:
         
     def publish_thread_func(self):
         while not rospy.is_shutdown():
-            topic, msg = pickle.loads(self._zmq_pub_socket.recv())
-            rospy.loginfo('Parent publishing message on %s' % topic)            
+            topic, msg_buff = pickle.loads(self._zmq_pub_socket.recv())
+            compression = self._config_dict['topics'][topic]['compression']
+            if compression is None:
+                uncompressed_msg_buff = msg_buff
+            elif compression is 'zlib':
+                uncompressed_msg_buff = zlib.decompress(msg_buff)
+            else:
+                rospy.logerr('Unknown compression type %s for topic %s' % (str(compression), topic))
+                continue
+            
+            rospy.logdebug('Parent publishing message on %s' % topic)
             with self._ros_interface_lock:
-                self._ros_interface.publish(topic, msg)
+                self._ros_interface.publish(topic, uncompressed_msg_buff)
 
     def ros_message_callback(self, msg, parent_topic):
         # TODO: throttle based on priority
