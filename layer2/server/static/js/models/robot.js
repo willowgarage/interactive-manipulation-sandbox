@@ -228,12 +228,15 @@ function( Ember, DS, App, ROS, Action) {
         return;
       }
 
+      // First tuck arms before navigating
       this.set('progress_update', 'Tucking arms...');
 
       var action = new Action({
         ros: this.ros,
         name: 'TuckArms'
       })
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
 
       var _this = this;
       action.on("result", function(result) {
@@ -249,8 +252,6 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
-      action.inputs.tuck_left = true;
-      action.inputs.tuck_right = true;
       console.log("Sending TuckArm action");
       action.execute();
     },
@@ -341,6 +342,9 @@ function( Ember, DS, App, ROS, Action) {
         ros: this.ros,
         name: 'TuckArms'
       })
+
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
 
       var _this = this;
       action.on("result", function(result) {
@@ -588,7 +592,55 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
     },
 
+    pickupObject: function(object_id) {
+      // First move the arms aside
+      this.set('progress_update', 'Moving arms aside');
+      
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      });
+      action.inputs.tuck_left = false;
+      action.inputs.tuck_right = false;
 
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("Result from TuckArms:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', 'Arm movement successful');
+          _this._pickupObject2(object_id);
+        } else {
+          _this.set('progress_update', 'Failed to untuck arms');
+        }
+      });
+
+      action.execute();
+    },
+
+    _pickupObject2: function(object_id) {
+      this.set('progress_update', 'Picking up object ' + object_id);
+      var action = new Action({
+        ros: this.ros,
+        name: 'PickupObject'
+      });
+
+      // Set the object to pick up
+      action.inputs.object_id = object_id;
+
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("Result from PickupObject:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', 'Pickup successful');
+        } else {
+          _this.set('progress_update', 'Failed to pick up object ' + object_id);
+        }
+      });
+
+      action.execute();
+    },
 
   });
 });

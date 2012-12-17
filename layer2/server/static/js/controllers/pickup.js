@@ -19,7 +19,13 @@ define([
         return;
       }
 
-      alert("Pickup not implemented yet, selected object: " + this.selected_object);
+      var robot = this.get('content');
+      robot.pickupObject(this.selected_object);
+    },
+
+    untuckArms: function() {
+      var robot = this.get('content');
+      robot.untuckArmsForGrasping(this.selected_object);
     }
 
   });
