@@ -1,4 +1,4 @@
-import threading, zlib
+import threading, zlib, time
 import cPickle as pickle
 import zmq
 import rospy
@@ -84,6 +84,16 @@ class MultiRosChild:
                 return
             compression = self._sub_topics[topic]['compression']
             rate = self._sub_topics[topic]['rate']
+
+        # slight hack. should maybe use the timestamp from the message header instead of
+        # the current time?
+        current_t = time.time()
+        if rate is not None:
+            if 'last_forwarded_t' in self._sub_topics[topic]:
+                if (current_t - self._sub_topics[topic]['last_forwarded_t'])  < (1.0/rate):
+                    # just forwarded a message on this topic; don't need to forward this one
+                    return
+        self._sub_topics[topic]['last_forwarded_t'] = current_t
             
         if self._zmq_pub_socket is not None:
             with self._zmq_pub_lock:
