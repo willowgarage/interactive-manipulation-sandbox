@@ -14,13 +14,14 @@ def run_parent(parent_ros_master_uri, child_config_uri, child_pub_uri, child_sub
 
 if __name__ == '__main__':
    parent_ros_master_uri = os.environ['ROS_MASTER_URI']
-   config_file = sys.argv[1]
+   robot = sys.argv[1]
+   config_file = sys.argv[2]
 
    config_dict = json.loads(open(config_file).read())
 
-   child_config_uri = 'tcp://127.0.0.1:5000'
-   child_pub_uri = 'tcp://127.0.0.1:5001'
-   child_sub_uri = 'tcp://127.0.0.1:5002'
+   child_config_uri = 'tcp://%s:5000' % robot
+   child_pub_uri = 'tcp://%s:5001' % robot
+   child_sub_uri = 'tcp://%s:5002' % robot
 
    # start the multi_ros parent in the main process
    run_parent(parent_ros_master_uri, child_config_uri, child_pub_uri, child_sub_uri, config_dict)
