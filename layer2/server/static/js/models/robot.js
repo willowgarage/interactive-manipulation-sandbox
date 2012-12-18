@@ -94,7 +94,6 @@ function( Ember, DS, App, ROS, Action) {
     plugged_in_value: -1,
     // Whether the robot is ready to act. Enabled is false if the runstop
     // is pressed.
-    enabled: false,
     pose: { 'x': -1 , 'y': -1 },
     // TL: hack because I can't get Handlebars expressions to work
     pose_display: "",
@@ -145,6 +144,12 @@ function( Ember, DS, App, ROS, Action) {
     // Empty navigation plan
     navigation_plan: { poses: [] },
 
+    // Clear statuses
+    battery: null,
+    plugged_in_value: null,
+    runstop_activated: null,
+    motors_not_halted: null,
+
     serviceUrlChanged: function() {
       if(this.get('service_url')) {
         this.ros = new ROS();
@@ -166,12 +171,18 @@ function( Ember, DS, App, ROS, Action) {
             _this.set('plugged_in_value', message.power_state.AC_present);
             if (message.power_board_state) {
               if (message.power_board_state.wireless_stop && message.power_board_state.run_stop) {
-                _this.set('enabled', true);
+                _this.set('runstop_activated', false);
               } else {
-                _this.set('enabled', false);
+                _this.set('runstop_activated', true);
               }
             } else {
-              _this.set('enabled', false);
+              _this.set('runstop_activated', null);
+            }
+
+            if (message.motors_halted_valid) {
+              _this.set('motors_not_halted', !(message.motors_halted.data));
+            } else {
+              _this.set('motors_not_halted', null);
             }
           });
           _this.ros.on('close',function() {
@@ -212,6 +223,31 @@ function( Ember, DS, App, ROS, Action) {
       }
     }.observes('service_url'),
 
+    // ----------------------------------------------------------------------
+    // Reset the motors
+
+    reset_motors: function(ev) {
+      // ros.Service provides an interface to calling ROS services.
+      // Creates a rospy_tutorials/AddTwoInts service client named /add_two_ints.
+      var reset_motors = new this.ros.Service({
+        name        : '/pr2_etherCAT/reset_motors',
+        serviceType : 'std_srvs/Empty'
+      });
+
+      // ros.ServiceRequest contains the data to send in the service call.
+      var request = new this.ros.ServiceRequest();
+
+      console.log("Sending reset_motors service call");
+      reset_motors.callService(request, function(result) {
+        // Callback when it finishes
+        console.log("Result for reset_motors call:", result);
+      });
+    },
+
+
+    // ----------------------------------------------------------------------
+    // Navigation
+
     navigateTo: function(place) {
       // Sanity checks to make sure we are navigating to a reasonable place
       if (!place.get('pose_x') || !place.get('pose_y')) {
@@ -228,12 +264,15 @@ function( Ember, DS, App, ROS, Action) {
         return;
       }
 
+      // First tuck arms before navigating
       this.set('progress_update', 'Tucking arms...');
 
       var action = new Action({
         ros: this.ros,
         name: 'TuckArms'
       })
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
 
       var _this = this;
       action.on("result", function(result) {
@@ -249,8 +288,6 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
-      action.inputs.tuck_left = true;
-      action.inputs.tuck_right = true;
       console.log("Sending TuckArm action");
       action.execute();
     },
@@ -341,6 +378,9 @@ function( Ember, DS, App, ROS, Action) {
         ros: this.ros,
         name: 'TuckArms'
       })
+
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
 
       var _this = this;
       action.on("result", function(result) {
@@ -585,10 +625,90 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
+      console.log("Calling SegmentAndRecognize");
       action.execute();
     },
 
+    pickupObject: function(object_id) {
+      // First move the arms aside
+      this.set('progress_update', 'Moving arms aside');
+      
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      });
+      action.inputs.tuck_left = false;
+      action.inputs.tuck_right = false;
 
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("Result from TuckArms:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', 'Arm movement successful');
+          _this._pickupObject2(object_id);
+        } else {
+          _this.set('progress_update', 'Failed to untuck arms');
+        }
+      });
+
+      action.execute();
+    },
+
+    _pickupObject2: function(object_id) {
+      this.set('progress_update', 'Picking up object ' + object_id);
+      var action = new Action({
+        ros: this.ros,
+        name: 'PickupObject'
+      });
+
+      // Set the object to pick up
+      action.inputs.object_id = object_id;
+      action.inputs.arm = 'right';
+
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("Result from PickupObject:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', 'Pickup successful');
+        } else {
+          _this.set('progress_update', 'Failed to pick up object ' + object_id);
+        }
+      });
+
+      console.log("Sending action PickupObject with args", action.inputs);
+      action.execute();
+    },
+
+    // ----------------------------------------------------------------------
+    // Interactive markers commands
+
+    interactive_gripper: function(action_string, arm, lift) {
+      var action = new Action({
+        ros: this.ros,
+        name: 'InteractiveGripper'
+      });
+
+      // Set parameters
+      action.inputs.action = action_string;
+      action.inputs.arm = arm;
+      action.inputs.lift = lift;
+
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("Result from InteractiveGripper:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', 'InteractiveGripper motion successful');
+        } else {
+          _this.set('progress_update', 'InteractiveGripper failed: ' + result.outcome);
+        }
+      });
+
+      console.log("Sending action InteractiveGripper with args", action.inputs);
+      action.execute();
+    }
 
   });
 });
