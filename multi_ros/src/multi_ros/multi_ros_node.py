@@ -1,5 +1,5 @@
 import threading, zlib, time
-import json
+import cPickle as pickle
 import zmq
 import rospy, roslib, roslib.message
 
@@ -19,6 +19,7 @@ class SubscribedTopic:
         self.compression = None
         self.bytes_sent = 0
         self.bytes_received = 0
+        self.last_forwarded_t = None
 
 class MultiRosNode:
     def __init__(self, name, prefix, ros_master_uri, poll_rate=1.0):
@@ -64,13 +65,13 @@ class MultiRosNode:
         loop_rate = rospy.Rate(self._poll_rate)
         while not rospy.is_shutdown():
             msg_str = self._zmq_config_socket.recv()
-            req = json.loads(msg_str)
+            req = pickle.loads(msg_str)
             cmd = req['COMMAND']
             if cmd == 'GET_TOPIC_LIST':
                 self._ros_interface.update_ros_graph()
                 rospy.loginfo('Child sending topic list')
                 local_topics = self._ros_interface.get_ros_graph()
-                self._zmq_config_socket.send(json.dumps(local_topics))
+                self._zmq_config_socket.send(pickle.dumps(local_topics))
             elif cmd == 'ADVERTISE':
                 for topic_dict in req['TOPICS']:
                     topic_info = PublishedTopic()
@@ -82,7 +83,7 @@ class MultiRosNode:
                     self._ros_interface.advertise(topic_info.topic, topic_info.message_type, topic_info.md5sum)
                     with self._pub_topics_lock:
                         self._pub_topics[topic_info.topic] = topic_info
-                self._zmq_config_socket.send(json.dumps('OK'))
+                self._zmq_config_socket.send(pickle.dumps('OK'))
             elif cmd == 'SUBSCRIBE':
                 for topic_dict in req['TOPICS']:
                     topic_info = SubscribedTopic()
@@ -93,12 +94,12 @@ class MultiRosNode:
                     topic_info.rate = topic_dict.get('rate', None)
                     rospy.loginfo('%s subscribing to %s' % (self._name, topic_info.topic))
                     self._ros_interface.subscribe(topic_info.topic, topic_info.message_type, topic_info.md5sum)
-                    with self._pub_topics_lock:
-                        self._pub_topics[topic_info.topic] = topic_info
-                self._zmq_config_socket.send(json.dumps('OK'))
+                    with self._sub_topics_lock:
+                        self._sub_topics[topic_info.topic] = topic_info
+                self._zmq_config_socket.send(pickle.dumps('OK'))
             else:
                 rospy.logerr('Unknown command %s' % cmd)
-                self._zmq_config_socket.send(json.dumps('ERROR'))
+                self._zmq_config_socket.send(pickle.dumps('ERROR'))
             
             loop_rate.sleep()
         
@@ -131,7 +132,7 @@ class MultiRosNode:
         for topic_dict in config_dict['topics']:
             remote_topic = str(topic_dict['topic'])
             local_topic = self.remote_to_local_topic(remote_topic)
-            
+
             message_type = str(topic_dict['message_type'])
             message_class = roslib.message.get_message_class(message_type)
             if 'compression' in topic_dict:
@@ -150,6 +151,21 @@ class MultiRosNode:
             remote_pub_topics.append({
                 'topic': remote_topic, 'message_type': message_type,
                 'md5sum': md5sum, 'compression': compression})
+
+            sub_topic_info = SubscribedTopic()
+            sub_topic_info.topic = local_topic
+            sub_topic_info.message_type = message_type
+            sub_topic_info.md5sum = md5sum
+            sub_topic_info.rate = rate
+            sub_topic_info.compression = compression
+            self._sub_topics[sub_topic_info.topic] = sub_topic_info
+
+            pub_topic_info = PublishedTopic()
+            pub_topic_info.topic = local_topic
+            pub_topic_info.message_type = message_type
+            pub_topic_info.md5sum = md5sum
+            pub_topic_info.compression = compression
+            self._pub_topics[pub_topic_info.topic] = pub_topic_info            
             
             # subscribe to the topic on the local ROS system
             rospy.loginfo('%s subscribing to %s' % (self._name, local_topic))
@@ -161,13 +177,13 @@ class MultiRosNode:
 
         # tell the remote to advertise each of the forwarded topics
         command = {'COMMAND': 'ADVERTISE', 'TOPICS': remote_pub_topics}
-        self._zmq_config_socket.send(json.dumps(command))
-        rep = json.loads(self._zmq_config_socket.recv())
+        self._zmq_config_socket.send(pickle.dumps(command))
+        rep = pickle.loads(self._zmq_config_socket.recv())
 
         # tell the remote to subscribe to each of the forwarded topics
         command = {'COMMAND': 'SUBSCRIBE', 'TOPICS': remote_sub_topics}
-        self._zmq_config_socket.send(json.dumps(command))
-        rep = json.loads(self._zmq_config_socket.recv())
+        self._zmq_config_socket.send(pickle.dumps(command))
+        rep = pickle.loads(self._zmq_config_socket.recv())
 
         # spin an wait for remote messages to publish
         self.remote_message_thread_func()
@@ -178,8 +194,8 @@ class MultiRosNode:
         Received a message on the local ROS system. Forward it to the remote system.
         '''
         with self._sub_topics_lock:
-            if not topic in self._sub_topics:
-                rospy.logwarn('Message received on %s but no config info for this topic' % local_topic)
+            if not local_topic in self._sub_topics:
+                rospy.logwarn('%s: Message received on %s but no config info for this topic' % (self._name, local_topic))
                 return
             topic_info = self._sub_topics[local_topic]
 
@@ -204,7 +220,7 @@ class MultiRosNode:
                 
                 rospy.loginfo('Topic: %s  Uncompressed: %d  Compressed: %d' % (local_topic, len(msg._buff), len(msg_buf)))
                 remote_topic = self.local_to_remote_topic(local_topic)
-                self._zmq_pub_socket.send(json.dumps((topic, msg_buf)))
+                self._zmq_pub_socket.send(pickle.dumps((remote_topic, msg_buf)))
 
     def remote_message_thread_func(self):
         '''
@@ -213,13 +229,13 @@ class MultiRosNode:
         '''
         while not rospy.is_shutdown():
             msg_str = self._zmq_sub_socket.recv()
-            remote_topic, msg_buf = json.loads(msg_str)
+            remote_topic, msg_buf = pickle.loads(msg_str)
             local_topic = self.remote_to_local_topic(remote_topic)
             with self._pub_topics_lock:
-                if not topic in self._pub_topics:
+                if not local_topic in self._pub_topics:
                     rospy.logwarn('%s received message on unconfigured topic %s' % (self._name, local_topic))
                     continue
-                topic_info = self._pub_topics[topic]
+                topic_info = self._pub_topics[local_topic]
 
             if topic_info.compression is None:
                 msg_buf = msg._buf
