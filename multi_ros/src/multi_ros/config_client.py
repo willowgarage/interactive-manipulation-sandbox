@@ -1,20 +1,19 @@
-import threading, zlib
-import cPickle as pickle
+import threading
 import zmq
-import rospy, roslib, roslib.message
+import json
+import rospy
 
-from multi_ros.ros_interface import RosInterface
-from multi_ros.msg import LinkStats, TopicLinkStats
+class ConfigClient:
+    def __init__(self, config_uri):
+        '''
+        Args:
+            config_uri (str): ZeroMQ REP socket address of node we are configuring.
+        '''
+    self._config_uri = config_uri
 
-class MultiRosParent:
-    def __init__(self, ros_master_uri, config_uri, pub_uri, sub_uri, config_dict, prefix='', poll_rate=1.):
-        self._ros_master_uri = ros_master_uri
-        self._config_uri = config_uri
-        self._pub_uri = pub_uri
-        self._sub_uri = sub_uri
-        self._config_dict = config_dict
-        self._prefix = config_dict['prefix']
-        self._poll_rate = poll_rate
+    
+    self._prefix = config_dict['prefix']
+    self._poll_rate = poll_rate
 
     def initialize(self):
         # socket for configuration requests
@@ -22,31 +21,6 @@ class MultiRosParent:
         self._zmq_config_socket = self._zmq_context.socket(zmq.REQ)
         self._zmq_config_socket.connect(self._config_uri)
 
-        # socket for receiving messages
-        rospy.loginfo('Parent listening for messages on zmq socket %s' % self._pub_uri)
-        self._zmq_pub_socket = self._zmq_context.socket(zmq.SUB)
-        self._zmq_pub_socket.connect(self._pub_uri)
-        self._zmq_pub_socket.setsockopt(zmq.SUBSCRIBE, '')
-        self._pub_socket_lock = threading.Lock()
-
-        # socket for publishing messages
-        rospy.loginfo('Parent publishing messages on zmq socket %s' % self._sub_uri)
-        self._zmq_sub_socket = self._zmq_context.socket(zmq.PUB)
-        self._zmq_sub_socket.connect(self._sub_uri)
-        self._sub_socket_lock = threading.Lock()
-
-        # used to inspect the local ROS system
-        self._ros_interface = RosInterface(self._ros_master_uri, 'mros_parent', self.ros_message_callback)
-        self._ros_interface_lock = threading.Lock()
-
-        # used to publish bandwidth statistics about each topic
-        self._link_stats_pub = rospy.Publisher('multi_ros/link_stats', LinkStats)
-
-    def parent_to_child_topic(self, topic):
-        return topic[len(self._prefix):]
-
-    def child_to_parent_topic(self, topic):
-        return self._prefix + topic
 
     def run(self):
         self.initialize()
