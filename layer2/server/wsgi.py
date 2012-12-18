@@ -17,12 +17,12 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
-# Apply WSGI middleware here.
-# from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application)
-
 # Apply the socket-io code redirection.
 # All incoming requests requesting "socket.io" will be routed to
 # gevent-socketio's socketio_manage application.
 from sockets.middleware import WithSocketIO
 application = WithSocketIO(application)
+
+# Serve the statics from this server as well.
+from django.contrib.staticfiles.handlers import StaticFilesHandler
+application = StaticFilesHandler(application)
