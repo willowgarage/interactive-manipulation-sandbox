@@ -67,10 +67,8 @@
         - python-openid
         - django-openid-auth
         - pillow
-        - gevent
+        - south
         - git+https://github.com/abourget/gevent-socketio.git
-        - gevent-websocket
-        - greenlet
 #        - hg+https://bitbucket.org/wkornewald/djangotoolbox
 #        - git+https://github.com/django-nonrel/mongodb-engine
 #        - jinja2
@@ -131,6 +129,9 @@
     # TODO: Propagate failures (currently fails silently)
     - name: Apply initial application fixtures
       action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/prototype.json chdir='~/layer2/server'
+
+    - name: migrate all applications
+      action: command /usr/bin/python2.7 ./manage.py migrate --all chdir='~/layer2/server'
 
     # TODO: Start django
     # - name: run django
