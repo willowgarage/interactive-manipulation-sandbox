@@ -34,7 +34,7 @@ class PickupObject(State):
             goal.arm_selection = 1
         else:
             goal.arm_selection = 0
-        goal.object_id = userdata.object_id
+        goal.object_id = int(userdata.object_id)
         rospy.loginfo("Sending pickup object goal for %s arm to pick up object %d"%(userdata['arm'], goal.object_id))
 
         # send the goal
