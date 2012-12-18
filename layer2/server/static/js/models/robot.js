@@ -625,6 +625,7 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
+      console.log("Calling SegmentAndRecognize");
       action.execute();
     },
 
@@ -663,6 +664,7 @@ function( Ember, DS, App, ROS, Action) {
 
       // Set the object to pick up
       action.inputs.object_id = object_id;
+      action.inputs.arm = 'right';
 
       var _this = this;
       action.on("result", function(result) {
@@ -675,8 +677,9 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
+      console.log("Sending action PickupObject with args", action.inputs);
       action.execute();
-    },
+    }
 
   });
 });
