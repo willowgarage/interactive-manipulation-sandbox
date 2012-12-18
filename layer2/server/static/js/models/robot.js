@@ -679,6 +679,35 @@ function( Ember, DS, App, ROS, Action) {
 
       console.log("Sending action PickupObject with args", action.inputs);
       action.execute();
+    },
+
+    // ----------------------------------------------------------------------
+    // Interactive markers commands
+
+    interactive_gripper: function(action_string, arm, lift) {
+      var action = new Action({
+        ros: this.ros,
+        name: 'InteractiveGripper'
+      });
+
+      // Set parameters
+      action.inputs.action = action_string;
+      action.inputs.arm = arm;
+      action.inputs.lift = lift;
+
+      var _this = this;
+      action.on("result", function(result) {
+        console.log("Result from InteractiveGripper:", result);
+        if (result.outcome == "succeeded") {
+          // It worked!
+          _this.set('progress_update', 'InteractiveGripper motion successful');
+        } else {
+          _this.set('progress_update', 'InteractiveGripper failed: ' + result.outcome);
+        }
+      });
+
+      console.log("Sending action InteractiveGripper with args", action.inputs);
+      action.execute();
     }
 
   });
