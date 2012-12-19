@@ -18,38 +18,44 @@ module.exports = function(grunt) {
       // Linting options. See http://www.jshint.com/docs/.
       options: {
         // Requires curly braces around blocks
-        curly   : true,
+        curly    : true,
         // Requires triple equals in comparisons
-        eqeqeq  : true,
+        eqeqeq   : true,
         // Wrap functions in () when doing immediate function invokation
-        immed   : true,
+        immed    : true,
         // Prevents use of a variable before it was defined
-        latedef : true,
+        latedef  : true,
         // Capitalize constructor names
-        newcap  : true,
+        newcap   : true,
         // Prohibits the use of arguments.caller and arguments.callee
-        noarg   : true,
+        noarg    : true,
         // Allows obj['key'] or obj.key
-        sub     : true,
+        sub      : true,
         // Prohibits use of explicitly undefined variables (usually typos).
-        undef   : true,
+        undef    : true,
         // Does not allow assignments inside a comparison
-        boss    : false,
+        boss     : false,
         // Require === null, not == null
-        eqnull  : false,
+        eqnull   : false,
         // Allows window, document, etc.
-        browser : true,
+        browser  : true,
         // Allows console and alert.
-        devel   : true,
+        devel    : true,
         // Uses ES5 functions (http://kangax.github.com/es5-compat-table/)
-        es5     : true,
+        es5      : true,
         // Ignore strict mode
-        strict  : false
+        strict   : false,
+        // No trailing whitespace
+        trailing : true,
+        // Single quotes
+        quotmark : 'single'
       },
       // Global variables and functions ignored by linter.
       globals: {
-        define  : true,
-        require : true
+        define                : true,
+        require               : true,
+        requirejs             : true,
+        requestAnimationFrame : true
       }
     }
   });
