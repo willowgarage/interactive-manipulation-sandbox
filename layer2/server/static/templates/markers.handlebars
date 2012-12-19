@@ -13,6 +13,19 @@
 
   <div id="main-container">
     Interactive Markers
-    <div id="container"></div>
+    <table>
+      <tr>
+        <td>
+          <div id="container"></div>
+        </td>
+        <td>
+          <div id="buttons">
+            <div class="mybutton" {{action grasp target="controller"}}>Grasp</div>
+            <div class="mybutton" {{action move target="controller"}}>Move</div>
+            <div class="mybutton" {{action place target="controller"}}>Place</div>
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
