@@ -83,14 +83,22 @@ define([
       var highlighter = new ThreeInteraction.Highlighter(mouseHandler);
       this.set('highlighter', highlighter);
 
+      // Only subscribe to interactive markers once the robot model has been loaded
+      var robot = this.get('controller').get('content');
+      robot.addObserver('service_url', this, 'subscribe_to_markers');
+    },
+
+    subscribe_to_markers: function() {
       // Show interactive markers
       var content = this.get('controller').get('content');
       var imClient = new ImProxy.Client(content.ros);
+      // TODO: this should most definitely not be hardcoded to blh
       var meshBaseUrl = 'http://blh.willowgarage.com:8000/resources/';
       var imViewer = new ImThree.Viewer(selectableObjects, camera, imClient, meshBaseUrl);
 
       imClient.subscribe('/pr2_marker_control');
     },
+
     animate : function() {
       var camera = this.get('camera');
       var cameraControls = this.get('cameraControls');
