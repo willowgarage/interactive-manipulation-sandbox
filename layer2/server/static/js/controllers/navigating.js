@@ -1,10 +1,10 @@
 define([
-  'ember'
-, 'app'
+  'ember',
+  'app'
 ],
 function(
-  Ember
-, App
+  Ember,
+  App
 ) {
 
   App.NavigatingController = Ember.ObjectController.extend();

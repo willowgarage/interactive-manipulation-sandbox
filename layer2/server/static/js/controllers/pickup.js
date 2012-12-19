@@ -15,7 +15,7 @@ define([
 
     pickupObject: function() {
       if (this.selected_object === null) {
-        alert("No object selected!");
+        alert('No object selected!');
         return;
       }
 

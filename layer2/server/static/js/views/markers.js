@@ -73,7 +73,7 @@ define([
       renderer.autoClear = false;
       this.set('renderer', renderer);
 
-      var container = document.getElementById("container");
+      var container = document.getElementById('container');
       container.appendChild(renderer.domElement);
 
       // Propagates mouse events to three.js objects

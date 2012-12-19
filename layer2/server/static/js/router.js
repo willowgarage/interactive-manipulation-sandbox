@@ -76,8 +76,8 @@ function(
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
-              id = App.router.currentState.client.get('id');
-              App.store.get("_adapter").find(App.store,App.Client,id);
+              var id = App.router.currentState.client.get('id');
+              App.store.get('_adapter').find(App.store,App.Client, id);
             }, 1000*10);
           }
 
@@ -115,13 +115,13 @@ function(
           Ember.Route.transitionTo('navigating')(router,navigatingContext);
         },
 
-        /* Initialize the "navigate" state */
+        /* Initialize the 'navigate' state */
         connectOutlets: function(router, context) {
           // HACK: Set-up periodic refreshing of client state
-          if(! App.interval) {
+          if (!App.interval) {
             App.interval = setInterval(function(){
-              id = App.router.currentState.client.get('id');
-              App.store.get("_adapter").find(App.store,App.Client,id);
+              var id = App.router.currentState.client.get('id');
+              App.store.get('_adapter').find(App.store,App.Client,id);
             }, 1000*10);
           }
 
@@ -135,7 +135,7 @@ function(
           /* And also update the client status information view with the new
            * application context (i.e.: where the user is now in the app) */
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id)); 
+            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
           /* Set the RobotView's {{outlet}} to be a NavigateView with
            * a NagivateController which has a Robot model as context */
           router.get('robotController')
@@ -166,8 +166,8 @@ function(
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
-              id = App.router.currentState.client.get('id');
-              App.store.get("_adapter").find(App.store,App.Client,id);
+              var id = App.router.currentState.client.get('id');
+              App.store.get('_adapter').find(App.store,App.Client,id);
             }, 1000*10);
           }
 
@@ -195,8 +195,8 @@ function(
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
-              id = App.router.currentState.client.get('id');
-              App.store.get("_adapter").find(App.store,App.Client,id);
+              var id = App.router.currentState.client.get('id');
+              App.store.get('_adapter').find(App.store,App.Client,id);
             }, 1000*10);
           }
 
@@ -262,8 +262,8 @@ function(
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
-              id = App.router.currentState.client.get('id');
-              App.store.get("_adapter").find(App.store,App.Client,id);
+              var id = App.router.currentState.client.get('id');
+              App.store.get('_adapter').find(App.store,App.Client,id);
             }, 1000*10);
           }
 
@@ -290,8 +290,8 @@ function(
           // HACK: Set-up periodic refreshing of client state
           if(! App.interval) {
             App.interval = setInterval(function(){
-              id = App.router.currentState.client.get('id');
-              App.store.get("_adapter").find(App.store,App.Client,id);
+              var id = App.router.currentState.client.get('id');
+              App.store.get('_adapter').find(App.store,App.Client,id);
             }, 1000*10);
           }
 

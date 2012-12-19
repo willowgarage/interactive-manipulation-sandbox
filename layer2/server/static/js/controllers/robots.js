@@ -1,10 +1,10 @@
 define([
-  'ember'
-, 'app'
+  'ember',
+  'app'
 ],
 function(
-  Ember
-, App
+  Ember,
+  App
 ) {
 
   App.RobotsController = Ember.ArrayController.extend();
