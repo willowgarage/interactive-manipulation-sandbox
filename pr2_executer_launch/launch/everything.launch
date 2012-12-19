@@ -3,6 +3,7 @@
   <arg name="run_sim" default="false" />
   <arg name="im" default="true" />
   <arg name="kinect_frame_prefix" default="/head_kinect" />
+  <arg name="multi_ros" default="true" />
 
   <arg name="http_streamer" default="false" />
 
@@ -77,6 +78,10 @@
 
   <node name="throttle_plan" pkg="topic_tools" type="throttle"
     args="messages /move_base_node/NavfnROS/plan 0.20 /plan_throttled">
+  </node>
+
+  <!-- start multi_ros server -->
+  <node if="$(arg multi_ros)" name="multi_ros_child" pkg="multi_ros" type="child">
   </node>
 
 </launch>
