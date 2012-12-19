@@ -20,14 +20,15 @@ function( Ember, DS, App, ROS, Action) {
     look_cameras: DS.attr('string'), // Subset of this.cameras which share the "look" feature.
 
     // TL: used for testing the Pickup tab without having to do a full segment_and_recognize
-    test_objects: {"0":{"xmin":0.34422243192144925,"ymin":0.4637337219076444,"ymax":0.6817042037682622,"xmax":0.40844968855057406},"1":{"xmin":0.5093700733340171,"ymin":0.5337361612434626,"ymax":0.694115453916135,"xmax":0.5653736815220065},"2":{"xmin":0.6635228555365372,"ymin":0.6004678931372165,"ymax":0.7484530318871222,"xmax":0.725233314557502}},
+    test_objects: {'0':{'xmin':0.34422243192144925,'ymin':0.4637337219076444,'ymax':0.6817042037682622,'xmax':0.40844968855057406},'1':{'xmin':0.5093700733340171,'ymin':0.5337361612434626,'ymax':0.694115453916135,'xmax':0.5653736815220065},'2':{'xmin':0.6635228555365372,'ymin':0.6004678931372165,'ymax':0.7484530318871222,'xmax':0.725233314557502}},
 
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
     selectedCameraIsHead: function() {
-      if (this.get('selected_camera') && this.get('selected_camera').name == "head") {
+      if (this.get('selected_camera') && this.get('selected_camera').name === 'head') {
         return true;
-      } else {
+      }
+      else {
         return false;
       }
     }.property('selected_camera'),
@@ -68,7 +69,7 @@ function( Ember, DS, App, ROS, Action) {
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
-        return (this.get('cameras') && this.get('cameras')[name] && 
+        return (this.get('cameras') && this.get('cameras')[name] &&
           this.get('cameras')[name].url);
     },
 
@@ -76,27 +77,23 @@ function( Ember, DS, App, ROS, Action) {
     status: function() {
       switch(this.get('status_code')) {
         case 0:
-          return { value: "unreachable", class: "disabled" }
+          return { value: 'unreachable', class: 'disabled' };
         case 1:
-          return { value: "connected", class: "ready" }
+          return { value: 'connected', class: 'ready' };
         case 2:
-          return { value: "disconnected", class: "error" }
+          return { value: 'disconnected', class: 'error' };
         default:
-          return { value: "N/A", class: "error" }
+          return { value: 'N/A', class: 'error' };
       }
     }.property('status_code'),
     isConnected: function() {
-      return (this.get('status_code') == 1);
+      return (this.get('status_code') === 1);
     }.property('status_code'),
-    progress_update: "",
+    progress_update: '',
 
-    battery: -1,
-    plugged_in_value: -1,
     // Whether the robot is ready to act. Enabled is false if the runstop
     // is pressed.
     pose: { 'x': -1 , 'y': -1 },
-    // TL: hack because I can't get Handlebars expressions to work
-    pose_display: "",
     // True iff the robot is in the process of plugging in
     is_plugging_in: false,
 
@@ -105,22 +102,24 @@ function( Ember, DS, App, ROS, Action) {
     }.property('plugged_in_value'),
 
     log: function( msg) {
-      console.log("["+ this.get('name') + "]: " + msg);
+      console.log('['+ this.get('name') + ']: ' + msg);
     },
 
     transformPoseToMap : function(pose) {
       var map_x, map_y;
-      if (pose.x == -1) {
+      if (pose.x === -1) {
         map_x = -1;
-      } else {
+      }
+      else {
         map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
       }
-      if (pose.y == -1) {
+      if (pose.y === -1) {
         map_y = -1;
-      } else {
+      }
+      else {
         map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
       }
-      return {'x': map_x, 'y': map_y};
+      return {'x' : map_x, 'y' : map_y};
     },
 
     map_coords: function() {
@@ -134,9 +133,10 @@ function( Ember, DS, App, ROS, Action) {
     // get that to work after several hours of trying.
     pose_display: function() {
       var pose = this.get('pose');
-      if (pose.x == -1 && pose.y == -1) {
-        return "unknown";
-      } else {
+      if (pose.x === -1 && pose.y === -1) {
+        return 'unknown';
+      }
+      else {
         return pose.x.toFixed(2) + ', ' + pose.y.toFixed(2);
       }
     }.property('pose'),
@@ -151,7 +151,7 @@ function( Ember, DS, App, ROS, Action) {
     motors_not_halted: null,
 
     serviceUrlChanged: function() {
-      if(this.get('service_url')) {
+      if (this.get('service_url')) {
         this.ros = new ROS();
 
         //myDebugEvents( this.ros, this.get('name'), ['connection','close','error']);
@@ -237,10 +237,10 @@ function( Ember, DS, App, ROS, Action) {
       // ros.ServiceRequest contains the data to send in the service call.
       var request = new this.ros.ServiceRequest();
 
-      console.log("Sending reset_motors service call");
+      console.log('Sending reset_motors service call');
       reset_motors.callService(request, function(result) {
         // Callback when it finishes
-        console.log("Result for reset_motors call:", result);
+        console.log('Result for reset_motors call:', result);
       });
     },
 
@@ -254,7 +254,7 @@ function( Ember, DS, App, ROS, Action) {
         this.set('progress_update', 'Invalid navigation coordinates');
         // Redirect to navigate view. We probably got here because the user
         // reloaded in the navigating view
-        App.get('router').send("navigate", this);
+        App.get('router').send('navigate', this);
         return;
       }
 
@@ -270,15 +270,15 @@ function( Ember, DS, App, ROS, Action) {
       var action = new Action({
         ros: this.ros,
         name: 'TuckArms'
-      })
+      });
       action.inputs.tuck_left = true;
       action.inputs.tuck_right = true;
 
       var _this = this;
-      action.on("result", function(result) {
-        console.log("Received result from tucking arms: ", result);
+      action.on('result', function(result) {
+        console.log('Received result from tucking arms: ', result);
         _this.set('progress_update', 'Tucking arms ' + result.outcome);
-        if (result.outcome == "succeeded") {
+        if (result.outcome === 'succeeded') {
           // Tuckarms worked, now go
           _this._pointHeadForward(function() {
             _this._navigateTo2(place);
@@ -288,7 +288,10 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
-      console.log("Sending TuckArm action");
+      console.log('Sending TuckArm action');
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
+      console.log('Sending TuckArm action');
       action.execute();
     },
 
@@ -301,11 +304,11 @@ function( Ember, DS, App, ROS, Action) {
 
       // Get notified when navigation finishes
       var _this = this;
-      action.on("result", function(result) {
-        console.log("navigation result: " + result.outcome);
+      action.on('result', function(result) {
+        console.log('navigation result: ' + result.outcome);
         _this.set('progress_update', 'Navigation ' + result.outcome);
         // Return to navigation view
-        App.get('router').send("navigate", _this);
+        App.get('router').send('navigate', _this);
       });
 
       // Actually send the navigation command
@@ -314,7 +317,7 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.theta    = place.get('pose_angle');
       action.inputs.collision_aware    = true;
       action.inputs.frame_id = '/map';
-      console.log("Sending navigation action:", action.inputs);
+      console.log('Sending navigation action:', action.inputs);
       action.execute();
     },
 
@@ -327,7 +330,7 @@ function( Ember, DS, App, ROS, Action) {
         ros: this.ros
       });
       action.cancelAll();
-      console.log("Cancelling all goals");
+      console.log('Cancelling all goals');
     },
 
     /* Unplugging has three steps: remove the plug from the wall, tuck your
@@ -341,7 +344,7 @@ function( Ember, DS, App, ROS, Action) {
       var action = new Action({
         ros: this.ros,
         name: 'Unplug'
-      })
+      });
 
       var _this = this;
 
@@ -350,10 +353,10 @@ function( Ember, DS, App, ROS, Action) {
         _this.set('is_plugging_in', false);
       };
 
-      action.on("result", function(result) {
-        console.log("unplug result: " + result.outcome);
+      action.on('result', function(result) {
+        console.log('unplug result: ' + result.outcome);
         _this.set('progress_update', 'Unplugging ' + result.outcome);
-        if (result.outcome == "succeeded") {
+        if (result.outcome === 'succeeded') {
           // Unplug worked, now tuck arms
           _this._tuckArms(function() {
             _this._pointHeadForward(function() {
@@ -367,7 +370,7 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
       action.execute();
-      console.log("Calling Unplug action");
+      console.log('Calling Unplug action');
     },
 
     _tuckArms: function(nextStep, onError) {
@@ -377,29 +380,33 @@ function( Ember, DS, App, ROS, Action) {
       var action = new Action({
         ros: this.ros,
         name: 'TuckArms'
-      })
+      });
 
       action.inputs.tuck_left = true;
       action.inputs.tuck_right = true;
 
       var _this = this;
-      action.on("result", function(result) {
-        console.log("tuckarms result: " + result.outcome);
+      action.on('result', function(result) {
+        console.log('tuckarms result: ' + result.outcome);
         _this.set('progress_update', 'Tucking arms ' + result.outcome);
-        if (result.outcome == "succeeded") {
+        if (result.outcome === 'succeeded') {
           // Tuckarms worked, now move head forward
-          if (nextStep) nextStep();
+          if (nextStep) {
+            nextStep();
+          }
         } else {
           // TODO: Notify user that unplugging failed
-          if (onError) onError();
+          if (onError) {
+            onError();
+          }
         }
       });
       action.execute();
-      console.log("Calling TuckArms action");
+      console.log('Calling TuckArms action');
     },
 
     _pointHeadForward: function(nextStep, onError) {
-      console.log("in _pointHeadForward, nextStep: ", nextStep);
+      console.log('in _pointHeadForward, nextStep: ', nextStep);
       this.set('progress_update', 'Looking forward...');
       var action = new Action({
         ros: this.ros,
@@ -408,24 +415,28 @@ function( Ember, DS, App, ROS, Action) {
 
       // Get notified when head movement finishes
       var _this = this;
-      action.on("result", function(result) {
+      action.on('result', function(result) {
         _this.set('progress_update', 'Look forward ' + result.outcome);
         // Regardless of outcome, tell the UI to say that plugging is done
-        if (result.outcome == "succeeded") {
-          if (nextStep) nextStep();
+        if (result.outcome === 'succeeded') {
+          if (nextStep) {
+            nextStep();
+          }
         } else {
-          if (onError) onError();
+          if (onError) {
+            onError();
+          }
         }
       });
 
-      action.inputs.target_frame        = 'torso_lift_link';
-      action.inputs.target_x            = 1.0;
-      action.inputs.target_y            = 0;
-      action.inputs.target_z            = 0.4;
-      action.inputs.pointing_frame      = 'head_mount_kinect_rgb_optical_frame';
-      action.inputs.pointing_x          = 0.0;
-      action.inputs.pointing_y          = 0.0;
-      action.inputs.pointing_z          = 1.0;
+      action.inputs.target_frame   = 'torso_lift_link';
+      action.inputs.target_x       = 1.0;
+      action.inputs.target_y       = 0;
+      action.inputs.target_z       = 0.4;
+      action.inputs.pointing_frame = 'head_mount_kinect_rgb_optical_frame';
+      action.inputs.pointing_x     = 0.0;
+      action.inputs.pointing_y     = 0.0;
+      action.inputs.pointing_z     = 1.0;
       action.execute();
       console.log('Calling PointHead action', action.inputs);
     },
@@ -443,8 +454,8 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.camera_info_topic   = '/wide_stereo/left/camera_info';
 
       var _this = this;
-      action.on("result", function(result) {
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', '');
         } else {
@@ -467,18 +478,19 @@ function( Ember, DS, App, ROS, Action) {
         name: 'PlugIn'
       });
       var _this = this;
-      //myDebugEvents( action, this.get('name') + " plugIn action", ['result','status','feedback']);
-      myDebugEvents( action, this.get('name') + " plugIn action", ['result', 'feedback']);
-      action.on("result", function(result) {
-        console.log("plugIn result: " + result.outcome);
+      //myDebugEvents( action, this.get('name') + ' plugIn action', ['result','status','feedback']);
+      myDebugEvents( action, this.get('name') + ' plugIn action', ['result', 'feedback']);
+      action.on('result', function(result) {
+        console.log('plugIn result: ' + result.outcome);
         _this.set('progress_update', 'Plugging in ' + result.outcome);
         _this.set('is_plugging_in', false);
 
-        if (result.outcome == "succeeded") {
+        if (result.outcome === 'succeeded') {
           // TODO: notify user that plugging in finished
           // Tell the UI to say that plugging is done
           _this.set('is_plugging_in', false);
-        } else {
+        }
+        else {
           // TODO: notify the user that plugging in failed
           // and point our head forwards
           _this._pointHeadForward(function() {
@@ -489,7 +501,7 @@ function( Ember, DS, App, ROS, Action) {
 
       });
       action.execute();
-      console.log("Calling PlugIn action");
+      console.log('Calling PlugIn action');
     },
 
     // ----------------------------------------------------------------------
@@ -506,14 +518,15 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.y                  = 0.0;
       action.inputs.theta              = 0.0;
       action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = "/base_footprint";
+      action.inputs.frame_id           = '/base_footprint';
 
       var _this = this;
-      action.on("result", function(result) {
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', '');
-        } else {
+        }
+        else {
           _this.set('progress_update', 'Move action failed');
         }
       });
@@ -532,14 +545,15 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.y                  = 0.0;
       action.inputs.theta              = 0.0;
       action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = "/base_footprint";
+      action.inputs.frame_id           = '/base_footprint';
 
       var _this = this;
-      action.on("result", function(result) {
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', '');
-        } else {
+        }
+        else {
           _this.set('progress_update', 'Move action failed');
         }
       });
@@ -558,14 +572,15 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.y                  = 0.0;
       action.inputs.theta              = 0.20;
       action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = "/base_footprint";
+      action.inputs.frame_id           = '/base_footprint';
 
       var _this = this;
-      action.on("result", function(result) {
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', '');
-        } else {
+        }
+        else {
           _this.set('progress_update', 'Move action failed');
         }
       });
@@ -584,14 +599,15 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.y                  = 0.0;
       action.inputs.theta              = -0.20;
       action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = "/base_footprint";
+      action.inputs.frame_id           = '/base_footprint';
 
       var _this = this;
-      action.on("result", function(result) {
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', '');
-        } else {
+        }
+        else {
           _this.set('progress_update', 'Move action failed');
         }
       });
@@ -613,26 +629,27 @@ function( Ember, DS, App, ROS, Action) {
       });
 
       var _this = this;
-      action.on("result", function(result) {
-        console.log("Result from SegmentAndRecognize:", result);
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        console.log('Result from SegmentAndRecognize:', result);
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', '');
           _this.set('recognized_objects', result.outputs);
-        } else {
+        }
+        else {
           _this.set('progress_update', 'Failed to identify objects');
           _this.set('recognized_objects', {});
         }
       });
 
-      console.log("Calling SegmentAndRecognize");
+      console.log('Calling SegmentAndRecognize');
       action.execute();
     },
 
     pickupObject: function(object_id) {
       // First move the arms aside
       this.set('progress_update', 'Moving arms aside');
-      
+
       var action = new Action({
         ros: this.ros,
         name: 'TuckArms'
@@ -641,9 +658,9 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.tuck_right = false;
 
       var _this = this;
-      action.on("result", function(result) {
-        console.log("Result from TuckArms:", result);
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        console.log('Result from TuckArms:', result);
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', 'Arm movement successful');
           _this._pickupObject2(object_id);
@@ -667,9 +684,9 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.arm = 'right';
 
       var _this = this;
-      action.on("result", function(result) {
-        console.log("Result from PickupObject:", result);
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        console.log('Result from PickupObject:', result);
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', 'Pickup successful');
         } else {
@@ -677,7 +694,7 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
-      console.log("Sending action PickupObject with args", action.inputs);
+      console.log('Sending action PickupObject with args', action.inputs);
       action.execute();
     },
 
@@ -696,9 +713,9 @@ function( Ember, DS, App, ROS, Action) {
       action.inputs.lift = lift;
 
       var _this = this;
-      action.on("result", function(result) {
-        console.log("Result from InteractiveGripper:", result);
-        if (result.outcome == "succeeded") {
+      action.on('result', function(result) {
+        console.log('Result from InteractiveGripper:', result);
+        if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', 'InteractiveGripper motion successful');
         } else {
@@ -706,15 +723,17 @@ function( Ember, DS, App, ROS, Action) {
         }
       });
 
-      console.log("Sending action InteractiveGripper with args", action.inputs);
+      console.log('Sending action InteractiveGripper with args', action.inputs);
       action.execute();
     }
 
   });
 });
-function myDebugEvents( source, id, events) {
-  for(var i=0;i<events.length;i++) {
+
+function myDebugEvents(source, id, events) {
+  for (var i=0; i < events.length; i++) {
     eval('var f = function(e){ console.log("["+id+".'+events[i]+'] received"); console.dir(arguments); };');
     source.on(events[i], f);
   }
-};
+}
+

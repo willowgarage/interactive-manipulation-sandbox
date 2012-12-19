@@ -1,9 +1,10 @@
 define([
-    'ember',
-    'app',
-    'd3',
-    'text!templates/map.handlebars'
-],function(Ember,App,d3,mapHtml) {
+  'ember',
+  'app',
+  'jquery',
+  'd3',
+  'text!templates/map.handlebars'
+], function(Ember, App, $, d3, mapHtml) {
 
   App.MapView = Ember.View.extend({
     template: Ember.Handlebars.compile(mapHtml),
@@ -17,15 +18,15 @@ define([
         x = d3.scale.linear().domain([0, w]),
         y = d3.scale.ordinal().domain([0, h]);
 
-      var svg = d3.select("#floorplan-div").append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .attr("id","mapsvg");
+      var svg = d3.select('#floorplan-div').append('svg')
+        .attr('width', w)
+        .attr('height', h)
+        .attr('id', 'mapsvg');
 
-      svg.append("svg:image")
-        .attr("xlink:href", "/static/img/willow-floorplan.png")
-        .attr("width", w)
-        .attr("height", h);
+      svg.append('svg:image')
+        .attr('xlink:href', '/static/img/willow-floorplan.png')
+        .attr('width', w)
+        .attr('height', h);
 
       var content = this.get('controller').get('content');
       this.enablePlaces = content.get('enablePlaces');
@@ -38,9 +39,10 @@ define([
       if (this.enablePlaces) {
         var places = content.places;
         places.addArrayObserver(this);
-      } else {
+      }
+      else {
         // If we are not enabling Places, then hide the nav panel
-        $("#navigation_panel").hide();
+        $('#navigation_panel').hide();
       }
 
       // Add an observer so that whenever the robot's position changes, we
@@ -62,7 +64,7 @@ define([
 
     willDestroyElement: function() {
       var content = this.get('controller').get('content');
-      
+
       // Remove listeners on places and this robot
       if (this.enablePlaces) {
         var places = content.places;
@@ -76,7 +78,7 @@ define([
       }
 
       // Remove the map so it gets redrawn next time
-      d3.select("#mapsvg").remove();
+      d3.select('#mapsvg').remove();
     },
 
     arrayWillChange: function() {},
@@ -99,9 +101,11 @@ define([
       // Figure out which room the robot is closest to
       var nearest = -1;
       var closest_place = null;
-      for (var i=0; i<places.length; i++) {
+      for (var i = 0; i < places.length; i++) {
         var place = places[i];
-        if (place.get('map_x') === null || place.get('map_y') === null) continue;
+        if (place.get('map_x') === null || place.get('map_y') === null) {
+          continue;
+        }
         var robot_coords = robot.get('map_coords');
 
         // First check if the robot is inside
@@ -121,13 +125,13 @@ define([
 
         // Otherwise, find its distance to the nearest corner of the room
         var distance = this.getDistance(robot_coords, place);
-        if ((nearest == -1) || distance < nearest) {
+        if ((nearest === -1) || distance < nearest) {
           nearest = distance;
           closest_place = place;
         }
       }
-      if (closest_place != null) {
-        d3.select("#closest").text(closest_place.get('name'));
+      if (closest_place !== null) {
+        d3.select('#closest').text(closest_place.get('name'));
       }
     },
 
@@ -146,28 +150,28 @@ define([
     },
 
     drawRobot: function(robot) {
-      var map = d3.select("#mapsvg");
+      var map = d3.select('#mapsvg');
       var _this = this;
 
-      if ((robot.get('map_coords').x == -1) || (robot.get('map_coords').y == -1)) {
+      if ((robot.get('map_coords').x === -1) || (robot.get('map_coords').y === -1)) {
         return;
       }
 
       // Remove old robot
-      map.selectAll(".robot").remove();
+      map.selectAll('.robot').remove();
 
       /* Draw our robot on the map */
-      map.selectAll(".robot")
+      map.selectAll('.robot')
         .data([robot])
-        .enter().append("svg:circle")
-          .attr("class", "robot")
-          .attr("cx", function(d) {
+        .enter().append('svg:circle')
+          .attr('class', 'robot')
+          .attr('cx', function(d) {
               return d.get('map_coords').x;
             })
-          .attr("cy", function(d) {
+          .attr('cy', function(d) {
               return d.get('map_coords').y;
             })
-          .attr("r", 5);
+          .attr('r', 5);
     },
 
     drawDestination : function(place) {
@@ -182,57 +186,57 @@ define([
       var rooms = places.filter( function(p) { return (!p.get('isOutlet') && !p.get('isTable')); });
       var outlets = places.filter( function(p) { return p.get('isOutlet'); });
       var tables = places.filter( function(p) { return p.get('isTable'); });
-      var map = d3.select("#mapsvg");
+      var map = d3.select('#mapsvg');
 
       /* When the user clicks on a room, update "Selected location" and
        * store this place name in our controller */
       function nodeSelected(d) {
         // Remove old selection
-        d3.select(".selected").classed("selected", false);
+        d3.select('.selected').classed('selected', false);
         // Add new selection
-        d3.select(d3.event.target).classed("selected", true);
+        d3.select(d3.event.target).classed('selected', true);
 
         // Populate the "Selected location" text field
-        d3.select("#placename").text(d.get('name'));
+        d3.select('#placename').text(d.get('name'));
         // Store this place id in our controller
         _this.get('controller').set('placeId', d.get('id'));
       }
 
       /* Draw Rooms */
       var _this = this;
-      map.selectAll(".room")
+      map.selectAll('.room')
         .data(rooms.toArray())
-        .enter().append("svg:rect")
-          .attr("class", "room")
-          .attr("x", function(d) { return d.get('map_x'); })
-          .attr("y", function(d) { return d.get('map_y'); })
-          .attr("width", function(d) { return d.get('map_width'); })
-          .attr("height", function(d) { return d.get('map_height'); })
-          .on("click", nodeSelected);
+        .enter().append('svg:rect')
+          .attr('class', 'room')
+          .attr('x', function(d) { return d.get('map_x'); })
+          .attr('y', function(d) { return d.get('map_y'); })
+          .attr('width', function(d) { return d.get('map_width'); })
+          .attr('height', function(d) { return d.get('map_height'); })
+          .on('click', nodeSelected);
 
       /* Draw Outlets */
-      map.selectAll(".outlet")
+      map.selectAll('.outlet')
         .data(outlets.toArray())
-        .enter().append("svg:image")
-          .attr("class", "outlet")
-          .attr("xlink:href", "/static/img/outlet.jpg")
-          .attr("x", function(d) { return d.get('map_x'); })
-          .attr("y", function(d) { return d.get('map_y'); })
-          .attr("width", 20)
-          .attr("height", 20)
-          .on("click", nodeSelected);
+        .enter().append('svg:image')
+          .attr('class', 'outlet')
+          .attr('xlink:href', '/static/img/outlet.jpg')
+          .attr('x', function(d) { return d.get('map_x'); })
+          .attr('y', function(d) { return d.get('map_y'); })
+          .attr('width', 20)
+          .attr('height', 20)
+          .on('click', nodeSelected);
 
       /* Draw Tables */
-      map.selectAll(".table")
+      map.selectAll('.table')
         .data(tables.toArray())
-        .enter().append("svg:image")
-          .attr("class", "table")
-          .attr("xlink:href", "/static/img/table.png")
-          .attr("x", function(d) { return d.get('map_x'); })
-          .attr("y", function(d) { return d.get('map_y'); })
-          .attr("width", 20)
-          .attr("height", 20)
-          .on("click", nodeSelected);
+        .enter().append('svg:image')
+          .attr('class', 'table')
+          .attr('xlink:href', '/static/img/table.png')
+          .attr('x', function(d) { return d.get('map_x'); })
+          .attr('y', function(d) { return d.get('map_y'); })
+          .attr('width', 20)
+          .attr('height', 20)
+          .on('click', nodeSelected);
     },
 
     drawNavPlan : function() {
@@ -242,11 +246,13 @@ define([
 
       var poses = plan.poses;
 
-      var map = d3.select("#mapsvg");
+      var map = d3.select('#mapsvg');
       // Remove the old plan
-      map.selectAll(".navpath").remove();
+      map.selectAll('.navpath').remove();
 
-      if (poses.length == 0) return;
+      if (poses.length === 0) {
+        return;
+      }
 
       // Construct an array of points
       var array1 = poses.slice(0, poses.length - 1);

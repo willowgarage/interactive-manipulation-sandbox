@@ -13,3 +13,4 @@ layer2/server/server.*.db
 layer2/server/world.*.json
 parser.out
 parsetab.py
+node_modules

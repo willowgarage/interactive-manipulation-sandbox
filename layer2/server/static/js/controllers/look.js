@@ -1,13 +1,14 @@
 define([
-    'ember',
-    'app'
-], function( Ember, App) {
+  'ember',
+  'app',
+  'jquery'
+], function(Ember, App, $) {
 
   App.LookController = Ember.ObjectController.extend({
 
     pointHeadClick: function(arg) {
       // Workaround for Firefox because it does not provide the offsetX/Y values
-      if(typeof arg.offsetX === "undefined" || typeof arg.offsetY === "undefined") {
+      if (typeof arg.offsetX === 'undefined' || typeof arg.offsetY === 'undefined') {
         var targetOffset = $(arg.target).offset();
         arg.offsetX = arg.pageX - targetOffset.left;
         arg.offsetY = arg.pageY - targetOffset.top;

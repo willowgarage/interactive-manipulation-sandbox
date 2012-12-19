@@ -22,10 +22,10 @@ function(
     map_width: DS.attr('number'),
     map_height: DS.attr('number'),
     isOutlet: function() {
-      return (this.get('tags') == "outlet");
+      return (this.get('tags') === 'outlet');
     }.property(),
     isTable: function() {
-      return (this.get('tags') == "table");
+      return (this.get('tags') === 'table');
     }.property()
   });
 });

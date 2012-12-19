@@ -1,16 +1,17 @@
 define([
-    'ember',
-    'app'
-], function( Ember, App) {
+  'ember',
+  'app',
+  'jquery'
+], function(Ember, App, $) {
 
   App.PlugController = Ember.ObjectController.extend({
     plugIn: function() {
-      if( this._toggle()) {
+      if (this._toggle()) {
         this.get('content').plugIn();
       }
     },
     unplug: function() {
-      if( this._toggle()) {
+      if (this._toggle()) {
         this.get('content').unplug();
       }
     },
