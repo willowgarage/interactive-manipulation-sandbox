@@ -86,13 +86,29 @@ define([
 
       // Only subscribe to interactive markers once the robot model has been loaded
       var robot = this.get('controller').get('content');
-      robot.addObserver('status_code', this, 'subscribe_to_markers');
+      // TL: This is a hack to make the markers tab work. If we get to this tab
+      // and the robot has already been loaded, then status_code will be 1 and
+      // the observer will never fire. However if we get to this tab before the
+      // robot has loaded, then robot.ros has not been created yet. So we need
+      // a better way to only call subscribe when there is a ROS connection
+      // open.
+      if (robot.get('status_code') === 1) {
+        this.subscribeToMarkers();
+      } else {
+        robot.addObserver('status_code', this, 'subscribeToMarkers');
+      }
     },
 
-    subscribe_to_markers: function() {
+    willDestroyElement: function() {
+      // Remove the subscription when we switch away from this tab
+      var robot = this.get('controller').get('content');
+      robot.removeObserver('status_code', this, 'subscribeToMarkers');
+    },
+
+    subscribeToMarkers: function() {
       var robot = this.get('controller').get('content');
       var status_code = robot.get('status_code');
-      if (status_code == 1) {
+      if (status_code === 1) {
         // Show interactive markers
         var content = this.get('controller').get('content');
         var imClient = new ImProxy.Client(content.ros);

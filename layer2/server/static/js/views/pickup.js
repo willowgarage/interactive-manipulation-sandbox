@@ -22,9 +22,18 @@ define([
         // Set up the listener so that when segment_and_recognize finishes, we draw the objects
         var robot = this.get('controller').get('content');
         robot.addObserver('recognized_objects', this, 'drawObjects');
+
+        // Make sure nothing is currently selected
+        this.get('controller').set('selected_object', null);
       },
 
-      drawObjects: function(robot) {
+      willDestroyElement: function() {
+        // Remove the recognized_objects listener
+        var robot = this.get('controller').get('content');
+        robot.removeObserver('recognized_objects', this, 'drawObjects');
+      },
+
+      drawObjects: function(ev) {
         /* When the user clicks on an object, update "Selected object" and
          * store this object id in our controller */
         function objSelected(d) {
@@ -39,7 +48,8 @@ define([
           _this.get('controller').set('selected_object', d.id);
         }
 
-        var robot = this.get('controller').get('content');
+        var pickupController = this.get('controller');
+        var robot = pickupController.get('content');
         var objects = robot.get('recognized_objects');
 
         var svg = d3.select('#svgcanvas');
