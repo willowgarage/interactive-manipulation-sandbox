@@ -22,6 +22,14 @@ define([
         var robot = this.get('controller').get('content');
         robot.addObserver('recognized_objects', this, 'drawObjects');
 
+        // Make sure nothing is currently selected
+        this.get('controller').set('selected_object', null);
+      },
+
+      willDestroyElement: function() {
+        // Remove the recognized_objects listener
+        var robot = this.get('controller').get('content');
+        robot.removeObserver('recognized_objects', this, 'drawObjects');
       },
 
       drawObjects: function(robot) {
@@ -39,7 +47,11 @@ define([
           _this.get('controller').set('selected_object', d.id);
         }
 
-        var robot = this.get('controller').get('content');
+        console.log('this:', this);
+        var pickupController = this.get('controller');
+        console.log('pickupController:', pickupController);
+        var robot = pickupController.get('content');
+        console.log('robot:', robot);
         var objects = robot.get('recognized_objects');
 
         var svg = d3.select("#svgcanvas");
