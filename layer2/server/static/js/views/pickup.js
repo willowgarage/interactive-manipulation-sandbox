@@ -33,7 +33,7 @@ define([
         robot.removeObserver('recognized_objects', this, 'drawObjects');
       },
 
-      drawObjects: function(robot) {
+      drawObjects: function(ev) {
         /* When the user clicks on an object, update "Selected object" and
          * store this object id in our controller */
         function objSelected(d) {
@@ -48,11 +48,8 @@ define([
           _this.get('controller').set('selected_object', d.id);
         }
 
-        console.log('this:', this);
         var pickupController = this.get('controller');
-        console.log('pickupController:', pickupController);
         var robot = pickupController.get('content');
-        console.log('robot:', robot);
         var objects = robot.get('recognized_objects');
 
         var svg = d3.select('#svgcanvas');

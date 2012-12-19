@@ -92,7 +92,7 @@ define([
       // robot has loaded, then robot.ros has not been created yet. So we need
       // a better way to only call subscribe when there is a ROS connection
       // open.
-      if (robot.get('status_code') == 1) {
+      if (robot.get('status_code') === 1) {
         this.subscribeToMarkers();
       } else {
         robot.addObserver('status_code', this, 'subscribeToMarkers');
@@ -108,7 +108,7 @@ define([
     subscribeToMarkers: function() {
       var robot = this.get('controller').get('content');
       var status_code = robot.get('status_code');
-      if (status_code == 1) {
+      if (status_code === 1) {
         // Show interactive markers
         var content = this.get('controller').get('content');
         var imClient = new ImProxy.Client(content.ros);
