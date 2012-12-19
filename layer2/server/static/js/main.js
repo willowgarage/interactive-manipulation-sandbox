@@ -49,9 +49,10 @@ requirejs.config({
 
 define([
   'app',
-  'router'
+  'router',
+  'jquery'
 ],
-function( App, Router) {
-  $(".loading").remove();
+function(App, Router, $) {
+  $('.loading').remove();
   App.initialize();
 });

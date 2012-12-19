@@ -1,11 +1,13 @@
 define([
   'ember',
   'emberdata',
+  'jquery',
   'socketio'
 ],
 function(
   Ember,
   DS,
+  $,
   io
 ) {
   var App = Ember.Application.create({
@@ -13,7 +15,7 @@ function(
 
     ready: function() {
       //  Create a master socket connection to server
-      this.socket = io.connect("", {
+      this.socket = io.connect('', {
 
         // Maximum number of milliseconds between reconnect attempts.
         'reconnection limit': 3000,
@@ -50,7 +52,7 @@ function(
   DS.DjangoRESTAdapter = DS.RESTAdapter.extend({
     find: function( store, type, id) {
       var root = this.rootForType(type);
-      this.ajax( this.buildURL(root, id), "GET", {
+      this.ajax( this.buildURL(root, id), 'GET', {
         success: function( djson) {
           var json = {}; json[root] = djson;
           this.sideload(store, type, json, root);
@@ -61,7 +63,7 @@ function(
     findMany: function( store, type, ids) {
       ids = this.get('serializer').serializeIds(ids);
       var root = this.rootForType(type), plural = this.pluralize(root);
-      this.ajax( this.buildURL(root), "GET", {
+      this.ajax( this.buildURL(root), 'GET', {
         data: { ids: ids },
         success: function( djson) {
           var json = {}; json[plural] = djson;
@@ -72,7 +74,7 @@ function(
     },
     findAll: function( store, type) {
       var root = this.rootForType(type), plural = this.pluralize(root);
-      this.ajax( this.buildURL(root), "GET", {
+      this.ajax( this.buildURL(root), 'GET', {
         success: function( djson) {
           var json = {}; json[plural] = djson;
           this.sideload(store, type, json, plural);
@@ -82,9 +84,9 @@ function(
     },
     findQuery: function( store, type, query, recordArray) {
       var root = this.rootForType(type), plural = this.pluralize(root);
-      this.ajax( this.buildURL(root), "GET", {
+      this.ajax( this.buildURL(root), 'GET', {
         data: query,
-        success: function( djson) {
+        success: function(djson) {
           var json = {}; json[plural] = djson;
           this.sideload(store, type, json, plural);
           recordArray.load(json[plural]);
