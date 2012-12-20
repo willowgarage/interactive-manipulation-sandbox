@@ -52,8 +52,7 @@ function( Ember, DS, App, ROS, Action) {
         var cameras = this.get('cameras'),
             LOOK_FEATURE = 'look',
             look_cameras = [];
-
-        cameras.forEach(function(camera){
+        cameras && cameras.forEach(function(camera){
             camera.features.split(' ').forEach(function(feature){
                 if (LOOK_FEATURE === feature){
                     look_cameras.push(camera)
