@@ -15,7 +15,7 @@ function(
 
     ready: function() {
       //  Create a master socket connection to server
-      this.socket = io.connect('', {
+      this.socket = io.connect('/client', {
 
         // Maximum number of milliseconds between reconnect attempts.
         'reconnection limit': 3000,
@@ -35,6 +35,15 @@ function(
       this.socket.on('reconnect', function(){
         $.unblockUI();
       });
+
+
+      this.socket.on('context_others',function(other_users){
+        App.client.set('other_users', other_users);
+      });
+    },
+
+    setClientContext: function( clientContext) {
+      this.socket.emit('context_new', clientContext);
     }
   });
   window.TheApp = App;
