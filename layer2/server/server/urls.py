@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     url('^$', 'django.views.generic.simple.direct_to_template',
         {'template': 'index.html'}),
 
+    # socket.io integration
+    url(r'^socket\.io','sockets.views.socketio'),
+
     # Database of objects for our prototype application
     url(r'^world/', include('world.urls')),
 )
