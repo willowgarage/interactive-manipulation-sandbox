@@ -17,7 +17,6 @@ function( Ember, DS, App, ROS, Action) {
     service_url: DS.attr('string'),
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
-    look_cameras: DS.attr('string'), // Subset of this.cameras which share the "look" feature.
 
     // TL: used for testing the Pickup tab without having to do a full segment_and_recognize
     test_objects: {'0':{'xmin':0.34422243192144925,'ymin':0.4637337219076444,'ymax':0.6817042037682622,'xmax':0.40844968855057406},'1':{'xmin':0.5093700733340171,'ymin':0.5337361612434626,'ymax':0.694115453916135,'xmax':0.5653736815220065},'2':{'xmin':0.6635228555365372,'ymin':0.6004678931372165,'ymax':0.7484530318871222,'xmax':0.725233314557502}},
@@ -48,6 +47,22 @@ function( Ember, DS, App, ROS, Action) {
         return this.getCameraUrl('kinect');
     }.property('cameras'),
 
+    // Subset of this.cameras which share the "look" feature.
+    look_cameras: function() {
+        var cameras = this.get('cameras'),
+            LOOK_FEATURE = 'look',
+            look_cameras = [];
+        cameras && cameras.forEach(function(camera){
+            camera.features.split(' ').forEach(function(feature){
+                if (LOOK_FEATURE === feature){
+                    look_cameras.push(camera)
+                    return;
+                }
+            });
+        });
+        return look_cameras;
+    }.property('cameras'),
+
     //  This method parses the camera URLs every time they change
     //  and makes them available to be queried by other helper methods
     camerasChanged: function() {
@@ -58,14 +73,6 @@ function( Ember, DS, App, ROS, Action) {
             camera.url = camera_base_url + camera.url;
         });
     }.observes('cameras'),
-    look_camerasChanged: function() {
-        var look_cameras = this.get('look_cameras');
-        var camera_base_url = this.get('camera_base_url');
-        look_cameras && look_cameras.forEach(function(camera){
-            look_cameras[camera.name] = camera;
-            camera.url = camera_base_url + camera.url;
-        });
-    }.observes('look_cameras'),
 
     //  Helper method to get the URL for a given camera name
     getCameraUrl: function(name) {
@@ -736,4 +743,3 @@ function myDebugEvents(source, id, events) {
     source.on(events[i], f);
   }
 }
-
