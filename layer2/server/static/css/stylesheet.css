@@ -285,6 +285,9 @@ a {
     text-align: center;
 }
 
+/* ---------------------------------------------------------------------- */
+/* Buttons */
+
 .mybutton {
     margin: 20px;
     padding: 10px;
@@ -304,6 +307,23 @@ a {
     background: gray;
 }
 
+.stopbutton {
+    margin: 10px;
+    padding: 10px;
+    background: red;
+    color: black;
+    border-radius: 5px;
+	border: 2px solid white;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* ---------------------------------------------------------------------- */
 /* Warnings and notices */
 .notice {
     border: 1px solid;
