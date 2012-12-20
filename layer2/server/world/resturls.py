@@ -18,15 +18,9 @@ class CameraSerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 class RobotSerializer(serializers.ModelSerializer):
-    look_cameras = CameraSerializer(source='look_cameras')
+    cameras = CameraSerializer(source='cameras')
     class Meta:
         model = Robot
-
-    def get_related_field(self, model_field, to_many):
-        # HACK: This assumes the only related field in the Robot class
-        # is always a camera. We need to fix this if we want to add any
-        # other relation in the Robot class
-        return CameraSerializer()
 
 urlpatterns = patterns('',
     url(r'^places$', generics.ListCreateAPIView.as_view(model=Place)),
