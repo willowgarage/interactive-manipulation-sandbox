@@ -15,6 +15,7 @@ define([
   App.MarkersView = Ember.View.extend({
     template: Ember.Handlebars.compile(markersHtml),
     didInsertElement : function() {
+      this.initialized = false;
       this.start();
       this.animate();
     },
@@ -92,17 +93,15 @@ define([
       // robot has loaded, then robot.ros has not been created yet. So we need
       // a better way to only call subscribe when there is a ROS connection
       // open.
-      if (robot.get('status_code') === 1) {
-        this.subscribeToMarkers();
-      } else {
-        robot.addObserver('status_code', this, 'subscribeToMarkers');
-      }
+      this.subscribeToMarkers();
+      robot.addObserver('status_code', this, 'subscribeToMarkers');
     },
 
     willDestroyElement: function() {
       // Remove the subscription when we switch away from this tab
       var robot = this.get('controller').get('content');
       robot.removeObserver('status_code', this, 'subscribeToMarkers');
+      this.initialized = false;
     },
 
     subscribeToMarkers: function() {
@@ -117,6 +116,7 @@ define([
         var imViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), imClient, meshBaseUrl);
 
         imClient.subscribe('/pr2_marker_control');
+        this.initialized = true;
       }
     },
 

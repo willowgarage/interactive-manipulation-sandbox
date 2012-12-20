@@ -708,7 +708,7 @@ function( Ember, DS, App, ROS, Action) {
     // ----------------------------------------------------------------------
     // Interactive markers commands
 
-    interactive_gripper: function(action_string, arm, lift) {
+    interactiveGripper: function(action_string, arm, lift) {
       var action = new Action({
         ros: this.ros,
         name: 'InteractiveGripper'
@@ -732,6 +732,18 @@ function( Ember, DS, App, ROS, Action) {
 
       console.log('Sending action InteractiveGripper with args', action.inputs);
       action.execute();
+    },
+
+    // ----------------------------------------------------------------------
+    // Stop everything now!
+
+    cancelAllActions: function() {
+      var action = new Action({
+        ros: this.ros
+      });
+
+      this.set('progress_update', 'Canceling all robot instructions');
+      action.cancelAll();
     }
 
   });
