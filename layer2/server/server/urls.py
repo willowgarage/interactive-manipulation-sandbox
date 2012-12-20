@@ -30,4 +30,7 @@ urlpatterns = patterns('',
 
     # Database of objects for our prototype application
     url(r'^world/', include('world.urls')),
+
+    # Provide currently-logged-in client information
+    url(r'^client','server.views.client'),
 )

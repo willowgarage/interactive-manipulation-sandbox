@@ -1,14 +1,18 @@
 define([
   'ember',
   'emberdata',
-  'app'
+  'app',
+  'jquery'
 ],
 function(
   Ember,
   DS,
-  App
+  App,
+  $
 ) {
 
+  //  Create "Client" object which will hold information about currently logged-in user
+  //  as well as other users connected to the same part of the application
   App.client = Ember.Object.create({
     username: '',
     first_name: '',
@@ -26,5 +30,15 @@ function(
     }.property('other_users')
   });
 
+  //  Get currently logged-in information (triggered once per application load)
+  $.ajax({
+    url: '/client',
+    success: function( data) {
+      data = eval( "(" + data + ")");
+      App.client.set('username', data['username']);
+      App.client.set('first_name', data['first_name']);
+      App.client.set('last_name', data['last_name']);
+    }
+  });
 });
 
