@@ -2,7 +2,45 @@ from socketio.namespace import BaseNamespace
 import redis
 import json
 
-r = redis.Redis('localhost')
+# These global hashes are used to keep track of users in contexts
+context_by_sessid = {}
+users_by_context = {}
+
+def add_user_to_context( context, sessid, userdata):
+    if not context in users_by_context:
+        users_by_context[context] = {}
+    users_by_context[context][sessid] = userdata
+
+def del_user_from_context( context, sessid):
+    if sessid in users_by_context[context]:
+        del users_by_context[context][sessid] 
+
+def get_users_for_context( context):
+    return users_by_context[context]
+
+def set_context( sessid, context):
+    context_by_sessid[sessid] = context
+
+def get_context( sessid):
+    ret = context_by_sessid.get(sessid,None)
+    return ret
+
+def clear_context( sessid):
+    del context_by_sessid[sessid]
+
+def make_user( user):
+    if user.username == '':
+        return {
+            'username': 'AnonymousUser',
+            'first_name': '',
+            'last_name': 'Anonymous'
+        }
+    else:
+        return {
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        }
 
 class ClientNamespace(BaseNamespace):
 
@@ -19,42 +57,41 @@ class ClientNamespace(BaseNamespace):
         # of it from a different socket session (so as to emit updates to others, for example)
         # so I ended up using redis for this mapping, which I think is overkill
         # TODO: Investigate further the relationship between session.session_key and sessid
-        old_context = r.get('sessid:%s' % self.socket.sessid)
-        r.set('sessid:%s' % self.socket.sessid, new_context)
+        old_context = get_context( self.socket.sessid)
+        set_context( self.socket.sessid, new_context)
 
         # Delete and notify old context if there is one
         if old_context:
-            r.hdel('context:%s' % old_context, self.socket.sessid)
+            del_user_from_context( old_context, self.socket.sessid)
             self.update_contexts( old_context)
 
+
         # Update and notify new value
-        r.hset('context:%s' % new_context, self.socket.sessid, json.dumps(make_user(self.request.user)))
+        add_user_to_context( new_context, self.socket.sessid, make_user(self.request.user))
         self.update_contexts( new_context)
 
     # Remove from the current context on disconnect (otherwise phantom users keep piling up)
     def recv_disconnect( self):
         self.log("disconnect")
-        old_context = r.get('sessid:%s' % self.socket.sessid)
+        old_context = get_context( self.socket.sessid)
         if old_context is not None:
-            r.hdel('context:%s' % old_context, self.socket.sessid)
+            del_user_from_context( old_context, self.socket.sessid)
             self.update_contexts( old_context)
-            r.delete('sessid:%s' % self.socket.sessid)
+            clear_context( self.socket.sessid)
 
     def log( self, message):
         print "(socket %s) %s" % (self.socket.sessid, message)
 
     '''Send a message to all the connected clients which are in the context being updated'''
     def update_contexts( self, context):
+        self.log("Will update context %s" % context)
+
         # all_clients keeps a hash with all the users connected to this context
-        all_clients = r.hgetall('context:%s' % context)
-        # Deserialize (I don't know why the redis API doesn't do this automatically)
-        for k, v in all_clients.items():
-            self.log("deserializing: %s" % v)
-            all_clients[k] = json.loads(v)
+        all_clients = get_users_for_context( context)
 
         # Go through all connected sockets and send updates to clients connected to this context
         for sessid, socket in self.socket.server.sockets.iteritems():
-            sessid_context = r.get('sessid:%s' % sessid)
+            sessid_context = get_context( sessid)
 
             # If this session is in the updated context, send the update to this user
             if sessid_context == context:
@@ -75,17 +112,4 @@ class ClientNamespace(BaseNamespace):
                 self.log("emitting context_others event with %s" % list_others)
                 socket["/client"].emit('context_others', list_others)
         
-def make_user( user):
-    if user.username == '':
-        return {
-            'username': 'AnonymousUser',
-            'first_name': '',
-            'last_name': 'Anonymous'
-        }
-    else:
-        return {
-            'username': user.username,
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        }
 

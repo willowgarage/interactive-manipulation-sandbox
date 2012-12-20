@@ -36,13 +36,14 @@ function(
         $.unblockUI();
       });
 
-
       this.socket.on('context_others',function(other_users){
+        console.log("Notified about other users", other_users);
         App.client.set('other_users', other_users);
       });
     },
 
     setClientContext: function( clientContext) {
+      App.client.set('context', clientContext);
       this.socket.emit('context_new', clientContext);
     }
   });
