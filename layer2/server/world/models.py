@@ -48,11 +48,6 @@ class Robot(models.Model):
     camera_base_url = models.CharField(max_length=128)
     cameras = models.ManyToManyField(Camera)
 
-    @property
-    def look_cameras(self):
-        """Return a list of Camera instances accessible to the 'look' feature."""
-        return [camera for camera in self.cameras.all() if 'look' in camera.features.split()]
-
 class Client(models.Model):
     '''Represents a client (browser) connected to the server and it's state'''
     session_key = models.CharField(max_length=40)
