@@ -34,7 +34,7 @@ function(
   $.ajax({
     url: '/client',
     success: function( data) {
-      data = eval( "(" + data + ")");
+      data = eval('(' + data + ')');
       App.client.set('username', data['username']);
       App.client.set('first_name', data['first_name']);
       App.client.set('last_name', data['last_name']);
