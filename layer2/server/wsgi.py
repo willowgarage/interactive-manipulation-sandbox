@@ -17,11 +17,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
-# Apply the socket-io code redirection.
-# All incoming requests requesting "socket.io" will be routed to
-# gevent-socketio's socketio_manage application.
-from sockets.middleware import WithSocketIO
-application = WithSocketIO(application)
+# DISABLED: We're currently routing requests through Django's mechanism
+# to be able to get access to Django's ORM from socket namespaces
+# 
+## Apply the socket-io code redirection.
+## All incoming requests requesting "socket.io" will be routed to
+## gevent-socketio's socketio_manage application.
+#
+# from sockets.middleware import WithSocketIO
+# application = WithSocketIO(application)
 
 # Serve the statics from this server as well.
 from django.contrib.staticfiles.handlers import StaticFilesHandler

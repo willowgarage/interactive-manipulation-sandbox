@@ -47,10 +47,3 @@ class Robot(models.Model):
 #    forearm_camera_url = models.CharField(max_length=512)      # URL to mjpeg output for Robot's forearm camera
     camera_base_url = models.CharField(max_length=128)
     cameras = models.ManyToManyField(Camera)
-
-class Client(models.Model):
-    '''Represents a client (browser) connected to the server and it's state'''
-    session_key = models.CharField(max_length=40)
-    username = models.CharField(max_length=30)
-    context = models.TextField()
-    last_seen = models.DateTimeField()
