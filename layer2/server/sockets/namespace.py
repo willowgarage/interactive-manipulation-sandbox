@@ -1,5 +1,4 @@
 from socketio.namespace import BaseNamespace
-import redis
 import json
 
 # These global hashes are used to keep track of users in contexts
