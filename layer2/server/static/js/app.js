@@ -35,7 +35,7 @@ function(
       this.socket.on('reconnect', function(){
         $.unblockUI();
       });
-      
+
       //  Notify the server about our current context every time we connect or change context
       var _this = this;
       this.socket.on('connect', function() {
@@ -49,6 +49,25 @@ function(
       this.socket.on('context_others',function(other_users){
         App.client.set('other_users', other_users);
       });
+
+      // Maintain a separate connection to server for monitoring purposes.
+      this.monitorSocket = io.connect('/monitor', {
+        // Maximum number of milliseconds between reconnect attempts.
+        'reconnection limit': 3000,
+        // Attempt to reconnect for roughly 5 minutes.
+        'max reconnection attempts': 100
+      });
+      this.monitorSocket.once('connect', function(){
+          this.send('start monitoring');
+      });
+      this.monitorSocket.on('health check', function(data){
+          // Bounce the packet right back.
+          this.emit('bounced health check', data);
+
+          // For debugging purposes, log the approximate rtt.
+          console.log('Approximate round trip time: ' + data.rtt + ' (relative reference: ' + data.relative_rtt + ')');
+      });
+
     },
 
     setClientContext: function( clientContext) {
