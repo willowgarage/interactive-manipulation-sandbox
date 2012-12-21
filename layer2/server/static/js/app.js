@@ -35,16 +35,24 @@ function(
       this.socket.on('reconnect', function(){
         $.unblockUI();
       });
+      
+      //  Notify the server about our current context every time we connect or change context
+      var _this = this;
+      this.socket.on('connect', function() {
+        _this.socket.emit('context_new', App.client.get('context'));
+      });
+      App.client.addObserver('context',function(client) {
+        _this.socket.emit('context_new', App.client.get('context'));
+      });
 
+      //  The server notifies us that users in this same page have changed
       this.socket.on('context_others',function(other_users){
-        console.log("Notified about other users", other_users);
         App.client.set('other_users', other_users);
       });
     },
 
     setClientContext: function( clientContext) {
       App.client.set('context', clientContext);
-      this.socket.emit('context_new', clientContext);
     }
   });
   window.TheApp = App;

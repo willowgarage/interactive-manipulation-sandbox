@@ -80,7 +80,8 @@ class ClientNamespace(BaseNamespace):
             clear_context( self.socket.sessid)
 
     def log( self, message):
-        print "(socket %s) %s" % (self.socket.sessid, message)
+        pass
+#        print "(socket %s) %s" % (self.socket.sessid, message)
 
     '''Send a message to all the connected clients which are in the context being updated'''
     def update_contexts( self, context):
