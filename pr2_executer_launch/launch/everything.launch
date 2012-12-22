@@ -42,6 +42,10 @@
     <param name="buffer_size" value="120.0"/>
   </node>
 
+  <!-- TF2 Web Republisher -->
+  <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" output="screen">
+  </node>
+
   <!-- robot pose in map saver -->
   <node pkg="smach_executer" type="localization_saver.py" name="localization_saver">
     <param if="$(arg run_sim)" name="save_pose" value="false"/>
