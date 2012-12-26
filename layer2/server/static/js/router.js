@@ -73,19 +73,15 @@ function(
         showRobot: Ember.Route.transitionTo('navigate'),
 
         connectOutlets: function(router) {
-          // HACK: Set-up periodic refreshing of client state
-          if(! App.interval) {
-            App.interval = setInterval(function(){
-              var id = App.router.currentState.client.get('id');
-              App.store.get('_adapter').find(App.store,App.Client, id);
-            }, 1000*10);
-          }
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robots');
 
-          this.client =  App.Client.find('robots');
           router.get('applicationController')
             .connectOutlet('content', 'robots', App.Robot.find({format:'json'}));
           router.get('robotsController')
-            .connectOutlet('client', 'client', this.client);
+            .connectOutlet('client', 'client', App.client);
         }
       }),
 
@@ -117,16 +113,12 @@ function(
 
         /* Initialize the 'navigate' state */
         connectOutlets: function(router, context) {
-          // HACK: Set-up periodic refreshing of client state
-          if (!App.interval) {
-            App.interval = setInterval(function(){
-              var id = App.router.currentState.client.get('id');
-              App.store.get('_adapter').find(App.store,App.Client,id);
-            }, 1000*10);
-          }
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robot:'+context.id);
 
           this.robot =  App.Robot.find(context.id);
-          this.client = App.Client.find('robot:'+context.id);
           // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
           /* Set the ApplicationView's {{outlet}} to be a RobotView with
            * a RobotController which has a Robot model as context */
@@ -135,7 +127,7 @@ function(
           /* And also update the client status information view with the new
            * application context (i.e.: where the user is now in the app) */
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery','client',App.client);
           /* Set the RobotView's {{outlet}} to be a NavigateView with
            * a NagivateController which has a Robot model as context */
           router.get('robotController')
@@ -163,20 +155,15 @@ function(
         pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
-          // HACK: Set-up periodic refreshing of client state
-          if(! App.interval) {
-            App.interval = setInterval(function(){
-              var id = App.router.currentState.client.get('id');
-              App.store.get('_adapter').find(App.store,App.Client,id);
-            }, 1000*10);
-          }
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robot:'+context.id);
 
-          this.client = App.Client.find('robot:'+context.id);
-          // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',App.Client.find('robot:'+context.id));
+            connectOutlet('periphery','client',App.client);
           router.get('robotController')
             .connectOutlet('main', 'plug', App.Robot.find(context.id));
         }
@@ -192,19 +179,15 @@ function(
         pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
-          // HACK: Set-up periodic refreshing of client state
-          if(! App.interval) {
-            App.interval = setInterval(function(){
-              var id = App.router.currentState.client.get('id');
-              App.store.get('_adapter').find(App.store,App.Client,id);
-            }, 1000*10);
-          }
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robot:'+context.id);
 
-          this.client = App.Client.find('robot:'+context.id);
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client',this.client);
+            connectOutlet('periphery','client',App.client);
           router.get('robotController')
             .connectOutlet('main', 'look', App.Robot.find(context.id));
         }
@@ -224,13 +207,17 @@ function(
         },
 
         connectOutlets: function(router, context) {
-          this.client = App.Client.find('robot:'+context.robot_id);
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robot:'+context.robot_id);
+
           this.robot = App.Robot.find(context.robot_id);
           this.place = App.Place.find(context.place_id);
           router.get('applicationController').
             connectOutlet('content','robot',this.robot);
           router.get('robotController').
-            connectOutlet('periphery','client',this.client);
+            connectOutlet('periphery','client', App.client);
           router.get('robotController').
             connectOutlet('main', 'navigating', Ember.Object.create({
               robot: this.robot,
@@ -259,19 +246,15 @@ function(
         pickup: Ember.Route.transitionTo('pickup'),
 
         connectOutlets: function(router, context) {
-          // HACK: Set-up periodic refreshing of client state
-          if(! App.interval) {
-            App.interval = setInterval(function(){
-              var id = App.router.currentState.client.get('id');
-              App.store.get('_adapter').find(App.store,App.Client,id);
-            }, 1000*10);
-          }
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robot:'+context.robot_id);
 
-          this.client = App.Client.find('robot:'+context.id);
           router.get('applicationController')
             .connectOutlet('content', 'robot', App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery', 'client', App.Client.find('robot:'+context.id));
+            connectOutlet('periphery', 'client', App.client);
           router.get('robotController')
             .connectOutlet('main', 'markers', App.Robot.find(context.id));
         }
@@ -287,24 +270,18 @@ function(
         markers: Ember.Route.transitionTo('markers'),
 
         connectOutlets: function(router, context) {
-          // HACK: Set-up periodic refreshing of client state
-          if(! App.interval) {
-            App.interval = setInterval(function(){
-              var id = App.router.currentState.client.get('id');
-              App.store.get('_adapter').find(App.store,App.Client,id);
-            }, 1000*10);
-          }
+          //  New HACK for synchronizing current UI view.
+          //  This needs to be done in connectOutlet for each route
+          //  until I can figure out how to add an observer for this
+          App.setClientContext('robot:'+context.robot_id);
 
-          this.client = App.Client.find('robot:'+context.id);
-          // JAC: NOTE I'm using connectOutlet(<outlet name>,<view>,<context>)
           router.get('applicationController').
             connectOutlet('content','robot',App.Robot.find(context.id));
           router.get('robotController').
-            connectOutlet('periphery','client', this.client);
+            connectOutlet('periphery','client', App.client);
           router.get('robotController')
             .connectOutlet('main', 'pickup', App.Robot.find(context.id));
         }
-
       })
     })
   });

@@ -52,8 +52,11 @@ class Command(BaseCommand):
             from django.contrib.staticfiles.handlers import StaticFilesHandler
             application = StaticFilesHandler(application)
 
-        # Add the SocketIO escape for requests.
-        application = WithSocketIO(application)
+        # DISABLED: We're currently routing requests through Django's mechanism
+        # to be able to get access to Django's ORM from socket namespaces
+        #
+        ## Add the SocketIO escape for requests.
+        #application = WithSocketIO(application)
 
         print
         print 'Listening on port %s:%s' % (self.host, self.port)
