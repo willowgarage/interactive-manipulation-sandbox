@@ -6,17 +6,22 @@ define([
   App.MarkersController = Ember.ObjectController.extend({
     grasp: function() {
       var robot = this.get('content');
-      robot.interactive_gripper('grasp', 'right', true);
+      robot.interactiveGripper('grasp', 'right', true);
     },
 
     move: function() {
       var robot = this.get('content');
-      robot.interactive_gripper('move', 'right', false);
+      robot.interactiveGripper('move', 'right', false);
     },
 
     place: function() {
       var robot = this.get('content');
-      robot.interactive_gripper('place', 'right', true);
+      robot.interactiveGripper('place', 'right', true);
+    },
+
+    segmentAndRecognize: function() {
+      var robot = this.get('content');
+      robot.segmentAndRecognize();
     }
 
   });

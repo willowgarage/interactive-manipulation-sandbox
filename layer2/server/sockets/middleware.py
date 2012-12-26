@@ -1,14 +1,17 @@
+# DISABLED: This middleware is currently unused
+# It is left here as an example in case we want in the future to
+# direct traffic to socket code before going through django's mechanism
 from gevent import monkey
 monkey.patch_all()
 
 from socketio import socketio_manage
+from sockets.namespace import ClientNamespace
 
 
 # The namespaces served by the socket.io backend.
 # Currently emtpy, due to the fact that gevent-socketio (as socket.io.js)
 # implements heartbeats/reconnect (all that's needed for now).
 namespaces = dict()
-
 
 class WithSocketIO(object):
     """WSGI middleware to provide differential service to socket requests.
