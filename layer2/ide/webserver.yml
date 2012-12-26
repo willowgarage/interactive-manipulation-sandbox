@@ -133,8 +133,11 @@
     #   action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir='~/layer2/server'
 
     # # TODO: Propagate failures (currently fails silently)
+    # - name: Pre-migrate to initial fixtures level
+    #   action: command /usr/bin/python2.7 ./manage.py migrate world 0001 chdir='~/layer2/server'
+
     # - name: Apply initial application fixtures
-    #   action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/prototype.json chdir='~/layer2/server'
+    #   action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/0001_prototype.json chdir='~/layer2/server'
 
     # - name: migrate all applications
     #   action: command /usr/bin/python2.7 ./manage.py migrate --all chdir='~/layer2/server'
