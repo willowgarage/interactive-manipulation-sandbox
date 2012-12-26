@@ -51,21 +51,13 @@ function(
       });
 
       // Maintain a separate connection to server for monitoring purposes.
-      this.monitorSocket = io.connect('/monitor', {
-        // Maximum number of milliseconds between reconnect attempts.
-        'reconnection limit': 3000,
-        // Attempt to reconnect for roughly 5 minutes.
-        'max reconnection attempts': 100
-      });
-      this.monitorSocket.once('connect', function(){
-          this.send('start monitoring');
+      this.monitorSocket = io.connect('/monitor');
+      this.monitorSocket.on('connect', function(){
+        this.send('start monitoring');
       });
       this.monitorSocket.on('health check', function(data){
-          // Bounce the packet right back.
-          this.emit('bounced health check', data);
-
-          // For debugging purposes, log the approximate rtt.
-          console.log('Approximate round trip time: ' + data.rtt + ' (relative reference: ' + data.relative_rtt + ')');
+        // Bounce the packet right back.
+        this.emit('bounced health check', data);
       });
 
     },
