@@ -167,7 +167,7 @@ class LatencyMonitor(BaseNamespace):
 
     def recv_connect(self):
         """Setup the monitoring mechanism."""
-	gevent.spawn(self._monitor_packet_gun)
+        self.spawn(self._monitor_packet_gun)
 
     def on_bounced_health_check(self, health_monitor_packet):
         # Only piece of the bounced packet of interest to the server.
