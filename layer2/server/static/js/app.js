@@ -56,6 +56,8 @@ function(
         this.send('start monitoring');
       });
       this.monitorSocket.on('health check', function(data){
+        // Update connection data for the client.
+        App.client.set('connection_latency', data.rtt);
         // Bounce the packet right back.
         this.emit('bounced health check', data);
       });
