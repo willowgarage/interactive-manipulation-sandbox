@@ -17,6 +17,11 @@ define([
     place: function() {
       var robot = this.get('content');
       robot.interactiveGripper('place', 'right', true);
+    },
+
+    segmentAndRecognize: function() {
+      var robot = this.get('content');
+      robot.segmentAndRecognize();
     }
 
   });
