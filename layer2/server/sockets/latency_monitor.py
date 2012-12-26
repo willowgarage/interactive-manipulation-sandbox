@@ -176,5 +176,3 @@ class LatencyMonitor(BaseNamespace):
         hidrated_timestamp = parser.parse(timestamp)
         delta = datetime.now() - hidrated_timestamp
         self._rtt_computation.feed(delta.total_seconds())
-
-        print "RTT: %.6f, relative reference: %.6f" % (self._rtt, self._relative_rtt)  # DEBUG
