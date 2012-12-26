@@ -18,8 +18,8 @@ naiveip_re = re.compile(r"""^(?:
 (?P<fqdn>[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*) # FQDN
 ):)?(?P<port>\d+)$""", re.X)
 
-DEFAULT_PORT = '8000'
-DEFAULT_ADDR = '0.0.0.0'
+DEFAULT_PORT = getattr(settings,'DEFAULT_PORT','8000')
+DEFAULT_ADDR = getattr(settings,'DEFAULT_ADDR','0.0.0.0')
 
 class Command(BaseCommand):
     help = 'Server for Django which includes Socket.io support.'
@@ -29,6 +29,7 @@ class Command(BaseCommand):
         if args:
             raise CommandError('Usage is runserver %s' % self.args)
         if not addrport:
+            print "Using defaults: %s:%s" % (DEFAULT_ADDR,DEFAULT_PORT)
             self.host = DEFAULT_ADDR
             self.port = DEFAULT_PORT
         else:
