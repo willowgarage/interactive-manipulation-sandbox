@@ -25,6 +25,10 @@ for RTT.
 This implementation involves less client work, and potentially less impact on
 the network, since the client needs only call the "ack" function to trigger an
 ACK packet back to the server.
+
+ALTERNATIVE IMPLEMENTATION:
+Move all this logic to the client. Let the server only bounce the packets and
+feed from the results in them.
 """
 
 import math
@@ -33,6 +37,72 @@ from datetime import datetime, timedelta
 from dateutil import parser
 import gevent
 from socketio.namespace import BaseNamespace
+
+import collections
+
+
+class RTTComputingStrategy(object):
+    """Base class for all latency computing strategies."""
+
+    RTT_WORST = 0.0
+    RTT_BEST = 0.0
+
+    def __init__(self, rtt=0.0, relative_rtt=0.0, best=RTT_BEST,
+                 worst=RTT_WORST):
+        self.best = best
+        self.worst = worst
+
+        # A float with the absolute latency, in seconds.
+        self.rtt = rtt
+        # A number between 0 and 1, to use as reference reltive to the expected
+        # BEST/WORST values.
+        self.relative_rtt = relative_rtt
+
+    def feed(self, delta):
+        """Receive a new time delta and recompute the RTT.
+
+        This implementation drops the previuosly computed value.
+        """
+        raise NotImplementedError()
+
+
+class StatelessRTT(RTTComputingStrategy):
+    """
+    Latency computing strategy.
+
+    Use last feedback to produce the current latecy. Previuos values do not
+    alter computation.
+    """
+
+    def feed(self, delta):
+        self.rtt = delta
+        self.relative_rtt = (self.rtt - self.best) / (self.worst - self.best)
+
+
+class RunningAverageRTT(RTTComputingStrategy):
+    """
+    Latency computing strategy.
+
+    Use last N deltas to produce the current latecy.
+    """
+    LENGTH = 10
+
+    def __init__(self, *args, **kwargs):
+        super(RunningAverageRTT, self).__init__(*args, **kwargs)
+
+        # The average will be computed from this values.
+        self.deltas = collections.deque(maxlen=self.LENGTH)
+
+    def feed(self, delta):
+        """Receive a new time delta and recompute the RTT.
+
+        The current RTT is the running length of the LENGTH previuosly computed
+        values.
+        """
+        self.deltas.append(delta)
+
+        self.rtt = sum(self.deltas) / len(self.deltas)
+        self.relative_rtt = (self.rtt - self.best) / (self.worst - self.best)
 
 
 class LatencyMonitor(BaseNamespace):
@@ -47,21 +117,29 @@ class LatencyMonitor(BaseNamespace):
 
     # Reference values for RTT aproximation:
     # Optimum value: no latency.
-    RTT_BEST = timedelta()
+    RTT_BEST = 0.0  # seconds
     # Worst value acceptable: tuned to application.
-    RTT_WORST = timedelta(0,   # days.
-                          15,  # seconds.
-                          0)   # microseconds.
+    RTT_WORST = 3.0  # seconds.
 
     # Time between monitor packets sent, in seconds.
-    HEALTH_CHECK_INTERVAL = 2.0;
+    HEALTH_CHECK_INTERVAL = 2.0  # seconds
+
+    strategy = RunningAverageRTT
 
     def initialize(self):
-        # A timedelta object with the absolute latency.
-        self._rtt = LatencyMonitor.RTT_BEST
-        # A number between 0 and 1, to use as reference reltive to the expected
-        # BEST/WORST values.
-        self._relative_rtt = 0
+        # Strategy for computing the RTT.
+        self._rtt_computation = self.strategy(rtt=LatencyMonitor.RTT_BEST,
+                                              relative_rtt=0.0,
+                                              worst=LatencyMonitor.RTT_WORST,
+                                              best=LatencyMonitor.RTT_BEST)
+
+    @property
+    def _rtt(self):
+        return self._rtt_computation.rtt
+
+    @property
+    def _relative_rtt(self):
+        return self._rtt_computation.relative_rtt
 
     def _monitor_packet_gun(self):
         """Send a monitor packet every HEALTH_CHECK_INTERVAL.
@@ -81,8 +159,8 @@ class LatencyMonitor(BaseNamespace):
             health_monitor_packet = {
                 'type': 'health check',
                 'timestamp': timestamp,
-                'rtt': self._rtt.total_seconds(),
-                'relative_rtt': self._relative_rtt,
+                'rtt': self._rtt_computation.rtt,
+                'relative_rtt': self._rtt_computation.relative_rtt,
                 }
 
             self.emit('health check', health_monitor_packet)
@@ -96,13 +174,7 @@ class LatencyMonitor(BaseNamespace):
         timestamp = health_monitor_packet['timestamp']
 
         hidrated_timestamp = parser.parse(timestamp)
+        delta = datetime.now() - hidrated_timestamp
+        self._rtt_computation.feed(delta.total_seconds())
 
-        absolute_latency = datetime.now() - hidrated_timestamp
-        relative_referece = LatencyMonitor.RTT_WORST - LatencyMonitor.RTT_BEST
-
-        self._relative_rtt = (
-            (absolute_latency - LatencyMonitor.RTT_BEST).total_seconds()
-            / relative_referece.total_seconds())
-        self._rtt = absolute_latency
-
-        print "RTT:", self._rtt, ", relative reference:", self._relative_rtt  # DEBUG
+        print "RTT: %.6f, relative reference: %.6f" % (self._rtt, self._relative_rtt)  # DEBUG
