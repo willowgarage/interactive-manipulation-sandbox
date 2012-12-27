@@ -21,6 +21,13 @@ function( Ember, DS, App, ROS, Action) {
     // TL: used for testing the Pickup tab without having to do a full segment_and_recognize
     test_objects: {'0':{'xmin':0.34422243192144925,'ymin':0.4637337219076444,'ymax':0.6817042037682622,'xmax':0.40844968855057406},'1':{'xmin':0.5093700733340171,'ymin':0.5337361612434626,'ymax':0.694115453916135,'xmax':0.5653736815220065},'2':{'xmin':0.6635228555365372,'ymin':0.6004678931372165,'ymax':0.7484530318871222,'xmax':0.725233314557502}},
 
+    // Produce the place image URL, as served by the media server.
+    image_url: function(){
+      // HARDCODED value. This value correspondes to MEDIA_URL in Django settings.py
+      var MEDIA_URL = '/static/media/';
+      return MEDIA_URL + this.get('image');
+    }.property('image'),
+
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
     selectedCameraIsHead: function() {

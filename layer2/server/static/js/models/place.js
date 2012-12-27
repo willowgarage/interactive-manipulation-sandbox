@@ -21,6 +21,14 @@ function(
     map_y: DS.attr('number'),
     map_width: DS.attr('number'),
     map_height: DS.attr('number'),
+
+    // Produce the place image URL, as served by the media server.
+    image_url: function(){
+      // HARDCODED value. This value correspondes to MEDIA_URL in Django settings.py
+      var MEDIA_URL = '/static/media/';
+      return MEDIA_URL + this.get('image');
+    }.property('image'),
+
     isOutlet: function() {
       return (this.get('tags') === 'outlet');
     }.property(),
@@ -29,4 +37,3 @@ function(
     }.property()
   });
 });
-
