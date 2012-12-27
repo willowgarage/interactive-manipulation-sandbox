@@ -23,9 +23,7 @@ function( Ember, DS, App, ROS, Action) {
 
     // Produce the place image URL, as served by the media server.
     image_url: function(){
-      // HARDCODED value. This value correspondes to MEDIA_URL in Django settings.py
-      var MEDIA_URL = '/static/media/';
-      return MEDIA_URL + this.get('image');
+      return settings.MEDIA_URL + this.get('image');
     }.property('image'),
 
     // Attributes for keeping track of which camera the user wants to look through
