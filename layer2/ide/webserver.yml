@@ -62,6 +62,9 @@
         - libevent-2.0-5
         - libevent-dev
 
+    - name: installing the dateutil library for python.
+      action: apt pkg=python-dateutil state=present
+
     - name: install django pip packages
       action: pip name=$item state=present
       with_items:
