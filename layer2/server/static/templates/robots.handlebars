@@ -15,7 +15,7 @@
 	{{#each robot in content}}
 
 		<div class="robot" {{action showRobot robot}}>
-			<img {{bindAttr src="robot.image_url"}} width="100"><br>
+			<img {{bindAttr src="robot.image"}} width="100"><br>
 			<span class="name">{{robot.name}}</span><br>
 			<span {{bindAttr class="robot.status.class"}}>{{robot.status.value}}</span><br>
 		</div>

@@ -16,6 +16,9 @@ class Place(models.Model):
     map_width = models.IntegerField(blank=True,null=True)
     map_height = models.IntegerField(blank=True,null=True)
 
+    def __unicode__(self):
+        return self.name
+
 class Camera(models.Model):
     name = models.CharField(max_length=64)
     url = models.CharField(max_length=512)
