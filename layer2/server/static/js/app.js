@@ -35,7 +35,7 @@ function(
       this.socket.on('reconnect', function(){
         $.unblockUI();
       });
-      
+
       //  Notify the server about our current context every time we connect or change context
       var _this = this;
       this.socket.on('connect', function() {
@@ -49,6 +49,19 @@ function(
       this.socket.on('context_others',function(other_users){
         App.client.set('other_users', other_users);
       });
+
+      // Maintain a separate connection to server for monitoring purposes.
+      this.monitorSocket = io.connect('/monitor');
+      this.monitorSocket.on('connect', function(){
+        this.send('start monitoring');
+      });
+      this.monitorSocket.on('health check', function(data){
+        // Update connection data for the client.
+        App.client.set('connection_latency', data.rtt);
+        // Bounce the packet right back.
+        this.emit('bounced health check', data);
+      });
+
     },
 
     setClientContext: function( clientContext) {

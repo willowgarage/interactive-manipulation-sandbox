@@ -18,6 +18,7 @@ function(
     first_name: '',
     last_name: '',
     other_users: [],
+    connection_latency: 0.0,
     isLoggedIn: function() {
       var loggedin = (this.get('username') !== 'AnonymousUser');
       return loggedin;
@@ -27,7 +28,10 @@ function(
     }.property('other_users'),
     otherUserNames: function() {
       return this.get('other_users') && this.get('other_users').map(function bb(x){ return x.first_name + ' ' + x.last_name; }).join(' and ');
-    }.property('other_users')
+    }.property('other_users'),
+    latency: function(){
+      return this.get('connection_latency').toPrecision(4);
+    }.property('connection_latency')
   });
 
   //  Get currently logged-in information (triggered once per application load)
@@ -41,4 +45,3 @@ function(
     }
   });
 });
-
