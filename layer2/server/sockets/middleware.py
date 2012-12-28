@@ -4,45 +4,14 @@
 from gevent import monkey
 monkey.patch_all()
 
-import os, copy
-
 from socketio import socketio_manage
 from sockets.namespace import ClientNamespace
-from django.http import HttpResponseNotFound
 
 
 # The namespaces served by the socket.io backend.
 # Currently emtpy, due to the fact that gevent-socketio (as socket.io.js)
 # implements heartbeats/reconnect (all that's needed for now).
 namespaces = dict()
-
-class GZipRequireJSHack(object):
-    """
-    This middleware is a disposable hack to allow serving pre-gzipped files
-    to require.js, which won't accept using a different file extension other than .js
-    through Django's StaticFilesHandler, which will only set the proper encoding headers
-    to files which end with .gz
-    We should remove this hack as soon as we move the static files outside of Django
-    """
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        saved_environ = copy.copy(environ)
-
-        # First try to serve the original request
-        result = self.app(environ, start_response)
-
-        # If it fails and it is a .js file, try adding .gz and see what happens
-        if isinstance(result, HttpResponseNotFound):
-            path = saved_environ['PATH_INFO']
-            if path.endswith(".js"):
-                newpath = path.replace(".js",".js.gz")
-                print "-------> Attempting to replace %s with gzipped equivalent %s" % (path, newpath)
-                saved_environ['PATH_INFO'] = newpath
-                result = self.app(saved_environ, start_response)
-
-        return result
 
 class WithSocketIO(object):
     """WSGI middleware to provide differential service to socket requests.

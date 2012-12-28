@@ -9,6 +9,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 
+from sockets.middleware import WithSocketIO
+
+
 naiveip_re = re.compile(r"""^(?:
 (?P<addr>
 (?P<ipv4>\d{1,3}(?:\.\d{1,3}){3}) |         # IPv4 address
@@ -49,9 +52,12 @@ class Command(BaseCommand):
             # Add another middleware to the stack, to detour static file requests.
             from django.contrib.staticfiles.handlers import StaticFilesHandler
             application = StaticFilesHandler(application)
-            # Wrap that with this hack to serve gzipped files to require.js
-            from sockets.middleware import GZipRequireJSHack
-            application = GZipRequireJSHack(application)
+
+        # DISABLED: We're currently routing requests through Django's mechanism
+        # to be able to get access to Django's ORM from socket namespaces
+        #
+        ## Add the SocketIO escape for requests.
+        #application = WithSocketIO(application)
 
         print
         print 'Listening on port %s:%s' % (self.host, self.port)
@@ -65,5 +71,5 @@ class Command(BaseCommand):
                        # timeout is not met, the connection is considered lost.
                        heartbeat_timeout=10,
 
-                       resource='socket.io',
+                       resource=WithSocketIO.resource,
                        policy_server=False).serve_forever()

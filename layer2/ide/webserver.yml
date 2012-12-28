@@ -62,23 +62,22 @@
         - libevent-2.0-5
         - libevent-dev
 
+    - name: installing the dateutil library for python.
+      action: apt pkg=python-dateutil state=present
+
     - name: install django pip packages
       action: pip name=$item state=present
       with_items:
         - django
-        - djangorestframework
         - python-openid
         - django-openid-auth
         - pillow
         - south
         - git+https://github.com/abourget/gevent-socketio.git
         - MySQL-python
-#        - hg+https://bitbucket.org/wkornewald/djangotoolbox
-#        - git+https://github.com/django-nonrel/mongodb-engine
-#        - jinja2
-#        - paramiko
-#        - PyYAML
-#        - django-ember
+
+    - name: install specific version of django-rest-framework
+      action: pip name=djangorestframework version=2.1.11
 
     #-------------
     # ROS
