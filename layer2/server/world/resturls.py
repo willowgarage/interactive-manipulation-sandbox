@@ -22,8 +22,10 @@ class RobotSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField('image_url')
     cameras = CameraSerializer(source='cameras')
 
-    def image_url(self, robot):
-        return robot.image.url
+    def image_url(self, place):
+        if place.image:
+            return place.image.url
+        return ''
 
     class Meta:
         model = Robot
