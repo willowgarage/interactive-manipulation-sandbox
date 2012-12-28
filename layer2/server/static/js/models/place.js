@@ -21,6 +21,7 @@ function(
     map_y: DS.attr('number'),
     map_width: DS.attr('number'),
     map_height: DS.attr('number'),
+
     isOutlet: function() {
       return (this.get('tags') === 'outlet');
     }.property(),
@@ -29,4 +30,3 @@ function(
     }.property()
   });
 });
-
