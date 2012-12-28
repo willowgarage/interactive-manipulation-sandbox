@@ -31,6 +31,8 @@ define([
         // Remove the recognized_objects listener
         var robot = this.get('controller').get('content');
         robot.removeObserver('recognized_objects', this, 'drawObjects');
+
+        var svg = d3.select('#canvas').remove();
       },
 
       drawObjects: function(ev) {

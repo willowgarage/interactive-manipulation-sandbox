@@ -1,3 +1,4 @@
+/* General settings */
 body {
     font-family: Helvetica, Arial, Sans-Serif;
     margin-top: 0px;
@@ -139,6 +140,7 @@ a {
     margin: 0px 0px 0px 50px;
 }
 
+/* ---------------------------------------------------------------------- */
 /* The brown robot info box at the top right of the screen */
 .robot_info_container {
     position: absolute;
@@ -163,6 +165,7 @@ a {
     border-radius: 0px 0px 10px 10px;
 }
 
+/* ---------------------------------------------------------------------- */
 /* The login panel */
 #login-logout-link {
     float: right;
@@ -178,11 +181,6 @@ a {
     color: red;
 }
 
-.warning {
-    font-style: bold italic;
-    color: red;
-}
-
 .robot .ready,
 .robot_info .ready {
     color: green;
@@ -192,6 +190,9 @@ a {
     font-style: italic;
     color: gray;
 }
+
+/* ---------------------------------------------------------------------- */
+/* The navigate view */
 
 .placeinfo {
     margin-top: 50px;
@@ -205,12 +206,8 @@ a {
     vertical-align: top;
 }
 
-.navigation_button {
-    float: right;
-    width: 40px;
-}
-
-/* For the left navigation bar */
+/* ---------------------------------------------------------------------- */
+/* Tabs in the left navigation bar */
 #content
 {
     background-color: #f2f2f2;
@@ -270,14 +267,52 @@ a {
     border: 1px solid #888;
 }
 
+/* ---------------------------------------------------------------------- */
+/* Horizontal tabs */
 
-/* Old left navbar */
-
-.plugcontent {
-    text-align: center;
-    font-size: 36pt;
+.horiztabs {
+	padding: 3px 0;
+	margin-left: 0;
+	margin-bottom: 0;
+	margin-top: 0.1em;
+	font: bold 12px;
+	border-bottom: 1px solid gray;
 }
 
+.horiztabs li {
+	list-style: none;
+	display: inline;
+	margin: 0;
+}
+
+.horiztabs li a {
+	text-decoration: none;
+	padding: 4px 0.5em;
+	margin-right: 3px;
+	border: 1px solid #778;
+    border-top: 8px solid #666;
+	border-bottom: none;
+	background: #ddd;
+    color: #666;
+}
+
+.horiztabs li a:link, .horiztabs li a:visited {
+}
+
+.horiztabs li a:hover {
+	color: black;
+    border-top: 8px solid #333;
+}
+
+.horiztabs li a.current {
+	background: white;
+    border-top: 8px solid #08750C;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Buttons */
+
+/* The "navigate" button on the navigate tab */
 .navigate_button {
     margin-top: 50px;
     height: 60px;
@@ -285,15 +320,20 @@ a {
     text-align: center;
 }
 
-/* ---------------------------------------------------------------------- */
-/* Buttons */
-
+/* A custom button style made from scratch */
 .mybutton {
     margin: 20px;
     padding: 10px;
-    background: blue;
+
+    background: #65a9d7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+    background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
+    background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+    background: -ms-linear-gradient(top, #3e779d, #65a9d7);
+    background: -o-linear-gradient(top, #3e779d, #65a9d7);
+
     color: white;
-    border-radius: 25px;
+    border-radius: 10px;
     cursor: pointer;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -325,6 +365,12 @@ a {
 
 /* ---------------------------------------------------------------------- */
 /* Warnings and notices */
+
+.warning {
+    font-style: bold italic;
+    color: red;
+}
+
 .notice {
     border: 1px solid;
     text-align: center;
@@ -338,67 +384,16 @@ a {
     padding: 2px;
 }
 
-/* ---------------------------------------------------------------------- */
-/* For an on/off switch */
-
-.onoffswitch {
-    position: relative; width: 90px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-.onoffswitch-checkbox {
-    display: none;
-}
-.onoffswitch-label {
-    display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #666666; border-radius: 5px;
-}
-.onoffswitch-inner {
-    width: 200%; margin-left: -100%;
-    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
-    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
-}
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-    float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
-    font-size: 14px; color: white; font-family: Arial, sans-serif; font-weight: normal;
-    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-}
-.onoffswitch-inner:before {
-    content: "Active";
-    padding-left: 10px;
-    background-color: #8CED79; color: #000000;
-}
-.onoffswitch-inner:after {
-    content: "Halted";
-    padding-right: 10px;
-    background-color: #FF1C1C; color: #000000;
-    text-align: right;
-}
-.onoffswitch-switch {
-    width: 19px; margin: 0px;
-    background: #FFFFFF;
-    border: 2px solid #666666; border-radius: 5px;
-    position: absolute; top: 0; bottom: 0; right: 67px;
-    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
-    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
-    background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
-    background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
-    background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
-    background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-    margin-left: 0;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px; 
-}
 
 /* ---------------------------------------------------------------------- */
 
-/* For the arrow-key keypad */
+/* For the arrow-key keypad in the Move screen */
 .joypad .mybutton {
     margin: 10px;
     padding: 5px;
 }
+
+/* ---------------------------------------------------------------------- */
 
 /* For the pickup tab */
 .recognized_object {
