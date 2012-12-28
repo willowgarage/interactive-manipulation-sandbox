@@ -338,6 +338,17 @@ a {
     padding: 2px;
 }
 
+#connection-panel {
+    position: absolute;
+    bottom: -25px;
+}
+
+#connection-panel p {
+    color: grey;
+    font-size: 10pt;
+    font-style: italic;
+}
+
 /* ---------------------------------------------------------------------- */
 /* For an on/off switch */
 
@@ -379,7 +390,7 @@ a {
     border: 2px solid #666666; border-radius: 5px;
     position: absolute; top: 0; bottom: 0; right: 67px;
     -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
-    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
     background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
@@ -389,7 +400,7 @@ a {
     margin-left: 0;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px; 
+    right: 0px;
 }
 
 /* ---------------------------------------------------------------------- */
