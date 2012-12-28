@@ -11,7 +11,7 @@ DATABASES = {
 }
 
 
-MEDIA_ROOT = '/home/vagrant/layer2/server/media/'
+MEDIA_ROOT = '/home/vagrant/layer2/server/static/media/'
 
 STATICFILES_DIRS = (
     "/home/vagrant/layer2/server/static/",
