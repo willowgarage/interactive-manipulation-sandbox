@@ -1,10 +1,11 @@
 from django.db import models
+from django.conf import settings
 
 class Place(models.Model):
     name = models.TextField()
     tags = models.TextField(blank=True,null=True)
     description = models.TextField(blank=True,null=True)
-    image = models.ImageField(upload_to="static/images",blank=True,null=True)
+    image = models.ImageField(upload_to="images",blank=True,null=True)
 
     pose_x = models.FloatField(blank=True,null=True)
     pose_y = models.FloatField(blank=True,null=True)
@@ -14,6 +15,9 @@ class Place(models.Model):
     map_y = models.IntegerField(blank=True,null=True)
     map_width = models.IntegerField(blank=True,null=True)
     map_height = models.IntegerField(blank=True,null=True)
+
+    def __unicode__(self):
+        return self.name
 
 class Camera(models.Model):
     name = models.CharField(max_length=64)
@@ -30,7 +34,7 @@ class Robot(models.Model):
     name = models.TextField()
     tags = models.TextField(blank=True,null=True)
     description = models.TextField(blank=True,null=True)
-    image = models.ImageField(upload_to="static/images",blank=True,null=True)
+    image = models.ImageField(upload_to="images",blank=True,null=True)
 
     public = models.NullBooleanField(blank=True,null=True)
 
