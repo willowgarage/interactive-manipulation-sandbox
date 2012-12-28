@@ -340,7 +340,7 @@ a {
 
 #connection-panel {
     position: absolute;
-    bottom: -25px;
+    bottom: 0px;
 }
 
 #connection-panel p {
