@@ -22,21 +22,6 @@ module.exports = function(grunt) {
       }
     },
 
-    clean: {
-      files: ['../server/static/js/main.js']
-    },
-
-    copy: {
-      target: {
-        options: {
-          cwd: '../server/static/js'
-        },
-        files: {
-          '../server/static/js/main.src.js': ['../server/static/js/main.js']
-        }
-      }
-    },
-
     lint: {
       // Files to lint
       all: [
@@ -97,10 +82,8 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-requirejs');
   grunt.loadNpmTasks('grunt-contrib-compress');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-clean');
 
   grunt.registerTask('dev', 'lint');
-  grunt.registerTask('build', ['requirejs','compress','copy','clean']);
+  grunt.registerTask('build', ['requirejs','compress']);
 };
 
