@@ -2,18 +2,6 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    // r.js optimizer configuration
-    requirejs: {
-      std: {
-        options: {
-          name: 'main',
-          baseUrl: '../server/static/js',
-          out: '../server/static/js/main-built.js',
-          mainConfigFile: '../server/static/js/main.js'
-        }
-      }
-    },
-
     lint: {
       // Files to lint
       all: [
@@ -72,9 +60,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-requirejs');
-
   grunt.registerTask('dev', 'lint');
-  grunt.registerTask('build', 'requirejs');
+
 };
 
