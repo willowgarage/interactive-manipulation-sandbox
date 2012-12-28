@@ -11,3 +11,9 @@
 <div id="concurrency" }}>Also viewing: {{otherUserNames}}</div>
 {{/if}}
 </div>
+
+<div id="connection-panel">
+  {{#if latency}}
+  <p class="show-on-hover">connection latency is {{latency}} milliseconds.</p>
+  {{/if}}
+</div>

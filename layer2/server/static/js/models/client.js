@@ -30,7 +30,7 @@ function(
       return this.get('other_users') && this.get('other_users').map(function bb(x){ return x.first_name + ' ' + x.last_name; }).join(' and ');
     }.property('other_users'),
     latency: function(){
-      return this.get('connection_latency').toPrecision(4);
+      return this.get('connection_latency').toPrecision(3) * 1000; // milliseconds
     }.property('connection_latency')
   });
 
