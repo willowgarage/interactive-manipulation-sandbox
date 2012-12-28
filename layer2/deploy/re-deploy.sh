@@ -7,6 +7,30 @@
 #
 DEBUG=false
 
+# Parse arguments:
+#  -r release_number
+while getopts ":r:" opt; do
+  case $opt in
+    r)
+      RELEASE_NUMBER=$OPTARG
+      echo "Release number provided: $RELEASE_NUMBER"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires the release number as argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+# If no release number specified, use default 'unk' (unknown)
+if [ -z $RELEASE_NUMBER ]; then
+    RELEASE_NUMBER = "unk"
+fi
+
 runthis () {
     command_message=$1
     command_line=$2
@@ -37,7 +61,7 @@ SERVER_PID_FILE="${LAYER2DIR}/server.pid"
 # Instance variables.
 CURRENT_SERVER_PID="$(cat ${SERVER_PID_FILE})"
 DUMP_DIR="${LAYER2DIR}/dumps"
-DUMP_FILE="layer2.$(date +'%Y%m%d').json"
+DUMP_FILE="layer2.${RELEASE_NUMBER}.$(date +'%Y%m%d').json"
 
 ###
 # Tasks
