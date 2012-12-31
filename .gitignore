@@ -8,10 +8,11 @@ msg_gen
 parser.out
 parsetab.py
 node_modules
-
-# Django
-server.db
-server/local_settings.py
-server.*.db
-world.*.json
-
+layer2/server/server.db
+layer2/server/server/local_settings.py
+layer2/server/server.*.db
+layer2/server/world.*.json
+continuousop/django/server.db
+continuousop/django/server/local_settings.py
+continuousop/django/server.*.db
+continuousop/django/world.*.json
