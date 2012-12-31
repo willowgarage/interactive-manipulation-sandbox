@@ -1,0 +1,32 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li><a {{action navigate content}}> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+        <li><a {{action look content}}> Look </a></li>
+        <li><a {{action pickup content}}> Pick up </a></li>
+        <li class="tabselected"><a> Markers </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
+    Interactive Markers
+    <table>
+      <tr>
+        <td>
+          <div id="container"></div>
+        </td>
+        <td>
+          <div id="buttons">
+            <div class="mybutton" {{action grasp target="controller"}}>Grasp</div>
+            <div class="mybutton" {{action move target="controller"}}>Move</div>
+            <div class="mybutton" {{action place target="controller"}}>Place</div>
+            <div class="mybutton" {{action segmentAndRecognize target="controller"}}>Segment &amp; Recognize</div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div id="content">
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li class="tabselected"><a> Navigate </a></li>
+        <li><a {{action plug content}}> Plug </a></li>
+        <li><a {{action look content}}> Look </a></li>
+        <li><a {{action pickup content}}> Pick up </a></li>
+        <li><a {{action markers content}}> Markers </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
+    <div class="content">
+
+      {{#if plugged_in}}
+      <div class="notice">Warning: plugged in. Please unplug before navigating.</div>
+      {{/if}}
+
+      <div class="robot_map">
+      Tap on the map where you would like to go:
+
+      {{outlet}}
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li class="tabselected"><a> Navigate </a></li>
+        <li><a {{action plug robot}}> Plug </a></li>
+        <li><a {{action look robot}}> Look </a></li>
+        <li><a {{action pickup robot}}> Pick up </a></li>
+        <li><a {{action markers robot}}> Markers </a></li>
+      </ul>
+  </div>
+
+  <div id="main-container">
+	<div class="content">
+
+	  <div class="heading">Navigating to the {{place.name}}</div>
+
+	  <table width="100%">
+		<tr>
+		  <td>
+			{{outlet}}
+		  </td>
+		  <td>
+                    <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="robot.camera_url"}}></video>
+		  </td>
+		</tr>
+	  </table>
+
+  	  <div class="button" {{action cancelAllGoals}}> STOP </div>
+
+    </div>
+  </div>
+
+</div>
