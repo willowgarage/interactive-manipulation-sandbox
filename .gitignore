@@ -3,14 +3,15 @@ build
 .project
 .settings
 *.swp
-layer/local_settings.py
-layer/static/images
 .vagrant
-layer2/server/server.db
-layer2/server/server/local_settings.py
 msg_gen
-layer2/server/server.*.db
-layer2/server/world.*.json
 parser.out
 parsetab.py
 node_modules
+
+# Django
+server.db
+server/local_settings.py
+server.*.db
+world.*.json
+
