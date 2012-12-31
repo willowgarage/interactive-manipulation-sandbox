@@ -8,7 +8,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Move away main.js so that the server will serve main.js.gz instead
-JS_DIR=../server/static/js
+JS_DIR=../django/static/js
 cd ${JS_DIR}
 mv main.js main.src.js
 rm main-built.js

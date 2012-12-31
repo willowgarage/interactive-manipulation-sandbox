@@ -84,7 +84,7 @@
     #-------------
 
 #   Uncomment the lines below if you want to also install ROS in your VM
-#   Note that this is not necessary to run layer
+#   Note that this is not necessary to run the web server.
 
     # Tried adding key with command:
     # wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
@@ -113,7 +113,7 @@
 
     # Set-up local configuration if none is set by copying provided default provided version
     - name: set up local_settings.py for vagrant
-      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/layer2/server/server' creates=/home/vagrant/layer2/server/server/local_settings.py
+      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/continuousop/django/server' creates=/home/vagrant/continuousop/django/server/local_settings.py
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     #
@@ -123,24 +123,24 @@
     # # Until then: backup database, wipe, re-created and load fixtures again
     # # TODO: Test to make it work when there is no database created yet and then re-enable
     # - name: back-up application data before resetting database
-    #   action: shell (cp /home/vagrant/layer2/server/server.db /home/vagrant/layer2/server/server.`date +"%s"`.db && /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json) || echo 'backup step finished'  chdir='~/layer2/server'
+    #   action: shell (cp /home/vagrant/continuousop/django/server.db /home/vagrant/continuousop/django/server.`date +"%s"`.db && /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json) || echo 'backup step finished'  chdir='~/continuousop/django'
 
     # - name: delete previous database if it exists
-    #   action: command /bin/rm server.db chdir='~/layer2/server' removes=/home/vagrant/layer2/server/server.db
+    #   action: command /bin/rm server.db chdir='~/continuousop/django' removes=/home/vagrant/continuousop/django/server.db
 
     # - name: sync up database
-    #   action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir='~/layer2/server'
+    #   action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir='~/continuousop/django'
 
     # # TODO: Propagate failures (currently fails silently)
     # - name: Pre-migrate to initial fixtures level
-    #   action: command /usr/bin/python2.7 ./manage.py migrate world 0001 chdir='~/layer2/server'
+    #   action: command /usr/bin/python2.7 ./manage.py migrate world 0001 chdir='~/continuousop/django'
 
     # - name: Apply initial application fixtures
-    #   action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/0001_prototype.json chdir='~/layer2/server'
+    #   action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/0001_prototype.json chdir='~/continuousop/django'
 
     # - name: migrate all applications
-    #   action: command /usr/bin/python2.7 ./manage.py migrate --all chdir='~/layer2/server'
+    #   action: command /usr/bin/python2.7 ./manage.py migrate --all chdir='~/continuousop/django'
 
     # # TODO: Start django
     # # - name: run django
-    # #   action: command /usr/bin/python2.7./manage.py runserver 0.0.0.0:8000 chdir='~/layer'
+    # #   action: command /usr/bin/python2.7./manage.py runserver 0.0.0.0:8000 chdir='~/continuousop/django'

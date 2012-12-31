@@ -7,9 +7,9 @@ module.exports = function(grunt) {
       std: {
         options: {
           name: 'main',
-          baseUrl: '../server/static/js',
-          out: '../server/static/js/main-built.js',
-          mainConfigFile: '../server/static/js/main.js'
+          baseUrl: '../django/static/js',
+          out: '../django/static/js/main-built.js',
+          mainConfigFile: '../django/static/js/main.js'
         }
       }
     },
@@ -17,7 +17,7 @@ module.exports = function(grunt) {
     compress: {
       zlib: {
         files: {
-          '../server/static/js/main.js.gz': '../server/static/js/main-built.js'
+          '../django/static/js/main.js.gz': '../django/static/js/main-built.js'
         }
       }
     },
