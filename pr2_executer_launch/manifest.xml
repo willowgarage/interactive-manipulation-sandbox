@@ -17,6 +17,12 @@
   <depend package="smach_executer"/>
   <depend package="executer_actions"/>
   <depend package="pr2_marker_control"/>
+  <depend package="ros_http_video_streamer"/>
+  <depend package="interactive_marker_proxy"/>
+  <depend package="mjpeg_server"/>
+  <depend package="rosbridge_server"/>
+  <depend package="pr2_interactive_manipulation"/>
+  <depend package="tf2_web_republisher"/>
 
 </package>
 
