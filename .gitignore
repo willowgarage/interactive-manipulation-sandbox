@@ -8,6 +8,7 @@ msg_gen
 parser.out
 parsetab.py
 node_modules
+log
 layer2/server/server.db
 layer2/server/server/local_settings.py
 layer2/server/server.*.db

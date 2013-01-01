@@ -1,4 +1,5 @@
 # This is the local_settings.py file for use with Vagrant.
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -10,14 +11,13 @@ DATABASES = {
     }
 }
 
-
-MEDIA_ROOT = '/home/vagrant/continuousop/django/static/media/'
+MEDIA_ROOT = '{{ webapps_dir }}/{{ app_name }}/django/static/media/'
 
 STATICFILES_DIRS = (
-    '/home/vagrant/continuousop/django/static/',
+    '{{ webapps_dir }}/{{ app_name }}/django/static/',
 )
 
 TEMPLATE_DIRS = (
-    '/home/vagrant/continuousop/django/templates/'
+    '{{ webapps_dir }}/{{ app_name }}/django/templates/'
 )
 

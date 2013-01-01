@@ -1,0 +1,172 @@
+---
+
+- hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars:
+    webapps_dir: /home/vagrant
+    app_name: continuousop
+    http_port: 8000
+    server_name: localhost
+
+  tasks:
+    - name: update apt
+      action: command /usr/bin/apt-get update
+
+    #-------------
+    # Dev tools
+    #-------------
+
+    - name: install developer tools
+      action: apt pkg=$item state=present
+      with_items:
+        - vim
+        - tmux
+
+    #-------------
+    # Python tools
+    #-------------
+
+    - name: install python-software-properties
+      action: apt pkg=$item state=present
+      with_items:
+        - python-software-properties
+        - build-essential
+        - python-dev
+        - python-setuptools
+
+    - name: install pip
+      action: easy_install name=pip
+
+    - name: update easy_install packages
+      action: command /usr/bin/easy_install -U distribute
+
+    #-------------
+    # VCS
+    #-------------
+
+    - name: install mercurial
+      action: apt pkg=mercurial state=present
+
+    - name: install git
+      action: apt pkg=git state=present
+
+    #-------------
+    # Django
+    #-------------
+
+    - name: install libjpeg8
+      action: apt pkg=libjpeg8-dev state=present
+
+    - name: install system requirements for MySQL DB.
+      action: apt pkg=libmysqlclient-dev state=present
+
+    - name: install system requirements for gevent stack.
+      action: apt pkg=$item state=present
+      with_items:
+        - libevent-2.0-5
+        - libevent-dev
+
+    - name: installing the dateutil library for python.
+      action: apt pkg=python-dateutil state=present
+
+    - name: install django pip packages
+      action: pip name=$item state=present
+      with_items:
+        - django
+        - python-openid
+        - django-openid-auth
+        - pillow
+        - south
+        - git+https://github.com/abourget/gevent-socketio.git
+        - MySQL-python
+
+    - name: install specific version of django-rest-framework
+      action: pip name=djangorestframework version=2.1.11
+
+    #-------------
+    # Nginx
+    #-------------
+
+    - name: add nginx ppa
+      action: apt_repository repo=ppa:nginx/stable state=present
+
+    - name: install nginx
+      action: apt pkg=nginx state=present
+
+    - name: remove default nginx site
+      action: file path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: write nginx.conf
+      action: template src=../nginx/nginx.conf dest=/etc/nginx/nginx.conf
+
+    - name: ensure log directory
+      action: file dest=${webapps_dir}/${app_name}/log state=directory
+
+    - name: create nginx site config
+      action: template src=../nginx/site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+
+    - name: link nginx config
+      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+      notify:
+        - restart nginx
+
+    #-------------
+    # Application
+    #-------------
+
+    - name: set up local_settings.py
+      action: template src=../django/local_settings.vagrant.py dest=${webapps_dir}/${app_name}/django/server/local_settings.py
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    #
+    #   The following actions set up a local databse. They are no longer used; provisioning
+    #   the box should set it up to connect to babylon1's database.
+    #
+    # - name: back-up application data before resetting database
+    #   action: shell (cp ${webapps_dir}/${app_name}/django/server.db ${webapps_dir}/${app_name}/django/server.`date +"%s"`.db && /usr/bin/python2.7 ./manage.py dumpdata --indent 2 world > world.`date +"%s"`.json) || echo 'backup step finished'  chdir=${webapps_dir}/${app_name}/django
+    #
+    # - name: delete previous database if it exists
+    #   action: command /bin/rm server.db chdir=${webapps_dir}/${app_name}/django removes=${webapps_dir}/${app_name}/django/server.db
+    #
+    # - name: sync up database
+    #   action: command /usr/bin/python2.7 ./manage.py syncdb --noinput chdir=${webapps_dir}/${app_name}/django
+    #
+    # - name: Pre-migrate to initial fixtures level
+    #   action: command /usr/bin/python2.7 ./manage.py migrate world 0001 chdir=${webapps_dir}/${app_name}/django
+    #
+    # - name: Apply initial application fixtures
+    #   action: command /usr/bin/python2.7 ./manage.py loaddata fixtures/0001_prototype.json chdir=${webapps_dir}/${app_name}/django
+    #
+    # - name: migrate all applications
+    #   action: command /usr/bin/python2.7 ./manage.py migrate --all chdir=${webapps_dir}/${app_name}/django
+    #
+    # - name: run django
+    #   action: command /usr/bin/python2.7./manage.py runserver 0.0.0.0:8000 chdir=${webapps_dir}/${app_name}/django
+    #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    #-------------
+    # Supervisor
+    #-------------
+
+    - name: install supervisor
+      action: pip name=supervisor state=present
+
+    - name: create supervisord config
+      action: template src=../supervisor/supervisord.conf dest=/etc/supervisord.conf
+
+    - name: create supervisord init script
+      action: template src=../supervisor/supervisord.sh dest=/etc/init.d/supervisord mode=0755
+
+    - name: start supervisord service and have it run during system startup
+      action: service name=supervisord state=started enabled=yes
+
+  handlers:
+    - name: restart app
+      action: supervisorctl name=${app_name} state=restarted
+
+    - name: restart nginx
+      action: service name=nginx state=restarted
+

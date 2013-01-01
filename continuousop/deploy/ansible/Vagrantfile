@@ -12,7 +12,7 @@ Vagrant::Config.run do |config|
   config.vm.customize ["modifyvm", :id, "--natnet1", "10.101.100/24"]
 
   # Share the host folder (3rd argument) with the guest (2nd argument)
-  config.vm.share_folder "continuousop", "~/continuousop", "../../continuousop"
+  config.vm.share_folder "continuousop", "~/continuousop", "../../../continuousop"
 
   config.vm.provision :ansible do |ansible|
     # Point Vagrant at the location of your playbook you want to run
