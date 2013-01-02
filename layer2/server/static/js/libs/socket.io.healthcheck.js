@@ -91,6 +91,15 @@ function(
     HealthCheck.computeLatency(healthCheckData);
   };
 
+  HealthCheck.resetData = function(socket){
+    socket.healthCheck = {
+      data: {
+        latency: 0,
+        rtt: 0
+      }
+    };
+  };
+
   /**
    * Extend a connected socket to provide connection health information.
    *
@@ -106,9 +115,10 @@ function(
   HealthCheck.extend = function(socket, onHealthCheck){
 
     // Connection health related data exclusive to this sockets.
-    socket.healthCheck = {
-      data: {latency: 0}
-    };
+    HealthCheck.resetData(socket);
+
+    // Forget old values upon disconnect.
+    socket.on('disconnect', function(){ HealthCheck.resetData(socket)});
 
     socket.on('connect', function(){
       // Initiate the health check routine, sending the first health check packet.
