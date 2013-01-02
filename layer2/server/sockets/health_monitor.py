@@ -19,8 +19,8 @@ class HealthMonitorMixin(object):
     The anatomy of a health check packet is as follows:
 
     {
-        rtt: (float) seconds for the RTT for client-server-client.
-        timestamp: (int) milliseconds since epoch; used by client.
+        latency: (number) approximate client lantency in milliseconds.
+        timestamp: (number) milliseconds since epoch; used by client.
     }
 
     """

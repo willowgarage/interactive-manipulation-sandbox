@@ -54,7 +54,7 @@ function(
 
       // Extend the socket object with information about connection health.
       io_health.extend(this.socket, function(data){
-        App.client.set('connection_latency', data.rtt);
+        App.client.set('connection_latency', data.latency);
       });
 
     },

@@ -20,7 +20,8 @@ function(
    */
 
   HealthCheck.config = {
-    interval: 2000, // milliseconds between health checks.
+    interval: 2000,   // milliseconds between health checks.
+    averageLength: 10 // number of values to compute running averages on.
   };
 
   /**
@@ -35,12 +36,45 @@ function(
   /**
    * RTT computing algorithm.
    *
+   * @param [healthCheckData] reference health check related data object.
+   * @param {Number} [delta] Milliseconds for the current RTT measured.
    * @api private
    */
 
   HealthCheck.computeRTT = function(healthCheckData, delta){
-    // Simplest possible thing.
     healthCheckData.rtt = delta;
+  };
+
+
+  /**
+   * Algorithm to approximate latency.
+   *
+   * Use a running average of the computed round trip time to approximate latency.
+   *
+   * @param [healthCheckData] reference health check related data object.
+   * @api private
+   */
+
+  HealthCheck.computeLatency = function(healthCheckData){
+    var latency = 0;
+
+    // Use the data object to store previous delta values.
+    healthCheckData.RTTs = healthCheckData.RTTs || [];
+
+    // Push current value with the old ones.
+    if (healthCheckData.RTTs.length === HealthCheck.config.averageLength){
+      // Buffer of old values is full, loose the oldest.
+      healthCheckData.RTTs = healthCheckData.RTTs.slice(1);
+    }
+    healthCheckData.RTTs.push(healthCheckData.rtt);
+
+    // Compute the running average to approximate the latency.
+    for (var a = healthCheckData.RTTs, l = a.length, i = 0; i < l; i++){
+      latency += a[i];
+    }
+    latency = latency / healthCheckData.RTTs.length;
+
+    healthCheckData.latency = latency;
   };
 
   /**
@@ -50,8 +84,11 @@ function(
    */
 
   HealthCheck.update = function(healthCheckData, delta){
-    // Runs all computations... currently just RTT.
+    // Compute round trip time.
     HealthCheck.computeRTT(healthCheckData, delta);
+
+    // Using the values computed, approximate latency.
+    HealthCheck.computeLatency(healthCheckData);
   };
 
   /**
@@ -70,12 +107,12 @@ function(
 
     // Connection health related data exclusive to this sockets.
     socket.healthCheck = {
-      data: {rtt: 0}
+      data: {latency: 0}
     };
 
     socket.on('connect', function(){
       // Initiate the health check routine, sending the first health check packet.
-      socket.emit('health check', {rtt: 0, timestamp: (new Date).getTime()});
+      socket.emit('health check', {latency: 0, timestamp: (new Date).getTime()});
     });
 
     // Handle server responses to health checks.
@@ -86,7 +123,10 @@ function(
       HealthCheck.update(socket.healthCheck.data, delta);
 
       // Expose the health data to the application.
-      var healthCheckData = {rtt: socket.healthCheck.data.rtt};
+      var healthCheckData = {
+        rtt: socket.healthCheck.data.rtt,
+        latency: socket.healthCheck.data.latency
+      };
       onHealthCheck(healthCheckData);
     });
 
@@ -94,7 +134,7 @@ function(
     socket.healthCheck._interval = setInterval(function(){
       // Expose the health data to the server.
       var healthCheckData = {
-        rtt: socket.healthCheck.data.rtt,
+        latency: socket.healthCheck.data.latency,
         timestamp: (new Date).getTime()
       };
       socket.emit('health check', healthCheckData);
