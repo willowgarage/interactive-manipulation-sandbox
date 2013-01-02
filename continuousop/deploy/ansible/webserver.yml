@@ -86,31 +86,14 @@
       action: pip name=djangorestframework version=2.1.11
 
     #-------------
-    # Nginx
+    # Gunicorn
     #-------------
 
-    - name: add nginx ppa
-      action: apt_repository repo=ppa:nginx/stable state=present
+    - name: install gunicorn
+      action: pip name=gunicorn state=present
 
-    - name: install nginx
-      action: apt pkg=nginx state=present
-
-    - name: remove default nginx site
-      action: file path=/etc/nginx/sites-enabled/default state=absent
-
-    - name: write nginx.conf
-      action: template src=../nginx/nginx.conf dest=/etc/nginx/nginx.conf
-
-    - name: ensure log directory
-      action: file dest=${webapps_dir}/${app_name}/log state=directory
-
-    - name: create nginx site config
-      action: template src=../nginx/site.conf dest=/etc/nginx/sites-available/${app_name}.conf
-
-    - name: link nginx config
-      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
-      notify:
-        - restart nginx
+    - name: create gunicorn config
+      action: template src=../django/gunicorn.conf.py dest=${webapps_dir}/${app_name}/gunicorn.conf.py
 
     #-------------
     # Application
@@ -154,6 +137,9 @@
     - name: install supervisor
       action: pip name=supervisor state=present
 
+    - name: ensure supervisor directory
+      action: file dest=/etc/supervisor state=directory
+
     - name: create supervisord config
       action: template src=../supervisor/supervisord.conf dest=/etc/supervisord.conf
 
@@ -163,8 +149,46 @@
     - name: start supervisord service and have it run during system startup
       action: service name=supervisord state=started enabled=yes
 
+    - name: create supervisor program config
+      action: template src=../supervisor/supervisor.ini dest=/etc/supervisor/${app_name}.ini
+      notify:
+        - restart supervisor
+
+    #- name: start app with supervisor
+    #  action: supervisorctl name=${app_name} state=started
+
+    #-------------
+    # Nginx
+    #-------------
+
+    - name: add nginx ppa
+      action: apt_repository repo=ppa:nginx/stable state=present
+
+    - name: install nginx
+      action: apt pkg=nginx state=present
+
+    - name: remove default nginx site
+      action: file path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: write nginx.conf
+      action: template src=../nginx/nginx.conf dest=/etc/nginx/nginx.conf
+
+    - name: ensure log directory
+      action: file dest=${webapps_dir}/${app_name}/log state=directory
+
+    - name: create nginx site config
+      action: template src=../nginx/site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+
+    - name: link nginx config
+      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+      notify:
+        - restart nginx
+
   handlers:
-    - name: restart app
+    - name: restart supervisor
+      action: service name=supervisord state=restarted
+
+    - name: restart app with supervisor
       action: supervisorctl name=${app_name} state=restarted
 
     - name: restart nginx

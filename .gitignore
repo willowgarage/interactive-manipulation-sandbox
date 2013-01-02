@@ -17,3 +17,4 @@ continuousop/django/server.db
 continuousop/django/server/local_settings.py
 continuousop/django/server.*.db
 continuousop/django/world.*.json
+continuousop/gunicorn.conf.py
