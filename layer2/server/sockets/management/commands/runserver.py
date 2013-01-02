@@ -9,17 +9,14 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 
-from sockets.middleware import WithSocketIO
-
-
 naiveip_re = re.compile(r"""^(?:
 (?P<addr>
 (?P<ipv4>\d{1,3}(?:\.\d{1,3}){3}) |         # IPv4 address
 (?P<fqdn>[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*) # FQDN
 ):)?(?P<port>\d+)$""", re.X)
 
-DEFAULT_PORT = '8000'
-DEFAULT_ADDR = '0.0.0.0'
+DEFAULT_PORT = getattr(settings,'DEFAULT_PORT','8000')
+DEFAULT_ADDR = getattr(settings,'DEFAULT_ADDR','0.0.0.0')
 
 class Command(BaseCommand):
     help = 'Server for Django which includes Socket.io support.'
@@ -29,6 +26,7 @@ class Command(BaseCommand):
         if args:
             raise CommandError('Usage is runserver %s' % self.args)
         if not addrport:
+            print "Using defaults: %s:%s" % (DEFAULT_ADDR,DEFAULT_PORT)
             self.host = DEFAULT_ADDR
             self.port = DEFAULT_PORT
         else:
@@ -51,12 +49,9 @@ class Command(BaseCommand):
             # Add another middleware to the stack, to detour static file requests.
             from django.contrib.staticfiles.handlers import StaticFilesHandler
             application = StaticFilesHandler(application)
-
-        # DISABLED: We're currently routing requests through Django's mechanism
-        # to be able to get access to Django's ORM from socket namespaces
-        #
-        ## Add the SocketIO escape for requests.
-        #application = WithSocketIO(application)
+            # Wrap that with this hack to serve gzipped files to require.js
+            from sockets.middleware import GZipRequireJSHack
+            application = GZipRequireJSHack(application)
 
         print
         print 'Listening on port %s:%s' % (self.host, self.port)
@@ -70,5 +65,5 @@ class Command(BaseCommand):
                        # timeout is not met, the connection is considered lost.
                        heartbeat_timeout=10,
 
-                       resource=WithSocketIO.resource,
+                       resource='socket.io',
                        policy_server=False).serve_forever()

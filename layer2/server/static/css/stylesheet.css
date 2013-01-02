@@ -384,6 +384,25 @@ a {
     padding: 2px;
 }
 
+/* Connection panel, displayed only when user hovers over it. */
+
+#connection-panel {
+    position: absolute;
+    bottom: 5px;
+    width: 50%;
+    height: 25px;
+}
+#connection-panel p {
+    color: grey;
+    font-size: 10pt;
+    font-style: italic;
+}
+#connection-panel .show-on-hover {
+    display: none;
+}
+#connection-panel:hover .show-on-hover {
+    display: block;
+}
 
 /* ---------------------------------------------------------------------- */
 
