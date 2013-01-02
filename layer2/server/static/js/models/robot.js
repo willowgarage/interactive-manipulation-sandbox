@@ -79,6 +79,10 @@ function( Ember, DS, App, ROS, Action) {
         return (this.get('cameras') && this.get('cameras')[name] &&
           this.get('cameras')[name].url);
     },
+    // Helper to get the camera object by name
+    getCameraByName: function(name) {
+        return (this.get('cameras') && this.get('cameras')[name])
+    },
 
     status_code: 0,            //  Calculated in the client
     status: function() {
