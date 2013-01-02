@@ -59,8 +59,6 @@ function(
 
     },
 
-
-
     setClientContext: function( clientContext) {
       App.client.set('context', clientContext);
     }

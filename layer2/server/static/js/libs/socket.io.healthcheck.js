@@ -4,18 +4,55 @@ define([
 function(
   io
 ) {
-  /**
-   * The healthCheck namespace.
-   */
-  var healthCheck = {
-    // configuration affecting all extended sockets.
-    config: {
-      interval: 2000, // milliseconds
-    },
 
-    // per-socket state.
-    of: []
-  }
+  /**
+   * The health check namespace.
+   *
+   * @api public.
+   */
+
+  var HealthCheck = {};
+
+  /**
+   * Configuration affecting all extended sockets.
+   *
+   * @api private.
+   */
+
+  HealthCheck.config = {
+    interval: 2000, // milliseconds between health checks.
+  };
+
+  /**
+   * Data shared by all extended sockets.
+   *
+   * @api private.
+   */
+
+  HealthCheck.data = {
+  };
+
+  /**
+   * RTT computing algorithm.
+   *
+   * @api private
+   */
+
+  HealthCheck.computeRTT = function(healthCheckData, delta){
+    // Simplest possible thing.
+    healthCheckData.rtt = delta;
+  };
+
+  /**
+   * Update health data for a single socket.
+   *
+   * @api private
+   */
+
+  HealthCheck.update = function(healthCheckData, delta){
+    // Runs all computations... currently just RTT.
+    HealthCheck.computeRTT(healthCheckData, delta);
+  };
 
   /**
    * Extend a connected socket to provide connection health information.
@@ -29,10 +66,12 @@ function(
    * @returns {io.SocketNamespace}
    * @api public
    */
-  healthCheck.extend = function(socket, onHealthCheck){
+  HealthCheck.extend = function(socket, onHealthCheck){
 
-    // Register a state entry for this socket.
-    healthCheck.of[socket.name] = {rtt: 0};
+    // Connection health related data exclusive to this sockets.
+    socket.healthCheck = {
+      data: {rtt: 0}
+    };
 
     socket.on('connect', function(){
       // Initiate the health check routine, sending the first health check packet.
@@ -41,31 +80,29 @@ function(
 
     // Handle server responses to health checks.
     socket.on('health check', function(healthCheckPacket){
+      // Immediately compute the time delta.
       var delta = (new Date).getTime() - healthCheckPacket.timestamp;
 
-      // Compute the RTT using the delta in milliseconds.
-      //
-      // For now, simplest possible algorithm.
-      healthCheck.of[socket.name].rtt = delta;
+      HealthCheck.update(socket.healthCheck.data, delta);
 
       // Expose the health data to the application.
-      var healthCheckData = {rtt: healthCheck.of[socket.name].rtt};
+      var healthCheckData = {rtt: socket.healthCheck.data.rtt};
       onHealthCheck(healthCheckData);
     });
 
     // Send health checks to the server at intervals.
-    healthCheck.of[socket.name]._interval = setInterval(function(){
+    socket.healthCheck._interval = setInterval(function(){
       // Expose the health data to the server.
       var healthCheckData = {
-        rtt: healthCheck.of[socket.name].rtt,
+        rtt: socket.healthCheck.data.rtt,
         timestamp: (new Date).getTime()
       };
       socket.emit('health check', healthCheckData);
-      }, healthCheck.config.interval);
+    }, HealthCheck.config.interval);
 
     // Return the extended socket object.
     return socket;
   };
 
-  return healthCheck;
+  return HealthCheck;
 });
