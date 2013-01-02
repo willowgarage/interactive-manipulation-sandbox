@@ -2,13 +2,15 @@ define([
   'ember',
   'emberdata',
   'jquery',
-  'socketio'
+  'socketio',
+  'socketio_healthcheck',
 ],
 function(
   Ember,
   DS,
   $,
-  io
+  io,
+  io_health
 ) {
   var App = Ember.Application.create({
     autoinit: false,
@@ -40,9 +42,6 @@ function(
       var _this = this;
       this.socket.on('connect', function() {
         _this.socket.emit('context_new', App.client.get('context'));
-
-        // Initiate the health check routine, sending the first health check packet.
-        this.emit('health check', {rtt: 0, timestamp: (new Date).getTime()});
       });
       App.client.addObserver('context',function(client) {
         _this.socket.emit('context_new', App.client.get('context'));
@@ -53,25 +52,10 @@ function(
         App.client.set('other_users', other_users);
       });
 
-      //
-      // Health check code.
-      //
-      // This is a statefull computation... state goes to the socket object for now.
-      _this.socket.healthCheckData = {interval: 2000}; // Send a health check every two seconds.
-      this.socket.on('health check', function(healthCheck){
-        var delta = (new Date).getTime() - healthCheck.timestamp;
-
-        // Compute the RTT using the delta in milliseconds.
-        //
-        // For now, simplest possible algorithm.
-        this.healthCheckData.rtt = delta;
-
-        // Application logic. Expose the RTT to the app.
-        App.client.set('connection_latency', this.healthCheckData.rtt);
+      // Extend the socket object with information about connection health.
+      io_health.extend(this.socket, function(data){
+        App.client.set('connection_latency', data.rtt);
       });
-      this.socket.healthCheckData._interval = setInterval(function(){
-        _this.socket.emit('health check', {rtt: _this.socket.healthCheckData.rtt, timestamp: (new Date).getTime()});
-        }, this.socket.healthCheckData.interval);
 
     },
 
