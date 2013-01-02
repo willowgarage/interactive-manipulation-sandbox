@@ -1,43 +1,16 @@
-<div id="content">
+{{#if is_plugging_in}}
+  <div>Working, please wait...</div>
+{{else}}
+  {{#if plugged_in}}
+  <div>Currently plugged in</div>
+  {{else}}
+  <div>Not plugged in</div>
+  {{/if}}
+{{/if}}
 
-  <div id="tab-container">
-      <!-- The "content" parameter here is the robot object -->
-      <ul>
-        <li><a {{action navigate content}}> Navigate </a></li>
-        <li class="tabselected"><a> Plug </a></li>
-        <li><a {{action look content}}> Look </a></li>
-        <li><a {{action pickup content}}> Pick up </a></li>
-        <li><a {{action markers content}}> Markers </a></li>
-      </ul>
-  </div>
+<video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="forearm_camera_url"}}></video><br>
 
-  <div id="main-container">
-    <div class="content plugcontent">
-      {{#if is_plugging_in}}
-        <div>Working, please wait...</div>
-      {{else}}
-        {{#if plugged_in}}
-        <div>Currently plugged in</div>
-        {{else}}
-        <div>Not plugged in</div>
-        {{/if}}
-      {{/if}}
-
-      <table border=1 width="100%">
-        <tr>
-              <td>
-                <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="camera_url"}}></video><br>
-              </td>
-
-              {{#if forearm_camera_url}}
-              <td>
-                <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="forearm_camera_url"}}></video><br>
-              </td>
-              {{/if}}
-        </tr>
-      </table>
-
-      {{#if isConnected}}
+{{#if isConnected}}
 	{{#if is_plugging_in}}
 	{{else}}
 	  {{#if plugged_in}}
@@ -46,9 +19,6 @@
 	  <div class="mybutton" {{action plugIn target="controller"}}>Plug in</div>
 	  {{/if}}
 	{{/if}}
-      {{/if}}
+{{/if}}
 
-    </div>
-  </div>
 
-</div>
