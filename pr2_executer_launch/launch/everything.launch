@@ -61,9 +61,15 @@
   <!-- camera throttling -->
   <group if="$(arg throttle_cameras)">
 
-    <!-- the main camera -->
+    <!-- the wide stereo camera -->
     <node name="throttle_wide_stereo" pkg="topic_tools" type="throttle" 
 	args="messages /wide_stereo/left/image_rect_color 3.0 /wide_stereo_throttled/image"> 
+      <param name="lazy" value="true"/>
+    </node>
+
+    <!-- the Kinect head camera -->
+    <node name="throttle_kinect" pkg="topic_tools" type="throttle" 
+	args="messages /head_mount_kinect/rgb/image_rect_color 3.0 /interactive_manipulation_camera/image"> 
       <param name="lazy" value="true"/>
     </node>
 
