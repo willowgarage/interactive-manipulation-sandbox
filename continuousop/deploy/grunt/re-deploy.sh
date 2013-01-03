@@ -50,9 +50,9 @@ runthis () {
 # Auto-discover location of deploy script to calculate location of other files from there
 DEPLOYDIR="`dirname \"$0\"`"
 DEPLOYDIR="`( cd \"$DEPLOYDIR\" && pwd )`"
-LAYER2DIR="${DEPLOYDIR}/../server"
+APPDIR="${DEPLOYDIR}/../../django"
 PYTHON="python"
-SERVER_PID_FILE="${LAYER2DIR}/server.pid"
+SERVER_PID_FILE="${APPDIR}/server.pid"
 #
 ###
 
@@ -60,8 +60,8 @@ SERVER_PID_FILE="${LAYER2DIR}/server.pid"
 ###
 # Instance variables.
 CURRENT_SERVER_PID="$(cat ${SERVER_PID_FILE})"
-DUMP_DIR="${LAYER2DIR}/dumps"
-DUMP_FILE="layer2.${RELEASE_NUMBER}.$(date +'%Y%m%d').json"
+DUMP_DIR="${APPDIR}/dumps"
+DUMP_FILE="continuousop.${RELEASE_NUMBER}.$(date +'%Y%m%d').json"
 
 ###
 # Tasks
@@ -75,8 +75,8 @@ run_server () {
 
 
 ###
-# Move to the LAYER2DIR
-runthis "cd'ing into the target directory" "cd ${LAYER2DIR}"
+# Move to the APPDIR
+runthis "cd'ing into the target directory" "cd ${APPDIR}"
 
 ###
 # Step 1:
@@ -103,3 +103,4 @@ runthis "Dumping today's world' data." "mkdir -p ${DUMP_DIR}; ${PYTHON} manage.p
 #
 # Bring the server back up.
 runthis "Get the server back online" "run_server"
+
