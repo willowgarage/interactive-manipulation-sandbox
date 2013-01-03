@@ -1,13 +1,13 @@
 <launch>
   <arg name="throttle_cameras" default="true" />
-  <arg name="run_sim" default="false" />
+  <arg name="sim" default="false" />
   <arg name="im" default="true" />
   <arg name="kinect_frame_prefix" default="/head_kinect" />
 
   <arg name="http_streamer" default="true" />
 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
-    <arg name="run_sim" value="$(arg run_sim)" />
+    <arg name="sim" value="$(arg sim)" />
     <arg name="im" value="$(arg im)" />
   </include>
 
@@ -48,8 +48,8 @@
 
   <!-- robot pose in map saver -->
   <node pkg="smach_executer" type="localization_saver.py" name="localization_saver">
-    <param if="$(arg run_sim)" name="save_pose" value="false"/>
-    <param if="$(arg run_sim)" name="pose_file" value="$(find pr2_executer_launch)/config/initial_sim_pose.pck"/>
+    <param if="$(arg sim)" name="save_pose" value="false"/>
+    <param if="$(arg sim)" name="pose_file" value="$(find pr2_executer_launch)/config/initial_sim_pose.pck"/>
   </node>
 
   <!-- run image_rotate for both forearm camera images -->
