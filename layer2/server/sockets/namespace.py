@@ -1,5 +1,6 @@
 from socketio.namespace import BaseNamespace
 import json
+from sockets.health_monitor import HealthMonitorMixin
 
 # These global hashes are used to keep track of users in contexts
 context_by_sessid = {}
@@ -12,7 +13,7 @@ def add_user_to_context( context, sessid, userdata):
 
 def del_user_from_context( context, sessid):
     if sessid in users_by_context[context]:
-        del users_by_context[context][sessid] 
+        del users_by_context[context][sessid]
 
 def get_users_for_context( context):
     return users_by_context[context]
@@ -41,7 +42,7 @@ def make_user( user):
             'last_name': user.last_name
         }
 
-class ClientNamespace(BaseNamespace):
+class ClientNamespace(BaseNamespace, HealthMonitorMixin):
 
     '''Called by the client to indicate the user has navigated to another
        page or context within the client application'''
@@ -111,5 +112,3 @@ class ClientNamespace(BaseNamespace):
                 # Send the update
                 self.log("emitting context_others event with %s" % list_others)
                 socket["/client"].emit('context_others', list_others)
-        
-
