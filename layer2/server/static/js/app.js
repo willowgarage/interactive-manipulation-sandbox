@@ -2,13 +2,15 @@ define([
   'ember',
   'emberdata',
   'jquery',
-  'socketio'
+  'socketio',
+  'socketio_healthcheck',
 ],
 function(
   Ember,
   DS,
   $,
-  io
+  io,
+  io_health
 ) {
   var App = Ember.Application.create({
     autoinit: false,
@@ -50,16 +52,9 @@ function(
         App.client.set('other_users', other_users);
       });
 
-      // Maintain a separate connection to server for monitoring purposes.
-      this.monitorSocket = io.connect('/monitor');
-      this.monitorSocket.on('connect', function(){
-        this.send('start monitoring');
-      });
-      this.monitorSocket.on('health check', function(data){
-        // Update connection data for the client.
-        App.client.set('connection_latency', data.rtt);
-        // Bounce the packet right back.
-        this.emit('bounced health check', data);
+      // Extend the socket object with information about connection health.
+      io_health.extend(this.socket, function(data){
+        App.client.set('connection_latency', data.latency);
       });
 
     },

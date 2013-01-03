@@ -1,0 +1,67 @@
+<div id="content">
+
+  <div id="tab-container">
+      <!-- The "content" parameter here is the robot object -->
+      <ul>
+        <li><a {{action navigate content}}> Navigate </a></li>
+        <li class="tabselected"><a> Touch </a></li>
+        <li><a {{action markers content}}> Markers </a></li>
+      </ul>
+  </div>
+
+	<div id="main-container">
+    {{#if isConnected}}
+
+      <div id="touch-content" style="width: 100%;">
+        <!-- horizontal tabs on right -->
+        <div id="horizontal_tab_bar" style="display: inline; text-align: right;">
+          <ul class="horiztabs">
+          <li> <a class="current" param="move"   camera="head"      {{action setState target="controller"}}> Move base </a>
+          <li> <a                 param="plug"   camera="head"      {{action setState target="controller"}}> Plug in </a>
+          <li> <a                 param="pickup" camera="kinect"    {{action setState target="controller"}}> Pick up </a>
+          </ul>
+        </div>
+
+        <div id="horizontal_tab_content" style="border: 1px solid;">
+          <!-- touch content goes here -->
+
+          <table>
+            <tr>
+              <td>
+            View from the camera in the robot's
+            {{view Ember.Select
+                contentBinding="content.look_cameras"
+                selectionBinding="content.selected_camera"
+                optionLabelPath="content.name"
+                optionValuePath="content.url"
+                class="dropdown"}}:<br>
+
+            <div>
+            {{#if selectedCameraIsHead}}
+              <!-- Doesn't work right; makes more divs that block input clicks
+              <div id="canvas" style="position: absolute; left:0; top:0; z-index:1;"></div>
+              -->
+              <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}></video><br>
+                <div style="text-align: center;">Click in the image to look around</div><br>
+            {{else}}
+              <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}}></video><br>
+                <div style="text-align: center;">&nbsp;</div><br>
+            {{/if}}
+            </div>
+              </td>
+
+              <td align="center">
+                {{outlet}}
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </div>
+
+    {{else}}
+    Robot not connected; no controls available
+    {{/if}}
+
+	</div>
+</div>

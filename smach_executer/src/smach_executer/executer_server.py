@@ -19,6 +19,7 @@ from smach_executer.actions.segment_and_recognize import SegmentAndRecognize
 from smach_executer.actions.pickup_object import PickupObject
 from smach_executer.actions.move_torso import MoveTorso
 from smach_executer.actions.interactive_gripper import InteractiveGripper
+from smach_executer.actions.reset_collision_objects import ResetCollisionObjects
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -40,7 +41,8 @@ class ExecuterServer:
             'SegmentAndRecognize': SegmentAndRecognize,
             'PickupObject': PickupObject,
             'MoveTorso': MoveTorso,
-            'InteractiveGripper': InteractiveGripper
+            'InteractiveGripper': InteractiveGripper,
+            'ResetCollisionObjects': ResetCollisionObjects
             }
 
         self.sm = None

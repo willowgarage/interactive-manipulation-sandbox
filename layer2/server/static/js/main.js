@@ -22,6 +22,7 @@ requirejs.config({
     action        : 'libs/action',
     // socket.io
     socketio      : 'libs/socket.io',
+    socketio_healthcheck: 'libs/socket.io.healthcheck',
     // Templates
     templates     : '../templates'
   },
