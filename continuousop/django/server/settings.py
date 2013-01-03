@@ -3,8 +3,8 @@
 # NOTE: The settings you configure here are going to be deployed on babylon1
 # If you want to change a setting in your own local development environment
 # or on a test server you're running, please create a file named
-# local_settings.py in the layer2/server/server directory and override any settings you
-# need in that file
+# local_settings.py in the continuousop/django/server directory and override
+# any settings you need in that file.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -51,7 +51,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/home/rwt/layer2/server/static/media/'
+MEDIA_ROOT = '/home/rwt/continuousop/django/static/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -73,7 +73,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/rwt/layer2/server/static/",
+    "/home/rwt/continuousop/django/static/",
 )
 
 # List of finder classes that know how to find static files in
@@ -113,7 +113,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/home/rwt/layer2/server/templates'
+    '/home/rwt/continuousop/django/templates'
 )
 
 AUTHENTICATION_BACKENDS = (
