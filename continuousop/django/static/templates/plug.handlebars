@@ -1,0 +1,24 @@
+{{#if is_plugging_in}}
+  <div>Working, please wait...</div>
+{{else}}
+  {{#if plugged_in}}
+  <div>Currently plugged in</div>
+  {{else}}
+  <div>Not plugged in</div>
+  {{/if}}
+{{/if}}
+
+<video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="forearm_camera_url"}}></video><br>
+
+{{#if isConnected}}
+	{{#if is_plugging_in}}
+	{{else}}
+	  {{#if plugged_in}}
+	  <div class="mybutton" {{action unplug target="controller"}}>Unplug</div>
+	  {{else}}
+	  <div class="mybutton" {{action plugIn target="controller"}}>Plug in</div>
+	  {{/if}}
+	{{/if}}
+{{/if}}
+
+
