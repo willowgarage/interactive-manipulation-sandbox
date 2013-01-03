@@ -5,12 +5,13 @@ define([
   'ROS',
   'libs/interactivemarkersjs/improxy',
   'libs/interactivemarkersjs/imthree',
+  'libs/interactivemarkersjs/tfclient',
   'libs/interactivemarkersjs/markersthree',
   'libs/interactivemarkersjs/threeinteraction',
   'libs/interactivemarkersjs/examples/include/helpers/RosAxisHelper',
   'libs/interactivemarkersjs/examples/include/helpers/RosOrbitControls',
   'text!templates/markers.handlebars'
-], function(Ember, App, THREE, ROS, ImProxy, ImThree, MarkersThree, ThreeInteraction, RosAxes, RosOrbit, markersHtml) {
+], function(Ember, App, THREE, ROS, ImProxy, ImThree, TfClient, MarkersThree, ThreeInteraction, RosAxes, RosOrbit, markersHtml) {
 
   App.MarkersView = Ember.View.extend({
     template: Ember.Handlebars.compile(markersHtml),
@@ -108,9 +109,15 @@ define([
       var robot = this.get('controller').get('content');
       var status_code = robot.get('status_code');
       if (status_code === 1) {
+        // subscribe to tf updates
+        var tfClient = new TfClient( {
+          ros: ros,
+          fixedFrame: 'base_link',
+          angularThres: 1.5,
+          transThres: 0.01
+        } );
         // Show interactive markers
-        var content = this.get('controller').get('content');
-        var imClient = new ImProxy.Client(content.ros);
+        var imClient = new ImProxy.Client(robot.ros,tfClient);
         // TODO: this should most definitely not be hardcoded to blh
         var meshBaseUrl = 'http://blh.willowgarage.com:8000/resources/';
         var imViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), imClient, meshBaseUrl);
