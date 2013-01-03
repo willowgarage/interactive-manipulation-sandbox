@@ -9,10 +9,13 @@
 
   var ImProxy = {};
 
-  var Client = ImProxy.Client = function(ros) {
+  var Client = ImProxy.Client = function(ros,tf) {
     this.ros = ros;
-    this.interactiveMarkers = {};
+    this.tf = tf;
+    this.intMarkerHandles = {};
+    this.clientId = "improxy.js " + Math.round( Math.random() * 1000000 );
   };
+  
   Client.prototype.__proto__ = EventEmitter2.prototype;
 
   Client.prototype.subscribe = function(topicName) {
@@ -22,7 +25,7 @@
       name : topicName + '/tunneled/update',
       messageType : 'visualization_msgs/InteractiveMarkerUpdate'
     });
-    this.markerUpdateTopic.subscribe(this.markerUpdate.bind(this));
+    this.markerUpdateTopic.subscribe(this.processUpdate.bind(this));
 
     this.feedbackTopic = new this.ros.Topic({
       name : topicName + '/feedback',
@@ -35,44 +38,50 @@
       , serviceType : 'demo_interactive_markers/GetInit'
     });
     var request = new this.ros.ServiceRequest({});
-    this.initService.callService(request, this.markerInit.bind(this));
+    this.initService.callService(request, this.processInit.bind(this));
   };
-  
-  Client.prototype.deleteMarker = function(markerName) {
-    this.emit('deleted_marker', markerName);
-    delete this.interactiveMarkers[markerName];
-  }
   
   Client.prototype.unsubscribe = function() {
     if ( this.markerUpdateTopic ) {
       this.markerUpdateTopic.unsubscribe();
       this.feedbackTopic.unadvertise();
     }
-    for( markerName in this.interactiveMarkers ) {
-      this.deleteMarker(markerName);
+    for( intMarkerName in this.intMarkerHandles ) {
+      this.eraseIntMarker(intMarkerName);
     }
-    this.interactiveMarkers = {};
+    this.intMarkerHandles = {};
   }
   
-  Client.prototype.markerInit = function(initMessage) {
+  Client.prototype.eraseIntMarker = function(intMarkerName) {
+    if ( this.intMarkerHandles[intMarkerName] ) {
+      this.emit('deleted_marker', intMarkerName);
+      delete this.intMarkerHandles[intMarkerName];
+    }
+  }
+  
+  Client.prototype.processInit = function(initMessage) {
     var message = initMessage.msg;
+    var client = this;
     message.erases = [];
+    for( intMarkerName in this.intMarkerHandles ) {
+      message.erases.push( intMarkerName );
+    };
     message.poses = [];
-    this.markerUpdate(message);
+    this.processUpdate(message);
   }
 
-  Client.prototype.markerUpdate = function(message) {
+  Client.prototype.processUpdate = function(message) {
     var that = this;
 
     // Deletes markers
     message.erases.forEach(function(name) {
-      var marker = that.interactiveMarkers[name];
-      that.deleteMarker(name);
+      var marker = that.intMarkerHandles[name];
+      that.eraseIntMarker(name);
     });
 
     // Updates marker poses
     message.poses.forEach(function(poseMessage) {
-      var marker = that.interactiveMarkers[poseMessage.name];
+      var marker = that.intMarkerHandles[poseMessage.name];
       if (marker) {
         marker.setPoseFromServer(poseMessage.pose);
       }
@@ -80,26 +89,37 @@
 
     // Adds new markers
     message.markers.forEach(function(imMsg) {
-      var oldMarker = that.interactiveMarkers[imMsg.name];
-      if (oldMarker) {
-        that.deleteMarker(oldMarker.name);
+      var oldIntMarkerHandle = that.intMarkerHandles[imMsg.name];
+      if (oldIntMarkerHandle) {
+        that.eraseIntMarker(oldIntMarkerHandle.name);
       }
 
-      var marker = new ImProxy.IntMarkerHandle(imMsg, that.feedbackTopic);
-      that.interactiveMarkers[imMsg.name] = marker;
-      that.emit('created_marker', marker);
+      var intMarkerHandle = new ImProxy.IntMarkerHandle(imMsg, that.feedbackTopic, that.tf);
+      that.intMarkerHandles[imMsg.name] = intMarkerHandle;
+      that.emit('created_marker', intMarkerHandle);
     });
   };
   
   /* Handle with signals for a single interactive marker */
 
-  var IntMarkerHandle = ImProxy.IntMarkerHandle = function(imMsg, feedbackTopic) {
-    this.feedbackTopic = feedbackTopic;
-    this.pose     = imMsg.pose;
-    this.name     = imMsg.name;
-    this.header   = imMsg.header;
-    this.controls = imMsg.controls;
-    this.menuEntries = imMsg.menu_entries;
+  var IntMarkerHandle = ImProxy.IntMarkerHandle = function(imMsg, feedbackTopic, tf) {
+    this.feedbackTopic  = feedbackTopic;
+    this.tf             = tf;
+    this.name           = imMsg.name;
+    this.header         = imMsg.header;
+    this.controls       = imMsg.controls;
+    this.menuEntries    = imMsg.menu_entries;
+    this.dragging       = false;
+    this.timeoutHandle  = null;
+    this.tfTransform    = new TfClient.Transform();
+    this.pose           = new TfClient.Pose();
+    this.setPoseFromServer( imMsg.pose );
+    
+
+    // subscribe to tf updates if frame-fixed
+    if ( imMsg.header.stamp.secs === 0.0 && imMsg.header.stamp.nsecs === 0.0 ) {
+      this.tf.subscribe( imMsg.header.frame_id, this.tfUpdate.bind(this) );
+    }
   };
   
   IntMarkerHandle.prototype.__proto__ = EventEmitter2.prototype;
@@ -111,41 +131,59 @@
   var MOUSE_DOWN = 4;
   var MOUSE_UP = 5;
   
+  IntMarkerHandle.prototype.emitServerPoseUpdate = function() {
+    var poseTransformed = new TfClient.Pose( this.pose.position, this.pose.orientation );
+    this.tfTransform.apply( poseTransformed );
+    this.emit('server_updated_pose', poseTransformed );
+  }
+  
   IntMarkerHandle.prototype.setPoseFromServer = function(poseMsg) {
-    this.pose.position = poseMsg.position;
-    this.pose.orientation = poseMsg.orientation;
-    this.emit('server_updated_pose', poseMsg);
+    this.pose.copy( poseMsg );
+    this.emitServerPoseUpdate();
   };
 
-  IntMarkerHandle.prototype.setPoseFromClient = function(pose) {
-    this.pose.position.x = pose.position.x;
-    this.pose.position.y = pose.position.y;
-    this.pose.position.z = pose.position.z;
-    this.pose.orientation.x = pose.orientation.x;
-    this.pose.orientation.y = pose.orientation.y;
-    this.pose.orientation.z = pose.orientation.z;
-    this.pose.orientation.w = pose.orientation.w;
-    this.emit('client_updated_pose', pose);
-    this.sendFeedback(POSE_UPDATE);
+  IntMarkerHandle.prototype.tfUpdate = function(transformMsg) {
+    this.tfTransform.copy( transformMsg );
+    this.emitServerPoseUpdate();
+  };
+
+  IntMarkerHandle.prototype.setPoseFromClient = function(event) {
+    this.pose.copy(event);
+    this.tfTransform.applyInverse( this.pose );
+    this.emit('client_updated_pose', event);
+    this.sendFeedback(POSE_UPDATE, undefined, 0, event.controlName);
+
+    // keep sending pose feedback until the mouse goes up
+    if ( this.dragging ) {
+      if ( this.timeoutHandle ) {
+        clearTimeout(this.timeoutHandle);
+      }
+      this.timeoutHandle = setTimeout( this.setPoseFromClient.bind(this,event), 250 );
+    } 
   };
 
   IntMarkerHandle.prototype.onButtonClick = function(event) {
-    this.sendFeedback(BUTTON_CLICK, event.clickPosition);
+    this.sendFeedback(BUTTON_CLICK, event.clickPosition, 0, event.controlName);
   };
 
   IntMarkerHandle.prototype.onMouseDown = function(event) {
-    this.sendFeedback(MOUSE_DOWN, event.clickPosition);
+    this.sendFeedback(MOUSE_DOWN, event.clickPosition, 0, event.controlName);
+    this.dragging = true;
   }
 
   IntMarkerHandle.prototype.onMouseUp = function(event) {
-    this.sendFeedback(MOUSE_UP, event.clickPosition);
+    this.sendFeedback(MOUSE_UP, event.clickPosition, 0, event.controlName);
+    this.dragging = false;
+    if ( this.timeoutHandle ) {
+      clearTimeout(this.timeoutHandle);
+    }
   }
 
   IntMarkerHandle.prototype.onMenuSelect = function(event) {
-    this.sendFeedback(MENU_SELECT, undefined, event.id);
+    this.sendFeedback(MENU_SELECT, undefined, event.id, event.controlName);
   }
 
-  IntMarkerHandle.prototype.sendFeedback = function(eventType, clickPosition, menu_entry_id) {
+  IntMarkerHandle.prototype.sendFeedback = function(eventType, clickPosition, menu_entry_id, controlName) {
     
     var mouse_point_valid = clickPosition !== undefined;
     var clickPosition = clickPosition || {
@@ -156,16 +194,15 @@
 
     var feedback = {
       header       : this.header,
-      client_id    : '',
+      client_id    : this.client_id,
       marker_name  : this.name,
-      control_name : '',
+      control_name : controlName,
       event_type   : eventType,
       pose         : this.pose,
       mouse_point  : clickPosition,
       mouse_point_valid: mouse_point_valid,
       menu_entry_id: menu_entry_id
     }
-
     this.feedbackTopic.publish(feedback);
   };
 
