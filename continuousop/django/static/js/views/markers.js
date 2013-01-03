@@ -36,7 +36,7 @@ define([
       this.set('scene', scene);
 
       // Setup camera mouse control
-      var cameraControls = new THREE.RosOrbitControls(camera);
+      var cameraControls = new THREE.RosOrbitControls(scene,camera);
       this.set('cameraControls', cameraControls);
 
       // Add node to host selectable objects
@@ -111,7 +111,7 @@ define([
       if (status_code === 1) {
         // subscribe to tf updates
         var tfClient = new TfClient( {
-          ros: ros,
+          ros: robot.ros,
           fixedFrame: 'base_link',
           angularThres: 1.5,
           transThres: 0.01
