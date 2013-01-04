@@ -36,17 +36,15 @@
                 optionValuePath="content.url"
                 class="dropdown"}}:<br>
 
-            <div>
-            {{#if selectedCameraIsHead}}
-              <!-- Doesn't work right; makes more divs that block input clicks
-              <div id="canvas" style="position: absolute; left:0; top:0; z-index:1;"></div>
-              -->
-              <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}></video><br>
+            <div style="position: relative;" id="left_video">
+
+              {{#if selectedCameraIsHead}}
+                <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}} {{action pointHeadClick target="controller"}}></video><br>
                 <div style="text-align: center;">Click in the image to look around</div><br>
-            {{else}}
-              <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}}></video><br>
+              {{else}}
+                <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="selected_camera.url"}}></video><br>
                 <div style="text-align: center;">&nbsp;</div><br>
-            {{/if}}
+              {{/if}}
             </div>
               </td>
 

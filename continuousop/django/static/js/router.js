@@ -100,10 +100,8 @@ function(
         route: '/robots/:id/navigate',
         showAllRobots: Ember.Route.transitionTo('robots'),
 
-        plug: Ember.Route.transitionTo('plug'),
         touch: Ember.Route.transitionTo('touch'),
         markers: Ember.Route.transitionTo('markers'),
-        pickup: Ember.Route.transitionTo('pickup'),
 
         // TODO: Clean-up
         navigateTo: function( router, context) {
@@ -172,38 +170,12 @@ function(
         }
       }),
 
-      plug : Ember.Route.extend({
-        route: '/robots/:id/plug',
-        showAllRobots: Ember.Route.transitionTo('robots'),
-
-        navigate: Ember.Route.transitionTo('navigate'),
-        touch: Ember.Route.transitionTo('touch'),
-        markers: Ember.Route.transitionTo('markers'),
-        pickup: Ember.Route.transitionTo('pickup'),
-
-        connectOutlets: function(router, context) {
-          //  New HACK for synchronizing current UI view.
-          //  This needs to be done in connectOutlet for each route
-          //  until I can figure out how to add an observer for this
-          App.setClientContext('robot:'+context.id);
-
-          router.get('applicationController').
-            connectOutlet('content','robot',App.Robot.find(context.id));
-          router.get('robotController').
-            connectOutlet('periphery','client',App.client);
-          router.get('robotController')
-            .connectOutlet('main', 'plug', App.Robot.find(context.id));
-        }
-      }),
-
       navigating: Ember.Route.extend({
         route: '/robots/:robot_id/navigating/:place_id',
         showAllRobots: Ember.Route.transitionTo('robots'),
-        plug: Ember.Route.transitionTo('plug'),
         navigate: Ember.Route.transitionTo('navigate'),
         touch: Ember.Route.transitionTo('touch'),
         markers: Ember.Route.transitionTo('markers'),
-        pickup: Ember.Route.transitionTo('pickup'),
 
         cancelAllGoals: function(router) {
           this.robot.cancelAllGoals();
@@ -259,31 +231,8 @@ function(
           router.get('robotController')
             .connectOutlet('main', 'markers', App.Robot.find(context.id));
         }
-      }),
-
-      pickup: Ember.Route.extend({
-        route: '/robots/:id/touch/pickup',
-        showAllRobots: Ember.Route.transitionTo('robots'),
-
-        navigate: Ember.Route.transitionTo('navigate'),
-        plug: Ember.Route.transitionTo('plug'),
-        touch: Ember.Route.transitionTo('touch'),
-        markers: Ember.Route.transitionTo('markers'),
-
-        connectOutlets: function(router, context) {
-          //  New HACK for synchronizing current UI view.
-          //  This needs to be done in connectOutlet for each route
-          //  until I can figure out how to add an observer for this
-          App.setClientContext('robot:'+context.robot_id);
-
-          router.get('applicationController').
-            connectOutlet('content','robot',App.Robot.find(context.id));
-          router.get('robotController').
-            connectOutlet('periphery','client', App.client);
-          router.get('robotController')
-            .connectOutlet('main', 'pickup', App.Robot.find(context.id));
-        }
       })
+
     })
   });
 });
