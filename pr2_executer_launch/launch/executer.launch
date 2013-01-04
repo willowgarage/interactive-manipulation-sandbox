@@ -9,9 +9,7 @@
     <group unless="$(arg im)">
         <group unless="$(arg sim)">
             <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
-            <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
-                <arg name="run_sim" value="$(arg sim)" />
-            </include>	 
+            <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch"/>
         </group>
     </group>
 
