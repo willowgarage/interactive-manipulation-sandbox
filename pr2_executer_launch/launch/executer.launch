@@ -27,8 +27,8 @@
          </include>
 
 	 <node pkg="interactive_marker_proxy" type="proxy" name="im_proxy">
-              <param name="topic_ns" value="/pr2_marker_control" />
-              <param name="target_frame" value="/base_link" />
+              <remap from="topic_ns" to="/pr2_marker_control" />
+              <remap from="target_frame" to="/base_link" />
          </node>
     </group>
 
