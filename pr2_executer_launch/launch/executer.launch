@@ -1,5 +1,5 @@
 <launch>
-    <arg name="run_sim" default="false" />
+    <arg name="sim" default="false" />
     <arg name="im" default="false" />
 
     <!-- executer server -->
@@ -7,21 +7,19 @@
 
     <!-- PR2 plugs -->
     <group unless="$(arg im)">
-        <group unless="$(arg run_sim)">
+        <group unless="$(arg sim)">
             <include file="$(find pr2_plugs_actions)/launch/pr2_arm_ik.launch"/>
-            <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch">
-                <arg name="run_sim" value="$(arg run_sim)" />
-            </include>	 
+            <include file="$(find pr2_plugs_actions)/launch/plug_actions.launch"/>
         </group>
     </group>
 
     <group if="$(arg im)">
          <include file="$(find pr2_interactive_manipulation)/launch/pr2_interactive_manipulation_robot.launch">
-              <arg name="sim" value="$(arg run_sim)" />
+              <arg name="sim" value="$(arg sim)" />
               <arg name="throttle_cameras" value="false" />
               <arg name="nav" value="true" />
-              <arg unless="$(arg run_sim)" name="plugs" value="true" />
-              <arg if="$(arg run_sim)" name="plugs" value="false" />
+              <arg unless="$(arg sim)" name="plugs" value="true" />
+              <arg if="$(arg sim)" name="plugs" value="false" />
               <arg name="wg" value="true" />
 			  <!--arg name="im_debug" value="true" /-->
          </include>
