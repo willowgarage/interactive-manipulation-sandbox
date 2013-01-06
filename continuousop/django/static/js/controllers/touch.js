@@ -35,7 +35,6 @@ define([
       // Update the selected camera to display the right one for this tab (doesn't work)
       var robot = this.get('content');
       var cameraObject = robot.getCameraByName(camera);
-      console.log("Got camera object:", cameraObject.name);
       robot.set('selected_camera', cameraObject);
     }
 

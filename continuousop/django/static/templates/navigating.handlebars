@@ -10,22 +10,22 @@
   </div>
 
   <div id="main-container">
-	<div class="content">
+  <div class="content">
 
-	  <div class="heading">Navigating to the {{place.name}}</div>
+    <div class="heading">Navigating to the {{place.name}}</div>
 
-	  <table width="100%">
-		<tr>
-		  <td>
-			{{outlet}}
-		  </td>
-		  <td>
-                    <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="robot.camera_url"}}></video>
-		  </td>
-		</tr>
-	  </table>
+    <table width="100%">
+    <tr>
+      <td>
+      {{outlet}}
+      </td>
+      <td>
+        <video preload="none" autoplay="true" width=400 height=300 {{bindAttr src="robot.camera_url"}}></video>
+      </td>
+    </tr>
+    </table>
 
-  	  <div class="button" {{action cancelAllGoals}}> STOP </div>
+      <div class="button" {{action cancelAllGoals}}> STOP </div>
 
     </div>
   </div>

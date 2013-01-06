@@ -13,8 +13,12 @@ define([
 
       // Callback when the content is finshed loading
       didInsertElement: function() {
+        var canvas_div = d3.select('#left_video').append('div')
+          .attr('id', 'canvas')
+          .attr('style', 'position: absolute; left:0; top:0; z-index:1;');
+
         // Create the SVG element in the canvas div
-        var svg = d3.select('#canvas').append('svg')
+        var svg = canvas_div.append('svg')
           .attr('width', this.width)
           .attr('height', this.height)
           .attr('id','svgcanvas');

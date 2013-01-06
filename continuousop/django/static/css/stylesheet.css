@@ -234,6 +234,14 @@ a {
     border-left: 8px solid #666;
     background-color: #ddd;
     margin: 8px 0;
+
+	/* To prevent click-and-drag from selecting text */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 #tab-container ul li a,
 #tab-container ul li a:visited
@@ -294,6 +302,14 @@ a {
 	border-bottom: none;
 	background: #ddd;
     color: #666;
+
+	/* To prevent click-and-drag from selecting text */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .horiztabs li a:link, .horiztabs li a:visited {
