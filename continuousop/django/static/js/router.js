@@ -73,7 +73,6 @@ function(
       robots: Ember.Route.extend({
         route: '/robots',
 
-        //showRobot: Ember.Route.transitionTo('robot.navigate'),
         showRobot: Ember.Route.transitionTo('robot.navigate'),
 
         connectOutlets: function(router) {
