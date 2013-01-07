@@ -2,6 +2,7 @@
   <arg name="throttle_cameras" default="true" />
   <arg name="sim" default="false" />
   <arg name="im" default="true" />
+  <arg name="kinect_start" default="false" />
   <arg name="kinect_frame_prefix" default="/head_kinect" />
 
   <arg name="http_streamer" default="true" />
@@ -17,7 +18,7 @@
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
-  <group unless="$(arg im)">
+  <group if="$(arg kinect_start)">
     <include file="$(find openni_launch)/launch/openni.launch">
       <arg name="depth_registration" value="true"/>
       <arg name="camera" value="head_mount_kinect"/>
@@ -31,9 +32,9 @@
     <!-- http image topic video streamer -->
     <node name="ros_http_video_streamer" pkg="ros_http_video_streamer" type="ros_http_video_streamer" >
       <param name="port" value="9999"/>
-      <param name="host" value="prn.willowgarage.com"/>
       <param name="framerate" value="15"/>
       <param name="bitrate" value="250000"/>
+      <param name="profile" value="best">
     </node>
   </group>
 
