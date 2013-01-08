@@ -1,8 +1,6 @@
 <package>
-  <description brief="mros">
-
-     mros
-
+  <description brief="multi_ros">
+    multi_ros
   </description>
   <author>Jonathan Binney</author>
   <license>BSD</license>
