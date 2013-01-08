@@ -1,7 +1,14 @@
 """
+Provide a means to collect all BaseNamespace descendants in the site, to pass
+to the socket.io server.
+
 Every app in INSTALLED_APPS is probed for a namespace.py file. In that file
 they should define a Namespace class, descendant of
-socketio.namespace.BaseNamespace.
+socketio.namespace.BaseNamespace, which will handle incoming events.
+
+The Namespace class has an optional property "namespace". If present, it'll be
+used as the namespace of the socket. If not given the namespace is composed
+from the app name.
 """
 
 from importlib import import_module
@@ -9,7 +16,10 @@ from django.conf import settings
 
 
 def collect_namespaces():
-    """Collect all BaseNamespace descendants in the site."""
+    """Returns a dictionary with all BaseNamespace descendants in the site.
+
+    Raises RuntimeError if a namespace collision is detected.
+    """
 
     namespaces = {}
 
@@ -31,7 +41,7 @@ def collect_namespaces():
                 namespace = namespace_module.Namespace.namespace
             else:
                 # If no explicit name is given, revert to the app_name.
-                namespace = app_name.split('.')[-1]
+                namespace = '/' + app_name.split('.')[-1]
 
             # Collect the namespace.
             add_namespace(namespace, namespace_module.Namespace)
