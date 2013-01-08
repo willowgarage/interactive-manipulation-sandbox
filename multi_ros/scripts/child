@@ -15,9 +15,9 @@ def run_child(child_ros_master_uri, child_config_uri, child_pub_uri, child_sub_u
 if __name__ == '__main__':
    child_ros_master_uri = os.environ['ROS_MASTER_URI']
 
-   child_config_uri = 'tcp://127.0.0.1:5000'
-   child_pub_uri = 'tcp://127.0.0.1:5001'
-   child_sub_uri = 'tcp://127.0.0.1:5002'
+   child_config_uri = 'tcp://*:5000'
+   child_pub_uri = 'tcp://*:5001'
+   child_sub_uri = 'tcp://*:5002'
 
    # start the multi_ros child in a new process
    run_child(child_ros_master_uri, child_config_uri, child_pub_uri, child_sub_uri)
