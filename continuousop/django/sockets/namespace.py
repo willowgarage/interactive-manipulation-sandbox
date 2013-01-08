@@ -42,7 +42,10 @@ def make_user( user):
             'last_name': user.last_name
         }
 
-class ClientNamespace(BaseNamespace, HealthMonitorMixin):
+class Namespace(BaseNamespace, HealthMonitorMixin):
+
+    # The namespace to expose to socket.io client code.
+    namespace = '/client'
 
     '''Called by the client to indicate the user has navigated to another
        page or context within the client application'''

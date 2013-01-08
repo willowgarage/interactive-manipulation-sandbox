@@ -7,14 +7,9 @@ monkey.patch_all()
 import os, copy
 
 from socketio import socketio_manage
-from sockets.namespace import ClientNamespace
+from sockets import collect_namespaces
 from django.http import HttpResponseNotFound
 
-
-# The namespaces served by the socket.io backend.
-# Currently emtpy, due to the fact that gevent-socketio (as socket.io.js)
-# implements heartbeats/reconnect (all that's needed for now).
-namespaces = dict()
 
 class GZipRequireJSHack(object):
     """
@@ -76,6 +71,6 @@ class WithSocketIO(object):
         path = environ['PATH_INFO'].strip('/')
 
         if path.startswith(WithSocketIO.resource):
-            socketio_manage(environ, namespaces)
+            socketio_manage(environ, collect_namespaces())
         else:
             return self.app(environ, start_response)
