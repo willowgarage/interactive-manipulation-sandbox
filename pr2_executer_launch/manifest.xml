@@ -20,6 +20,7 @@
   <depend package="mjpeg_server"/>
   <depend package="rosbridge_server"/>
   <depend package="pr2_interactive_manipulation"/>
+  <depend package="tf2_web_republisher"/>
 
 </package>
 
