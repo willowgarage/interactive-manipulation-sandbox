@@ -6,6 +6,7 @@
   <arg name="kinect_frame_prefix" default="/head_kinect" />
 
   <arg name="http_streamer" default="true" />
+  <arg name="web_pointcloud_streaming" default="true" />
 
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="sim" value="$(arg sim)" />
@@ -37,6 +38,15 @@
       <param name="profile" value="best"/>
     </node>
   </group>
+
+  <group if="$(arg web_pointcloud_streaming)">
+    <!-- http pointcloud streaming -->
+    <node pkg="ros_http_video_streamer" type="webGL_pointcloud_image_encoder"  name="webGL_pointcloud_image_encoder" output="screen">		
+        <param name="rgb" value="/head_mount_kinect/rgb/image_color" />
+        <param name="depth" value="/head_mount_kinect/depth_registered/image_rect" />
+    </node>
+  </group>
+
 
   <!-- TF2 Buffer Server -->
   <node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen">
