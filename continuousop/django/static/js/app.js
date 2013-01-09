@@ -16,14 +16,17 @@ function(
     autoinit: false,
 
     ready: function() {
-      //  Create a master socket connection to server
-      this.socket = io.connect('/client', {
-
+      //  -- Create a robot socket connection to server --
+      this.socket = io.connect('/robot', {
         // Maximum number of milliseconds between reconnect attempts.
         'reconnection limit': 3000,
-
         // Attempt to reconnect for roughly 5 minutes.
         'max reconnection attempts': 100
+      });
+
+      // Extend the robot socket object with information about connection health.
+      io_health.extend(this.socket, function(data){
+        App.client.set('connection_latency', data.latency);
       });
 
       // Disconnect-reconnect routine.
@@ -31,30 +34,32 @@ function(
         $.blockUI({ message: '<h2>Connection to server lost...</h2><img src="/static/img/spinnerLarge.gif"/><h2>...trying to reconnect.</h2>'});
       });
       this.socket.on('reconnecting', function(){
-        // Event fired inmediatly before an attempt to reach the server.
         console.log('...trying to reconnect...');
       });
       this.socket.on('reconnect', function(){
         $.unblockUI();
       });
 
+      //  -- Create a client socket connection to server --
+      this.client_socket = io.connect('/client', {
+        // Maximum number of milliseconds between reconnect attempts.
+        'reconnection limit': 3000,
+        // Attempt to reconnect for roughly 5 minutes.
+        'max reconnection attempts': 100
+      });
+
       //  Notify the server about our current context every time we connect or change context
       var _this = this;
-      this.socket.on('connect', function() {
-        _this.socket.emit('context_new', App.client.get('context'));
+      this.client_socket.on('connect', function() {
+        _this.client_socket.emit('context_new', App.client.get('context'));
       });
       App.client.addObserver('context',function(client) {
-        _this.socket.emit('context_new', App.client.get('context'));
+        _this.client_socket.emit('context_new', App.client.get('context'));
       });
 
       //  The server notifies us that users in this same page have changed
-      this.socket.on('context_others',function(other_users){
+      this.client_socket.on('context_others',function(other_users){
         App.client.set('other_users', other_users);
-      });
-
-      // Extend the socket object with information about connection health.
-      io_health.extend(this.socket, function(data){
-        App.client.set('connection_latency', data.latency);
       });
 
     },
