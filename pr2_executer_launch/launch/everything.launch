@@ -35,6 +35,7 @@
       <param name="framerate" value="15"/>
       <param name="bitrate" value="250000"/>
       <param name="profile" value="best"/>
+      <param name="wwwroot" value="$(find depthcloudjs)/www"/>
     </node>
   </group>
 
