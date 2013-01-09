@@ -1,0 +1,11 @@
+---
+
+- name: continuousop config and operation
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - name: set up local_settings.py for vagrant
+      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/continuousop/django/server' creates=/home/vagrant/continuousop/django/server/local_settings.py
+

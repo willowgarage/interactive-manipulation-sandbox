@@ -1,0 +1,15 @@
+---
+
+- name: developer tools installation
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+
+    - name: install developer tools
+      action: apt pkg=$item state=present
+      with_items:
+        - vim
+        - tmux
+

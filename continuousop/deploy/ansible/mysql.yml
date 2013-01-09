@@ -1,0 +1,15 @@
+---
+
+- name: mysql installation
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+
+    - name: update apt
+      action: command /usr/bin/apt-get update
+
+    - name: install system requirements for MySQL DB.
+      action: apt pkg=libmysqlclient-dev state=present
+

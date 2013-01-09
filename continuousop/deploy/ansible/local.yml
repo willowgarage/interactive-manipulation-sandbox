@@ -1,0 +1,12 @@
+---
+
+- name: top level playbook for local installs
+  hosts: all
+  user: vagrant
+  sudo: True
+
+- include: developer_tools.yml
+- include: mysql.yml
+- include: django.yml
+- include: continuousop.yml
+
