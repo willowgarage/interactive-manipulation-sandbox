@@ -1,0 +1,8 @@
+---
+
+# This tasks is meant to be run by a parent playbook, with:
+# tasks:
+#   - include: ansible_user.yml user=vagrant
+- name: create a user for deploying ansible scripts
+  action: user name=ansible groups=sudo createhome=no  state=present
+
