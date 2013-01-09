@@ -10,6 +10,8 @@
     app_name: continuousop
     http_port: 8000
     server_name: localhost
+    local_settings_file: local_settings.vagrant.py
+
 
   # Eventually, the playbooks should run as a unique user like "ansible".
   # This task will create the ansible user on the machine for the other scripts
