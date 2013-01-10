@@ -520,111 +520,37 @@ function( Ember, DS, App, ROS, Action) {
 
     moveForward: function() {
       this.set('progress_update', 'Moving forward');
-      var action = new Action({
-        ros: this.ros,
-        name: 'NavigateToPose'
-      });
 
-      action.inputs.x                  = 0.2;
-      action.inputs.y                  = 0.0;
-      action.inputs.theta              = 0.0;
-      action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = '/base_footprint';
-
-      var _this = this;
-      action.on('result', function(result) {
-        if (result.outcome === 'succeeded') {
-          // It worked!
-          _this.set('progress_update', '');
-        }
-        else {
-          _this.set('progress_update', 'Move action failed');
-        }
-      });
-
-      action.execute();
-      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+      // Send the action to the server.
+      console.log('Sending NavigateToPose action to the server.');
+      MyApp.socket.emit('move forward');
     },
     moveBack: function() {
       this.set('progress_update', 'Moving backward');
-      var action = new Action({
-        ros: this.ros,
-        name: 'NavigateToPose'
-      });
 
-      action.inputs.x                  = -0.2;
-      action.inputs.y                  = 0.0;
-      action.inputs.theta              = 0.0;
-      action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = '/base_footprint';
-
-      var _this = this;
-      action.on('result', function(result) {
-        if (result.outcome === 'succeeded') {
-          // It worked!
-          _this.set('progress_update', '');
-        }
-        else {
-          _this.set('progress_update', 'Move action failed');
-        }
-      });
-
-      action.execute();
-      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+      // Send the action to the server.
+      console.log('Sending NavigateToPose action to the server.');
+      MyApp.socket.emit('move back');
     },
     turnLeft: function() {
       this.set('progress_update', 'Turning left');
-      var action = new Action({
-        ros: this.ros,
-        name: 'NavigateToPose'
-      });
 
-      action.inputs.x                  = 0.0;
-      action.inputs.y                  = 0.0;
-      action.inputs.theta              = 0.20;
-      action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = '/base_footprint';
-
-      var _this = this;
-      action.on('result', function(result) {
-        if (result.outcome === 'succeeded') {
-          // It worked!
-          _this.set('progress_update', '');
-        }
-        else {
-          _this.set('progress_update', 'Move action failed');
-        }
-      });
-
-      action.execute();
-      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+      // Send the action to the server.
+      console.log('Sending NavigateToPose action to the server.');
+      MyApp.socket.emit('turn left');
     },
     turnRight: function() {
       this.set('progress_update', 'Turning right');
-      var action = new Action({
-        ros: this.ros,
-        name: 'NavigateToPose'
-      });
 
-      action.inputs.x                  = 0.0;
-      action.inputs.y                  = 0.0;
-      action.inputs.theta              = -0.20;
-      action.inputs.collision_aware    = false;
-      action.inputs.frame_id           = '/base_footprint';
+      // Send the action to the server.
+      console.log('Sending NavigateToPose action to the server.');
+      MyApp.socket.emit('turn right');
+    },
 
-      var _this = this;
-      action.on('result', function(result) {
-        if (result.outcome === 'succeeded') {
-          // It worked!
-          _this.set('progress_update', '');
-        }
-        else {
-          _this.set('progress_update', 'Move action failed');
-        }
-      });
-
-      action.execute();
-      console.log('Calling NavigateToPose action with parameters: ', action.inputs);
+    stopMoving: function () {
+      this.set('progress_update', '');
+      console.log('Stop NavigateToPose motion, send to the server.');
+      MyApp.socket.emit('stop moving');
     },
 
     // ----------------------------------------------------------------------
