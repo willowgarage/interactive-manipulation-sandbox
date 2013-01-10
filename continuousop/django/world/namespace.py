@@ -42,3 +42,6 @@ class Namespace(BaseNamespace, HealthMonitorMixin):
         action = copy.deepcopy(self.action)
         action['inputs']['theta'] = -0.2
         print "COMMAND CAPTURED: turn right"  # DEBUG
+
+    def on_stop_moving(self):
+        print "COMMAND CAPTURED: stop moving"  # DEBUG
