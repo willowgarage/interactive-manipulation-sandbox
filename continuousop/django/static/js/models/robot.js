@@ -519,36 +519,46 @@ function( Ember, DS, App, ROS, Action) {
     // Move the base using open-loop control
 
     moveForward: function() {
+      var _this = this;
       this.set('progress_update', 'Moving forward');
 
       // Send the action to the server.
       console.log('Sending NavigateToPose action to the server.');
-      MyApp.socket.emit('move forward');
+      MyApp.socket.emit('move forward').once('robot stopped', function() {
+        _this.set('progress_update', '');
+      });
     },
     moveBack: function() {
+      var _this = this;
       this.set('progress_update', 'Moving backward');
 
       // Send the action to the server.
       console.log('Sending NavigateToPose action to the server.');
-      MyApp.socket.emit('move back');
+      MyApp.socket.emit('move back').once('robot stopped', function() {
+        _this.set('progress_update', '');
+      });
     },
     turnLeft: function() {
+      var _this = this;
       this.set('progress_update', 'Turning left');
 
       // Send the action to the server.
       console.log('Sending NavigateToPose action to the server.');
-      MyApp.socket.emit('turn left');
+      MyApp.socket.emit('turn left').once('robot stopped', function() {
+        _this.set('progress_update', '');
+      });
     },
     turnRight: function() {
+      var _this = this;
       this.set('progress_update', 'Turning right');
 
       // Send the action to the server.
       console.log('Sending NavigateToPose action to the server.');
-      MyApp.socket.emit('turn right');
+      MyApp.socket.emit('turn right').once('robot stopped', function() {
+        _this.set('progress_update', '');
+      });
     },
-
     stopMoving: function () {
-      this.set('progress_update', '');
       console.log('Stop NavigateToPose motion, send to the server.');
       MyApp.socket.emit('stop moving');
     },
