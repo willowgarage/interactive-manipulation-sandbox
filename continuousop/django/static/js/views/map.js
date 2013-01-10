@@ -198,8 +198,8 @@ define([
 
         // Populate the "Selected location" text field
         d3.select('#placename').text(d.get('name'));
-        // Store this place id in our controller
-        _this.get('controller').set('placeId', d.get('id'));
+        // Set the selected place in the controller
+        _this.get('controller').set('selectedPlace', d);
       }
 
       /* Draw Rooms */

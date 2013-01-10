@@ -130,11 +130,8 @@ function(
           },
 
           navigateTo: function( router, context) {
-            var navigatingContext = {
-              place_id: router.get('mapController').get('placeId'),
-              robot_id: router.get('robotController').get('content').get('id')
-            };
-            Ember.Route.transitionTo('navigating')(router,navigatingContext);
+            place = router.get('mapController').get('selectedPlace');
+            Ember.Route.transitionTo('navigating')(router,place);
           }
         }),
 
@@ -161,13 +158,13 @@ function(
         }),
 
         navigating: Ember.Route.extend({
-          route: '/navigating/:place_id',
+          route: '/navigating/:id',
 
           connectOutlets: function(router, context) {
-            console.log( "place id: " + context.place_id);
-            console.dir( context);
+            console.log('navigating.connectOutlets: ', context);
+
             var robot =  router.get('robotController').get('content');
-            var place = App.Place.find(context.place_id);
+            var place = App.Place.find(context.id);
 
             router.get('robotController').
               connectOutlet('main', 'navigating', Ember.Object.create({
@@ -186,15 +183,7 @@ function(
               }));
 
             // Send the robot the actual navigateTo command via ROS
-            //robot.navigateTo( place);
-          },
-
-          serialize: function( router, context) {
-            return { 'place_id': context.place_id };
-          },
-
-          deserialize: function( router, context) {
-            return { 'place_id': context['place_id'] };
+            robot.navigateTo( place);
           },
 
           cancelAllGoals: function(router) {
