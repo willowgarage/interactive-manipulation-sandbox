@@ -164,6 +164,8 @@ function(
           route: '/navigating/:place_id',
 
           connectOutlets: function(router, context) {
+            console.log( "place id: " + context.place_id);
+            console.dir( context);
             var robot =  router.get('robotController').get('content');
             var place = App.Place.find(context.place_id);
 
@@ -184,7 +186,15 @@ function(
               }));
 
             // Send the robot the actual navigateTo command via ROS
-            robot.navigateTo( place);
+            //robot.navigateTo( place);
+          },
+
+          serialize: function( router, context) {
+            return { 'place_id': context.place_id };
+          },
+
+          deserialize: function( router, context) {
+            return { 'place_id': context['place_id'] };
           },
 
           cancelAllGoals: function(router) {
