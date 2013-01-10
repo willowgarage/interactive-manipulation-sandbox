@@ -1,0 +1,26 @@
+---
+
+- name: supervisor installation
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - name: install supervisor
+      action: pip name=supervisor state=present
+
+    - name: ensure supervisor directory
+      action: file dest=/etc/supervisor state=directory
+
+    - name: create supervisord config
+      action: template src=../supervisor/supervisord.conf dest=/etc/supervisord.conf
+
+    - name: create supervisord init script
+      action: template src=../supervisor/supervisord.sh dest=/etc/init.d/supervisord mode=0755
+
+    - name: start supervisord service and have it run during system startup
+      action: service name=supervisord state=started enabled=yes
+
+  handlers:
+    - include: supervisor_handlers.yml
+
