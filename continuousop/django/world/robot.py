@@ -20,7 +20,7 @@ class TestPublisher:
         logger.debug('Mock Publisher -- publishing to %s.' % self.name)
 
 
-Publisher = TestPublisher
+Publisher = rospy.Publisher  # TestPublisher
 
 
 ###############################################################################
@@ -35,6 +35,7 @@ class RobotRunner(Thread):
         super(RobotRunner, self).__init__(*args, **kwargs)
         self.p = publisher
         self.twist = twist
+        self.moving = False
 
     def run(self):
         self.moving = True
@@ -48,10 +49,6 @@ class RobotProxy:
     MOVE_LINEAR_FACTOR = 1.0
     MOVE_ANGULAR_FACTOR = 2.0
 
-    SPEED_LIMITS = (1.0, 3.0)
-
-    TOPIC = '/prl/base_controller/command'
-
     MOTIONS = {
         'move forward': lambda speed: Twist(linear=Vector3(
             RobotProxy.MOVE_LINEAR_FACTOR * speed, 0, 0)),
@@ -62,6 +59,10 @@ class RobotProxy:
         'turn right': lambda speed: Twist(angular=Vector3(
             0, 0, -1.0 * RobotProxy.MOVE_ANGULAR_FACTOR * speed)),
     }
+
+    SPEED_LIMITS = (1.0, 3.0)
+
+    TOPIC = '/base_controller/command'  # ADD BACK THE '/prl' PREFIX
 
     def __init__(self, speed=2.0):
         # Reuse the publisher by all threads, since it takes a while.
