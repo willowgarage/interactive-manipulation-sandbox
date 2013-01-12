@@ -1,0 +1,19 @@
+---
+
+- include: ../nodejs/setup.yml
+- include: ../supervisor/setup.yml
+
+- name: set up hubot
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - include: tasks/setup.yml
+
+  handlers:
+    - include: ../supervisor/handlers/main.yml
+
