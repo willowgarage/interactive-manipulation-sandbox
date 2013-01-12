@@ -3,6 +3,6 @@
 - name: update apt
   action: command /usr/bin/apt-get update
 
-- name: install system requirements for MySQL DB.
+- name: install mysqldb client
   action: apt pkg=libmysqlclient-dev state=present
 
