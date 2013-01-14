@@ -1,7 +1,7 @@
 ---
 
 - name: set up node.js
-  hosts: webservers
+  hosts: irc
   user: vagrant
   sudo: True
 

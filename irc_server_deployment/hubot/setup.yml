@@ -4,7 +4,7 @@
 - include: ../supervisor/setup.yml
 
 - name: set up hubot
-  hosts: webservers
+  hosts: irc
   user: vagrant
   sudo: True
 
