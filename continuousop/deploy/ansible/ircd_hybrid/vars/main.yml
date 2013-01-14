@@ -1,0 +1,12 @@
+---
+
+irc_server_name: ircd_hybrid_server
+irc_server_port: 6667
+irc_server_description: irc server
+irc_server_max_clients: 512
+irc_server_network_name: network
+irc_server_network_description: i am a network short and stout
+irc_server_admin_name: Ms. Admin
+irc_server_admin_description: Main Server Administrator
+irc_server_admin_email: <msadmin@example.com>
+irc_server_operator_password: password
