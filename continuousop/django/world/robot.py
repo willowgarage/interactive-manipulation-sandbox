@@ -40,11 +40,12 @@ class RobotRunner(Thread):
     def run(self):
         self.moving = True
         while self.moving:
+            logger.debug(' -- --- ---- PUBLISHING!!!')
             self.p.publish(self.twist)
             rospy.sleep(RobotRunner.SLEEP_INTERVAL)
 
 
-class RobotProxy:
+class RobotProxy(object):
 
     MOVE_LINEAR_FACTOR = 1.0
     MOVE_ANGULAR_FACTOR = 2.0
@@ -62,7 +63,7 @@ class RobotProxy:
 
     SPEED_LIMITS = (1.0, 3.0)
 
-    TOPIC = '/base_controller/command'  # ADD BACK THE '/prl' PREFIX
+    TOPIC = 'base_controller/command'  # DEBUG: ADD BACK THE '/prl' PREFIX
 
     def __init__(self, speed=2.0):
         # Reuse the publisher by all threads, since it takes a while.
@@ -103,8 +104,15 @@ class RobotProxy:
         """
         if self.robot.moving:
             logger.debug("...stopping the robot...")
+
+            # kill running move-thread.
             self.robot.moving = False
             rospy.sleep(RobotRunner.SLEEP_INTERVAL)
+
+            # Send a "stop" twist to the robot.
+            stop_twist = Twist()
+            self._publisher.publish(stop_twist)
+
         if callable(callback):
             callback()
 
@@ -118,7 +126,7 @@ class RobotProxy:
         """
         if self.robot.is_alive():
             # The robot is still moving. Wait and retry.
-            self.robot.moving = False
+            self.stop_moving()
             rospy.sleep(RobotRunner.SLEEP_INTERVAL)
             if self.robot.is_alive:
                 # wtf...

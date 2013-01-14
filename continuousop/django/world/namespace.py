@@ -1,25 +1,30 @@
 from socketio.namespace import BaseNamespace
 from sockets.health_monitor import HealthMonitorMixin
-from robot import RobotProxy
+
+# from robotproxy import RobotProxy  # thread based ROS package
+from robot import RobotProxy  # thread based module
+# from robot_greenlet import RobotProxy  # greenlet based module
 
 import logging
-logger = logging.getLogger('robot')
+# logger = logging.getLogger('robot')
+logging.basicConfig()
+logger = logging.getLogger('rospy.internal')
 
 
 class Namespace(BaseNamespace, HealthMonitorMixin):
-
     # The namespace to expose to socket.io client code.
     namespace = '/robot'
 
-    def initialize(self):
-        self.robot = RobotProxy()
+    robot = RobotProxy()
 
     def recv_disconnect(self):
         if self.robot.moving:
+            logger.debug('NAMESPACE: stopping the robot.')
             self.robot.stop_moving()
 
     def robot_stopped_moving(self):
         """Inform the client the robot has stoped moving."""
+        logger.debug("NAMESPACE: the robot has stopped moving.")
         self.emit('robot stopped')
 
     # The following five events correspond to the NavigateToPose actions.
