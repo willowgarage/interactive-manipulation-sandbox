@@ -1,1 +1,1 @@
-["redis-brain.coffee", "tweet.coffee", "shipit.coffee", "git-help", "github-pulls", "hackernews", "hangman", "haters", "history", "iced-coffee-weather", "javascript-sandbox", "jenkins", "kittens", "remind", "robot-memes", "tell", "which-do-you-prefer", "whos-turn", "yoda-quotes", "wunderground", "xkcd"]
+{{ hubot_scripts }}

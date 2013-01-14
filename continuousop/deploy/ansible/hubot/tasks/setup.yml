@@ -21,7 +21,7 @@
 - name: create supervisor config
   action: template src=templates/supervisor.ini dest=/etc/supervisor/hubot.ini
 
-# This should be a notify under "create supervisor config", but wasn't working.
+# This should be a notify call under "create supervisor config", but wasn't working.
 - name: restart supervisor
   action: service name=supervisord state=restarted
 
