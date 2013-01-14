@@ -7,7 +7,7 @@
 - name: update apt
   action: command /usr/bin/apt-get update
 
-- name: install python-software-properties
+- name: install python tools
   action: apt pkg=$item state=present
   with_items:
     - python-software-properties
