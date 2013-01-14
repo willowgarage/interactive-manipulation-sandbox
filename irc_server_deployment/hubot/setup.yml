@@ -8,9 +8,6 @@
   user: vagrant
   sudo: True
 
-  vars_files:
-    - vars/main.yml
-
   tasks:
     - include: tasks/setup.yml
 

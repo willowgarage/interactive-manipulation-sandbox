@@ -6,7 +6,7 @@
   sudo: True
 
   vars_files:
-    - include: vars/main.yml
+    - vars/main.yml
 
 - include: ../ircd_hybrid/setup.yml
 - include: ../hubot/setup.yml

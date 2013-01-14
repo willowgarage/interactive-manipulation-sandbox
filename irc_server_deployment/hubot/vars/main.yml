@@ -1,5 +1,0 @@
----
-
-hubot_directory: /opt/hubot
-hubot_name: hubot
-hubot_scripts: ["shipit.coffee"]

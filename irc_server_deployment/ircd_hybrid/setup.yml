@@ -5,9 +5,6 @@
   user: vagrant
   sudo: True
 
-  vars_files:
-    - include: vars/main.yml
-
   tasks:
     - include: tasks/setup.yml
 
