@@ -5,6 +5,7 @@ build
 *.swp
 .vagrant
 msg_gen
+continuousop/gunicorn.conf.py
 continuousop/django/server.db
 continuousop/django/server/local_settings.py
 continuousop/django/server.*.db

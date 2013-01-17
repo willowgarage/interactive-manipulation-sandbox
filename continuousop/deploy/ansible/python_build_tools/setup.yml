@@ -1,8 +1,6 @@
 ---
 
-- include: ../python_build_tools/setup.yml
-
-- name: set up django
+- name: install python build tools
   hosts: webservers
   user: vagrant
   sudo: True
