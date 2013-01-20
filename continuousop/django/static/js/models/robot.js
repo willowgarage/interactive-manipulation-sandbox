@@ -204,12 +204,12 @@ function( Ember, DS, App, ROS, Action) {
           // Subscribe to pose messages
           _this.topic_pose = new _this.ros.Topic({
             name: '/robot_pose',
-            messageType: 'geometry_msgs/PoseWithCovarianceStamped'
+            messageType: 'geometry_msgs/Pose'
           });
           _this.topic_pose.subscribe(function(message) {
             _this.set('pose', {
-              'x' : message.pose.pose.position.x,
-              'y' : message.pose.pose.position.y
+              'x' : message.position.x,
+              'y' : message.position.y
               });
           });
           _this.ros.on('close',function() {
