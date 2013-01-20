@@ -111,7 +111,7 @@
   <node name="room_listener" pkg="world_listeners" type="room_listener">
     <param name="ns" value="$(arg robot_name)" />
   </node>
-  <node name="robot_listener" pkg="world_listeners" type="robot_listener">
+  <node name="robot_listener" pkg="world_listeners" type="robot_pose_listener">
     <param name="ns" value="$(arg robot_name)" />
   </node>
 </launch>
