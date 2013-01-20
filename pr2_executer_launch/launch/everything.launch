@@ -52,10 +52,10 @@
   </node>
 
   <!-- robot pose in map saver -->
-  <node pkg="smach_executer" type="localization_saver.py" name="localization_saver">
-    <param if="$(arg sim)" name="save_pose" value="false"/>
-    <param if="$(arg sim)" name="pose_file" value="$(find pr2_executer_launch)/config/initial_sim_pose.pck"/>
-  </node>
+  <!-- <node pkg="smach_executer" type="localization_saver.py" name="localization_saver"> -->
+    <!-- <param if="$(arg sim)" name="save_pose" value="false"/> -->
+    <!-- <param if="$(arg sim)" name="pose_file" value="$(find pr2_executer_launch)/config/initial_sim_pose.pck"/> -->
+  <!-- </node> -->
 
   <!-- run image_rotate for both forearm camera images -->
   <group unless="$(arg im)">
@@ -111,7 +111,7 @@
   <node name="room_listener" pkg="world_listeners" type="room_listener">
     <param name="ns" value="$(arg robot_name)" />
   </node>
-  <node name="robot_listener" pkg="world_listeners" type="robot_listener">
+  <node name="robot_listener" pkg="world_listeners" type="robot_pose_listener">
     <param name="ns" value="$(arg robot_name)" />
   </node>
 </launch>
