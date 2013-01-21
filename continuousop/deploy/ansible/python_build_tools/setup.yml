@@ -2,7 +2,6 @@
 
 - name: install python build tools
   hosts: webservers
-  user: vagrant
   sudo: True
 
   tasks:

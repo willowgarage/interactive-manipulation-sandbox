@@ -1,0 +1,18 @@
+---
+
+- include: ../continuousop/setup.yml
+
+- name: set up an instance of continuousop on babylon1
+  hosts: webservers
+  sudo: True
+
+  vars_files:
+    - ../continuousop/vars/main.yml
+    - vars/main.yml
+
+  tasks:
+    - include: tasks/setup.yml
+
+  handlers:
+    - include: ../continuousop/handlers/main.yml
+

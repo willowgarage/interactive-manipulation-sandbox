@@ -4,7 +4,6 @@
 
 - name: set up django
   hosts: webservers
-  user: vagrant
   sudo: True
 
   tasks:

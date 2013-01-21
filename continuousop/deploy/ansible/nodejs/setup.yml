@@ -2,7 +2,6 @@
 
 - name: set up node.js
   hosts: webservers
-  user: vagrant
   sudo: True
 
   tasks:
