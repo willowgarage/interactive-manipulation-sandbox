@@ -2,7 +2,6 @@
 
 - name: set up nginx
   hosts: webservers
-  user: vagrant
   sudo: True
 
   tasks:

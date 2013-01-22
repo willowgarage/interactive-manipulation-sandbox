@@ -3,6 +3,9 @@
 - name: update apt
   action: command /usr/bin/apt-get update
 
+- name: install python-software-properties¬
+  action: apt pkg=python-software-properties state=present
+
 - name: add nginx ppa
   action: apt_repository repo=ppa:nginx/stable state=present
 

@@ -14,13 +14,13 @@ module.exports = function(grunt) {
       }
     },
 
-    compress: {
+/*    compress: {
       zlib: {
         files: {
           '../../django/static/js/main.js.gz': '../../django/static/js/main-built.js'
         }
       }
-    },
+    }, */
 
     lint: {
       // Files to lint
@@ -81,9 +81,9 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-compress');
+//  grunt.loadNpmTasks('grunt-contrib-compress');
 
   grunt.registerTask('dev', 'lint');
-  grunt.registerTask('build', ['requirejs','compress']);
+  grunt.registerTask('build', ['requirejs']);
 };
 

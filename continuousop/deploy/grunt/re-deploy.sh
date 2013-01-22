@@ -82,9 +82,9 @@ runthis "cd'ing into the target directory" "cd ${APPDIR}"
 # Step 1:
 #
 # Kill the running server.
-runthis "Killing the server" "kill ${CURRENT_SERVER_PID}"
+# runthis "Killing the server" "kill ${CURRENT_SERVER_PID}"
 # TODO: Wait for server to die and make sure it's dead before continuing
-sleep 3
+# sleep 3
 
 ###
 # Step 2:
@@ -102,5 +102,5 @@ runthis "Dumping today's world' data." "mkdir -p ${DUMP_DIR}; ${PYTHON} manage.p
 # Step 4:
 #
 # Bring the server back up.
-runthis "Get the server back online" "run_server"
+# runthis "Get the server back online" "run_server"
 
