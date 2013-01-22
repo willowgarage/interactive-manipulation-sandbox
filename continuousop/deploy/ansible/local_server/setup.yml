@@ -1,19 +1,18 @@
 ---
 
+- name: pre-continuousop configuration
+  hosts: webservers
+  vars_files:
+    - vars/pre_continuousop.yml
+
 - include: ../continuousop/setup.yml
 
-- name: set up a local instance of continuousop
+- name: post-continuousop configuration
   hosts: webservers
   user: vagrant
   sudo: True
-
-  vars_files:
-    - ../continuousop/vars/main.yml
-    - vars/main.yml
-
   tasks:
-    - include: tasks/setup.yml
-
+    - include: tasks/post_continuousop.yml
   handlers:
     - include: ../continuousop/handlers/main.yml
 
