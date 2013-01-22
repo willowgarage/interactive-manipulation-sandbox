@@ -1,6 +1,6 @@
 ---
 
-- name: set up mysql
+- name: install python build tools
   hosts: webservers
   sudo: True
 

@@ -1,0 +1,19 @@
+---
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install python build tools
+  action: apt pkg=$item state=present
+  with_items:
+    - python-software-properties
+    - build-essential
+    - python-dev
+    - python-setuptools
+
+- name: install pip
+  action: easy_install name=pip
+
+- name: update easy_install packages
+  action: command /usr/bin/easy_install -U distribute
+

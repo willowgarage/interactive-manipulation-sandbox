@@ -11,5 +11,5 @@ fi
 JS_DIR=../../django/static/js
 cd ${JS_DIR}
 mv main.js main.src.js
-rm main-built.js
+mv main-built.js main.js
 cd -

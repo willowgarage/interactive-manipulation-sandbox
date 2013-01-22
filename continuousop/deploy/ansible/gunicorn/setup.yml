@@ -1,6 +1,8 @@
 ---
 
-- name: set up mysql
+- include: ../python_build_tools/setup.yml
+
+- name: set up nginx
   hosts: webservers
   sudo: True
 

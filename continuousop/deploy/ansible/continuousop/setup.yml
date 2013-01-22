@@ -5,20 +5,19 @@
 - include: ../developer_tools/setup.yml
 - include: ../mysql/setup.yml
 - include: ../django/setup.yml
+- include: ../nginx/setup.yml
+- include: ../gunicorn/setup.yml
 - include: ../supervisor/setup.yml
 
 - name: set up the continuousop app
   hosts: webservers
-  user: vagrant
   sudo: True
-
-  vars_files:
-    - vars/main.yml
 
   tasks:
     - include: tasks/setup.yml
 
   handlers:
     - include: ../supervisor/handlers/main.yml
+    - include: ../nginx/handlers/main.yml
     - include: handlers/main.yml
 

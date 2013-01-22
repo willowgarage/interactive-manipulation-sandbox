@@ -1,0 +1,5 @@
+---
+
+- name: link app code directory
+  action: file src=${app_code_dir} dest=${webapps_dir}/${app_name} state=link
+
