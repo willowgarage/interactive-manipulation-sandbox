@@ -1,4 +1,4 @@
-# This is the local_settings.py file for use with Vagrant.
+# This is the local_settings.py file for the Local server.
 
 DATABASES = {
     'default': {
