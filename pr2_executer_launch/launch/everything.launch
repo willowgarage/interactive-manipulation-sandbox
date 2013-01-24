@@ -17,9 +17,8 @@
   </include>
 
   <!-- rosbridge and mjpeg_server -->
-  <node name="rosbridge" pkg="rosbridge_server" type="rosbridge.py" >
-    <param name="port" value="9099"/>
-  </node>
+  <param name="/rosbridge/port" value="9099"/>
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
   <group if="$(arg http_streamer)">
@@ -50,12 +49,6 @@
   <!-- TF2 Web Republisher -->
   <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" output="screen">
   </node>
-
-  <!-- robot pose in map saver -->
-  <!-- <node pkg="smach_executer" type="localization_saver.py" name="localization_saver"> -->
-    <!-- <param if="$(arg sim)" name="save_pose" value="false"/> -->
-    <!-- <param if="$(arg sim)" name="pose_file" value="$(find pr2_executer_launch)/config/initial_sim_pose.pck"/> -->
-  <!-- </node> -->
 
   <!-- run image_rotate for both forearm camera images -->
   <group unless="$(arg im)">
