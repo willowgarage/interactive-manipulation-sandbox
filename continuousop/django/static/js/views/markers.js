@@ -10,8 +10,9 @@ define([
   'libs/interactivemarkersjs/threeinteraction',
   'libs/interactivemarkersjs/examples/include/helpers/RosAxisHelper',
   'libs/interactivemarkersjs/examples/include/helpers/RosOrbitControls',
+  'libs/depthcloudjs/depthcloud',
   'text!templates/markers.handlebars'
-], function(Ember, App, THREE, ROS, ImProxy, ImThree, TfClient, MarkersThree, ThreeInteraction, RosAxes, RosOrbit, markersHtml) {
+], function(Ember, App, THREE, ROS, ImProxy, ImThree, TfClient, MarkersThree, ThreeInteraction, RosAxes, RosOrbit, DepthCloud, markersHtml) {
 
   App.MarkersView = Ember.View.extend({
     template: Ember.Handlebars.compile(markersHtml),
@@ -107,15 +108,16 @@ define([
 
     subscribeToMarkers: function() {
       var robot = this.get('controller').get('content');
+      var scene = this.get('scene');
       var status_code = robot.get('status_code');
       if (status_code === 1) {
         // subscribe to tf updates
-        var tfClient = new TfClient( {
+        var tfClient = new TfClient({
           ros: robot.ros,
           fixedFrame: 'base_link',
           angularThres: 1.5,
           transThres: 0.01
-        } );
+        });
         // Show interactive markers
         var imClient = new ImProxy.Client(robot.ros,tfClient);
         // TODO: this should most definitely not be hardcoded to blh
@@ -123,6 +125,30 @@ define([
         var imViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), imClient, meshBaseUrl);
 
         imClient.subscribe('/pr2_marker_control');
+
+        var depthNode = new THREE.Object3D();
+        scene.add(depthNode);
+
+        var baseCameraUrl = robot.get('camera_base_url')
+        cloudStream = new DepthCloud.Viewer({
+          url : baseCameraUrl + '/streams/depth_color_combined.webm',
+          sceneNode : depthNode,
+          f : 525.0,
+          shaderUrl: '/static/js/libs/depthcloudjs/shaders/'
+        });
+        cloudStream.startStream();
+
+        tfClient.subscribe('head_mount_kinect_rgb_optical_frame',function(transform){
+          depthNode.position.x = transform.translation.x;
+          depthNode.position.y = transform.translation.y;
+          depthNode.position.z = transform.translation.z;
+          depthNode.useQuaternion = true;
+          depthNode.quaternion.x = transform.rotation.x;
+          depthNode.quaternion.y = transform.rotation.y;
+          depthNode.quaternion.z = transform.rotation.z;
+          depthNode.quaternion.w = transform.rotation.w;
+        });
+
         this.initialized = true;
       }
     },
