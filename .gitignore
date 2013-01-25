@@ -1,10 +1,19 @@
+# Build
 build
 *.pyc
+msg_gen
+
+# IDE (Eclipse, PyCharm, vim, ...)
 .project
 .settings
 *.swp
+.idea
+*.iml
+
+# Deployment
 .vagrant
-msg_gen
+
+# Config and log files
 continuousop/gunicorn.conf.py
 continuousop/django/server.db
 continuousop/django/server/local_settings.py
@@ -12,5 +21,8 @@ continuousop/django/server.*.db
 continuousop/django/world.*.json
 parser.out
 parsetab.py
-node_modules
 log
+
+# Node.js
+node_modules
+
