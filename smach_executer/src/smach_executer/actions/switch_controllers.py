@@ -81,6 +81,9 @@ class SwitchControllers(State):
             else:
                 rospy.logerr("switching joint to Cartesian failed")
                 return 'failed'
+            
+        # already in Cartesian mode
+        return 'succeeded'
 
 
     ##stops the Cartesian controllers, starts the joint ones (both need to be loaded already)
@@ -99,6 +102,9 @@ class SwitchControllers(State):
             else:
                 rospy.logerr("switching Cartesian to joint failed")
                 return 'failed'
+
+        # already in joint mode
+        return 'succeeded'
 
 
     def execute(self, userdata):

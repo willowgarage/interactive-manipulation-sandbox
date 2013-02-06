@@ -1,5 +1,5 @@
 '''
-Action for moving the arm to a set of joint angles
+Action for moving the arm to a set of joint angles (collision-aware, with motion planning)
 '''
 import rospy
 import actionlib
