@@ -1,5 +1,7 @@
 PICK UP 
 
+<div class="mybutton" {{action dockWithTable target="controller"}}>Dock with table</div><br>
+
 <div class="mybutton" {{action segmentAndRecognize target="controller"}}>Find objects</div><br>
 {{#if selected_object}}
   <div class="mybutton" {{action pickupObject target="controller"}}>Pick up object</div><br>
@@ -7,3 +9,4 @@ PICK UP
   <div class="mybutton disabled"}}>Pick up object</div><br>
 {{/if}}
 
+<div class="mybutton" {{action undockFromTable target="controller"}}>Undock from table</div><br>
