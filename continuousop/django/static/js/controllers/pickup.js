@@ -8,6 +8,16 @@ define([
     found_objects: [],
     selected_object: null,
 
+    dockWithTable: function() {
+      var robot = this.get('content');
+      robot.dockWithTable();
+    },
+
+    undockFromTable: function() {
+      var robot = this.get('content');
+      robot.undockFromTable();
+    },
+
     segmentAndRecognize: function() {
       var robot = this.get('content');
       robot.segmentAndRecognize();
