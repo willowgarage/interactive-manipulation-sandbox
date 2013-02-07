@@ -714,6 +714,9 @@ function( Ember, DS, App, ROS, Action) {
 
     // ----------------------------------------------------------------------
     // Docking and undocking from a table
+
+    // Meta: we should be using the CPU in the mid-tier to sequence smach actions together, rather than
+    // doing it in the browser like I've done here
     dockWithTable: function() {
       // First move the arms aside
       this.set('progress_update', 'Untucking arms');
@@ -821,8 +824,88 @@ function( Ember, DS, App, ROS, Action) {
     },
 
     undockFromTable: function() {
-      // Unimplemented
+      // First move backwards a bit
+      this.set('progress_update', 'Moving backwards');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+      action.inputs.frame_id = '/base_footprint';
+      action.inputs.x = -0.20;
+      action.inputs.y = 0;
+      action.inputs.theta = 0;
+      action.inputs.collision_aware = false;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from NavigateToPose:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Move backwards successful');
+          _this._undockFromTable2();
+        } else {
+          _this.set('progress_update', 'Move backwards failed');
+        }
+      });
+      action.execute();
     },
+
+    _undockFromTable2: function() {
+      // Then move the torso back down
+      this.set('progress_update', 'Lowering torso');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveTorso'
+      });
+      action.inputs.position = 0;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from MoveTorso:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Torso lowered successfully');
+          _this._undockFromTable3();
+        } else {
+          _this.set('progress_update', 'Torso lowering failed');
+        }
+      });
+      action.execute();
+    },
+
+    _undockFromTable3: function() {
+      // Then tuck the arms
+      this.set('progress_update', 'Tucking arms');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      });
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from TuckArms:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Arms tucked successfully');
+          _this._pointHeadForward(function() {
+            _this._undockFromTable4();
+          });
+        } else {
+          _this.set('progress_update', 'Failed to tuck arms');
+        }
+      });
+      action.execute();
+    },
+
+    _undockFromTable4: function() {
+      this.set('progress_update', 'Undocked from table');
+    },
+
 
     // ----------------------------------------------------------------------
     // Stop everything now!
