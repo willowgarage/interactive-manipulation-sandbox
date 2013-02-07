@@ -1,4 +1,4 @@
 ---
 
 - name: install gunicorn
-  action: pip name=gunicorn state=present
+  action: pip name=gunicorn version=0.16.1 state=present
