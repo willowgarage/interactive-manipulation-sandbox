@@ -859,7 +859,7 @@ function( Ember, DS, App, ROS, Action) {
         ros: this.ros,
         name: 'MoveTorso'
       });
-      action.inputs.position = 0;
+      action.inputs.position = 0.0125;
 
       var _this = this;
       action.on('result', function(result) {
