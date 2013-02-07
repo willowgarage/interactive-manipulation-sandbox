@@ -746,33 +746,55 @@ function( Ember, DS, App, ROS, Action) {
 
     _dockWithTable2: function() {
       // Next move the arms to the side
-      this.set('progress_update', 'Moving arms to side');
+      this.set('progress_update', 'Moving right arm to side');
 
       var action = new Action({
         ros: this.ros,
-        name: 'MoveArmsToJointAngle'
+        name: 'MoveArmToJoint'
       });
-      // TBD, this function hasn't been implemented yet
-      action.inputs.arg1 = false;
-      action.inputs.arg2 = false;
+      action.inputs.arm_angles = [-2.135, -0.02, -1.64, -2.07, -1.64, -1.680, 1.398];
+      action.inputs.arm = 'right';
 
       var _this = this;
       action.on('result', function(result) {
-        console.log('Result from MoveArmsToJointAngle:', result);
+        console.log('Result from MoveArmToJoint:', result);
         if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', 'Arm movement successful');
           _this._dockWithTable3();
         } else {
-          _this.set('progress_update', 'Failed to move arms to side');
+          _this.set('progress_update', 'Failed to move right arm to side');
         }
       });
-      // Not implemented yet
-      // action.execute();
-      this._dockWithTable3();
+      action.execute();
     },
 
     _dockWithTable3: function() {
+      // Next move the arms to the side
+      this.set('progress_update', 'Moving left arm to side');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveArmToJoint'
+      });
+      action.inputs.arm_angles =  [ 2.135, -0.02,  1.64, -2.07,  1.64, -1.680, 1.398];
+      action.inputs.arm = 'left';
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from MoveArmToJoint:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Arm movement successful');
+          _this._dockWithTable4();
+        } else {
+          _this.set('progress_update', 'Failed to move left arm to side');
+        }
+      });
+      action.execute();
+    },
+
+    _dockWithTable4: function() {
       // Then MoveTorso all the awy up
       this.set('progress_update', 'Raising torso');
 
@@ -788,7 +810,7 @@ function( Ember, DS, App, ROS, Action) {
         if (result.outcome === 'succeeded') {
           // It worked!
           _this.set('progress_update', 'Torso move successful');
-          _this._dockWithTable4();
+          _this._dockWithTable5();
         } else {
           _this.set('progress_update', 'Failed to move torso');
         }
@@ -796,7 +818,7 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
     },
 
-    _dockWithTable4: function() {
+    _dockWithTable5: function() {
       // Finally move forward a bit
       this.set('progress_update', 'Moving forwards');
 
