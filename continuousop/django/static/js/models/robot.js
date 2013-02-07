@@ -18,9 +18,6 @@ function( Ember, DS, App, ROS, Action) {
     camera_base_url: DS.attr('string'),
     cameras: DS.attr('string'),
 
-    // TL: used for testing the Pickup tab without having to do a full segment_and_recognize
-    test_objects: {'0':{'xmin':0.34422243192144925,'ymin':0.4637337219076444,'ymax':0.6817042037682622,'xmax':0.40844968855057406},'1':{'xmin':0.5093700733340171,'ymin':0.5337361612434626,'ymax':0.694115453916135,'xmax':0.5653736815220065},'2':{'xmin':0.6635228555365372,'ymin':0.6004678931372165,'ymax':0.7484530318871222,'xmax':0.725233314557502}},
-
     // Attributes for keeping track of which camera the user wants to look through
     selected_camera: null,
     selectedCameraIsHead: function() {
@@ -658,29 +655,6 @@ function( Ember, DS, App, ROS, Action) {
     },
 
     pickupObject: function(object_id) {
-      // First move the arms aside
-      this.set('progress_update', 'Moving arms aside');
-
-      var action = new Action({
-        ros: this.ros,
-        name: 'TuckArms'
-      });
-      action.inputs.tuck_left = false;
-      action.inputs.tuck_right = false;
-
-      var _this = this;
-      action.on('result', function(result) {
-        console.log('Result from TuckArms:', result);
-        if (result.outcome === 'succeeded') {
-          // It worked!
-          _this.set('progress_update', 'Arm movement successful');
-          _this._pickupObject2(object_id);
-        } else {
-          _this.set('progress_update', 'Failed to untuck arms');
-        }
-      });
-
-      action.execute();
     },
 
     _pickupObject2: function(object_id) {
@@ -737,6 +711,223 @@ function( Ember, DS, App, ROS, Action) {
       console.log('Sending action InteractiveGripper with args', action.inputs);
       action.execute();
     },
+
+    // ----------------------------------------------------------------------
+    // Docking and undocking from a table
+
+    // Meta: we should be using the CPU in the mid-tier to sequence smach actions together, rather than
+    // doing it in the browser like I've done here
+    dockWithTable: function() {
+      // First move the arms aside
+      this.set('progress_update', 'Untucking arms');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      });
+      action.inputs.tuck_left = false;
+      action.inputs.tuck_right = false;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from TuckArms:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Arm movement successful');
+          _this._dockWithTable2();
+        } else {
+          _this.set('progress_update', 'Failed to untuck arms');
+        }
+      });
+
+      action.execute();
+
+    },
+
+    _dockWithTable2: function() {
+      // Next move the arms to the side
+      this.set('progress_update', 'Moving right arm to side');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveArmToJoint'
+      });
+      action.inputs.arm_angles = [-2.135, -0.02, -1.64, -2.07, -1.64, -1.680, 1.398];
+      action.inputs.arm = 'right';
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from MoveArmToJoint:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Arm movement successful');
+          _this._dockWithTable3();
+        } else {
+          _this.set('progress_update', 'Failed to move right arm to side');
+        }
+      });
+      action.execute();
+    },
+
+    _dockWithTable3: function() {
+      // Next move the arms to the side
+      this.set('progress_update', 'Moving left arm to side');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveArmToJoint'
+      });
+      action.inputs.arm_angles =  [ 2.135, -0.02,  1.64, -2.07,  1.64, -1.680, 1.398];
+      action.inputs.arm = 'left';
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from MoveArmToJoint:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Arm movement successful');
+          _this._dockWithTable4();
+        } else {
+          _this.set('progress_update', 'Failed to move left arm to side');
+        }
+      });
+      action.execute();
+    },
+
+    _dockWithTable4: function() {
+      // Then MoveTorso all the awy up
+      this.set('progress_update', 'Raising torso');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveTorso'
+      });
+      action.inputs.position = 0.295;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from MoveTorso:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Torso move successful');
+          _this._dockWithTable5();
+        } else {
+          _this.set('progress_update', 'Failed to move torso');
+        }
+      });
+      action.execute();
+    },
+
+    _dockWithTable5: function() {
+      // Finally move forward a bit
+      this.set('progress_update', 'Moving forwards');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+      action.inputs.frame_id = '/base_footprint';
+      action.inputs.x = 0.20;
+      action.inputs.y = 0;
+      action.inputs.theta = 0;
+      action.inputs.collision_aware = false;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from NavigateToPose:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Finished docking with table');
+        } else {
+          _this.set('progress_update', 'Failed to move torso');
+        }
+      });
+      action.execute();
+    },
+
+    undockFromTable: function() {
+      // First move backwards a bit
+      this.set('progress_update', 'Moving backwards');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'NavigateToPose'
+      });
+      action.inputs.frame_id = '/base_footprint';
+      action.inputs.x = -0.20;
+      action.inputs.y = 0;
+      action.inputs.theta = 0;
+      action.inputs.collision_aware = false;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from NavigateToPose:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Move backwards successful');
+          _this._undockFromTable2();
+        } else {
+          _this.set('progress_update', 'Move backwards failed');
+        }
+      });
+      action.execute();
+    },
+
+    _undockFromTable2: function() {
+      // Then move the torso back down
+      this.set('progress_update', 'Lowering torso');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'MoveTorso'
+      });
+      action.inputs.position = 0.0125;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from MoveTorso:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Torso lowered successfully');
+          _this._undockFromTable3();
+        } else {
+          _this.set('progress_update', 'Torso lowering failed');
+        }
+      });
+      action.execute();
+    },
+
+    _undockFromTable3: function() {
+      // Then tuck the arms
+      this.set('progress_update', 'Tucking arms');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'TuckArms'
+      });
+      action.inputs.tuck_left = true;
+      action.inputs.tuck_right = true;
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from TuckArms:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Arms tucked successfully');
+          _this._pointHeadForward(function() {
+            _this._undockFromTable4();
+          });
+        } else {
+          _this.set('progress_update', 'Failed to tuck arms');
+        }
+      });
+      action.execute();
+    },
+
+    _undockFromTable4: function() {
+      this.set('progress_update', 'Undocked from table');
+    },
+
 
     // ----------------------------------------------------------------------
     // Stop everything now!
