@@ -1,0 +1,30 @@
+---
+
+- name: local server configuration
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars:
+    - webapps_dir: /opt
+    - app_name: continuousop
+    - http_port: 8000
+    - server_name: localhost
+    - gunicorn_port: 8888
+    - server_type: local
+
+  tasks:
+    - include: tasks/developer_tools.yml
+    - include: tasks/python_build_tools.yml
+    - include: tasks/mysql.yml
+    - include: tasks/django.yml
+    - include: tasks/nginx.yml
+    - include: tasks/gunicorn.yml
+    - include: tasks/supervisor.yml
+    - include: tasks/continuousop.yml
+
+  handlers:
+    - include: handlers/supervisor.yml
+    - include: handlers/nginx.yml
+    - include: handlers/continuousop.yml
+
