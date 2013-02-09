@@ -1,0 +1,35 @@
+---
+
+- name: dev server configuration
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars:
+    - webapps_dir: /opt
+    - app_name: continuousop_dev
+    - app_code_dir: /home/rwt/jenkins/interactive-manipulation-sandbox/continuousop
+    - http_port: 8001
+    - server_name: babylon1
+    - gunicorn_port: 8889
+    - server_type: dev
+
+  tasks:
+    - name: link app code directory
+      action: file src=${app_code_dir} dest=${webapps_dir}/${app_name} state=link
+
+    - include: tasks/developer_tools.yml
+    - include: tasks/python_build_tools.yml
+    - include: tasks/mysql.yml
+    - include: tasks/django.yml
+    - include: tasks/nginx.yml
+    - include: tasks/gunicorn.yml
+    - include: tasks/supervisor.yml
+    - include: tasks/continuousop.yml
+
+
+  handlers:
+    - include: handlers/supervisor.yml
+    - include: handlers/nginx.yml
+    - include: handlers/continuousop.yml
+

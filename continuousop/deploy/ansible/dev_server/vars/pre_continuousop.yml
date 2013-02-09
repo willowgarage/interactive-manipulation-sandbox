@@ -1,9 +1,0 @@
----
-
-webapps_dir: /opt
-app_name: continuousop_dev
-app_code_dir: /home/rwt/jenkins/interactive-manipulation-sandbox/continuousop
-http_port: 8001
-server_name: babylon1
-gunicorn_port: 8889
-
