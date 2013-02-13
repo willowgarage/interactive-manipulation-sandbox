@@ -16,10 +16,9 @@
     <arg name="launch_kinect" value="$(arg launch_kinect)" />
   </include>
 
-  <!-- rosbridge and mjpeg_server -->
+  <!-- rosbridge -->
   <param name="/rosbridge/port" value="9099"/>
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
-  <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
 
   <group if="$(arg http_streamer)">
     <!-- http image topic video streamer -->
