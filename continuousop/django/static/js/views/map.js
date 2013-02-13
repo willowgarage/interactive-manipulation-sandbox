@@ -13,8 +13,10 @@ define([
     enableRobot: true,
 
     didInsertElement: function() {
-      var w = 480,
-        h = 374,
+/*      var w = 480,
+        h = 374, */
+        var w = 344,
+        h = 362,
         x = d3.scale.linear().domain([0, w]),
         y = d3.scale.ordinal().domain([0, h]);
 
@@ -23,8 +25,9 @@ define([
         .attr('height', h)
         .attr('id', 'mapsvg');
 
+/*         .attr('xlink:href', '/static/img/willow-floorplan.png') */
       svg.append('svg:image')
-        .attr('xlink:href', '/static/img/willow-floorplan.png')
+        .attr('xlink:href', '/static/img/creativa.ttb2.floorplan.png')
         .attr('width', w)
         .attr('height', h);
 
