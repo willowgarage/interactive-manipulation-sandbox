@@ -1,6 +1,5 @@
 from socketio.namespace import BaseNamespace
 import json
-from sockets.health_monitor import HealthMonitorMixin
 
 # These global hashes are used to keep track of users in contexts
 context_by_sessid = {}
@@ -42,7 +41,7 @@ def make_user( user):
             'last_name': user.last_name
         }
 
-class Namespace(BaseNamespace, HealthMonitorMixin):
+class Namespace(BaseNamespace):
 
     # The namespace to expose to socket.io client code.
     namespace = '/client'
