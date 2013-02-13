@@ -11,6 +11,8 @@
   <depend package="rosgraph"/>
   <depend package="rostopic"/>
 
+  <rosdep name="python-zmq"/>
+
 </package>
 
 
