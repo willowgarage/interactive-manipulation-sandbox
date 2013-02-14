@@ -47,14 +47,14 @@ class RobotRunner(Thread):
 
 class RobotProxy(object):
 
-    MOVE_LINEAR_FACTOR = 1.0
-    MOVE_ANGULAR_FACTOR = 2.0
+    MOVE_LINEAR_FACTOR = 0.15
+    MOVE_ANGULAR_FACTOR = 0.5
 
     MOTIONS = {
         'move forward': lambda speed: Twist(linear=Vector3(
             RobotProxy.MOVE_LINEAR_FACTOR * speed, 0, 0)),
         'move back': lambda speed: Twist(linear=Vector3(
-            0, -1.0 * RobotProxy.MOVE_LINEAR_FACTOR * speed, 0)),
+            -1.0 * RobotProxy.MOVE_LINEAR_FACTOR * speed, 0, 0)),
         'turn left': lambda speed: Twist(angular=Vector3(
             0, 0, RobotProxy.MOVE_ANGULAR_FACTOR * speed)),
         'turn right': lambda speed: Twist(angular=Vector3(
@@ -63,7 +63,7 @@ class RobotProxy(object):
 
     SPEED_LIMITS = (1.0, 3.0)
 
-    # TOPIC = 'base_controller/command'  # DEBUG: ADD BACK THE '/prl' PREFIX
+    # Turtlebot2's specific topic.
     TOPIC = '/cmd_vel_mux/input/teleop'
 
     def __init__(self, speed=2.0):
