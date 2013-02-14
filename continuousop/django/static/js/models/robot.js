@@ -207,13 +207,14 @@ function( Ember, DS, App, ROS, Action) {
 
           // Subscribe to pose messages
           _this.topic_pose = new _this.ros.Topic({
-            name: '/robot_pose',
-            messageType: 'geometry_msgs/Pose'
+            name: '/amcl_pose',
+            messageType: 'geometry_msgs/PoseWithCovarianceStamped'
           });
           _this.topic_pose.subscribe(function(message) {
+            console.log("Pose message received:", message);
             _this.set('pose', {
-              'x' : message.position.x,
-              'y' : message.position.y
+              'x' : message.pose.pose.position.x,
+              'y' : message.pose.pose.position.y
               });
           });
           _this.ros.on('close',function() {
@@ -244,19 +245,26 @@ function( Ember, DS, App, ROS, Action) {
     reset_motors: function(ev) {
       // ros.Service provides an interface to calling ROS services.
       // Creates a rospy_tutorials/AddTwoInts service client named /add_two_ints.
-      var reset_motors = new this.ros.Service({
-        name        : '/pr2_etherCAT/reset_motors',
-        serviceType : 'std_srvs/Empty'
+//      var reset_motors = new this.ros.Service({
+//        name        : '/pr2_etherCAT/reset_motors',
+//        serviceType : 'std_srvs/Empty'
+//      });
+
+      var reset_motors = new this.ros.Topic({
+        name        : '/mobile_base/commands/motor_power',
+        messageType : 'kobuki_msgs/MotorPower'
       });
 
-      // ros.ServiceRequest contains the data to send in the service call.
-      var request = new this.ros.ServiceRequest();
 
       console.log('Sending reset_motors service call');
+      reset_motors.publish({'state': 1});
+
+      /*
       reset_motors.callService(request, function(result) {
         // Callback when it finishes
         console.log('Result for reset_motors call:', result);
       });
+      */
     },
 
 
