@@ -63,7 +63,8 @@ class RobotProxy(object):
 
     SPEED_LIMITS = (1.0, 3.0)
 
-    TOPIC = 'base_controller/command'  # DEBUG: ADD BACK THE '/prl' PREFIX
+    # TOPIC = 'base_controller/command'  # DEBUG: ADD BACK THE '/prl' PREFIX
+    TOPIC = '/cmd_vel_mux/input/teleop'
 
     def __init__(self, speed=2.0):
         # Reuse the publisher by all threads, since it takes a while.
