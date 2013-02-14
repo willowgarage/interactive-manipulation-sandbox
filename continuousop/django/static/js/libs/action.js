@@ -17,8 +17,8 @@
 
       action.actionClient = new ActionClient({
         ros        : action.ros,
-        actionName : 'executer_actions/ExecuteAction',
-        serverName : '/executer/execute'
+        actionName : 'task_msgs/ExecuteAction',
+        serverName : '/task_manager/execute'
       });
 
       var data = {
@@ -59,8 +59,8 @@
     action.cancelAll = function() {
       var actionClient = new ActionClient({
         ros         : action.ros,
-        actionName : 'executer_actions/ExecuteAction',
-        serverName : '/executer/execute'
+        actionName : 'task_msgs/ExecuteAction',
+        serverName : '/task_manager/execute'
       });
 
       actionClient.cancel();

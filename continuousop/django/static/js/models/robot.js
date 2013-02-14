@@ -207,13 +207,14 @@ function( Ember, DS, App, ROS, Action) {
 
           // Subscribe to pose messages
           _this.topic_pose = new _this.ros.Topic({
-            name: '/robot_pose',
-            messageType: 'geometry_msgs/Pose'
+            name: '/amcl_pose',
+            messageType: 'geometry_msgs/PoseWithCovarianceStamped'
           });
           _this.topic_pose.subscribe(function(message) {
+            console.log("Pose message received:", message);
             _this.set('pose', {
-              'x' : message.position.x,
-              'y' : message.position.y
+              'x' : message.pose.pose.position.x,
+              'y' : message.pose.pose.position.y
               });
           });
           _this.ros.on('close',function() {
@@ -244,19 +245,26 @@ function( Ember, DS, App, ROS, Action) {
     reset_motors: function(ev) {
       // ros.Service provides an interface to calling ROS services.
       // Creates a rospy_tutorials/AddTwoInts service client named /add_two_ints.
-      var reset_motors = new this.ros.Service({
-        name        : '/pr2_etherCAT/reset_motors',
-        serviceType : 'std_srvs/Empty'
+//      var reset_motors = new this.ros.Service({
+//        name        : '/pr2_etherCAT/reset_motors',
+//        serviceType : 'std_srvs/Empty'
+//      });
+
+      var reset_motors = new this.ros.Topic({
+        name        : '/mobile_base/commands/motor_power',
+        messageType : 'kobuki_msgs/MotorPower'
       });
 
-      // ros.ServiceRequest contains the data to send in the service call.
-      var request = new this.ros.ServiceRequest();
 
       console.log('Sending reset_motors service call');
+      reset_motors.publish({'state': 1});
+
+      /*
       reset_motors.callService(request, function(result) {
         // Callback when it finishes
         console.log('Result for reset_motors call:', result);
       });
+      */
     },
 
 
@@ -265,6 +273,7 @@ function( Ember, DS, App, ROS, Action) {
 
     navigateTo: function(place) {
       // Sanity checks to make sure we are navigating to a reasonable place
+      /*
       if (!place.get('pose_x') || !place.get('pose_y')) {
         this.set('progress_update', 'Invalid navigation coordinates');
         // Redirect to navigate view. We probably got here because the user
@@ -272,55 +281,27 @@ function( Ember, DS, App, ROS, Action) {
         App.get('router').send('navigate', this);
         return;
       }
+      */
 
       // Make sure we aren't plugged in first
+      /*
       if (this.get('plugged_in')) {
         this.set('progress_update', 'Please unplug before navigating');
         return;
       }
+      */
 
-      // First tuck arms before navigating
-      this.set('progress_update', 'Tucking arms...');
-
-      var action = new Action({
-        ros: this.ros,
-        name: 'TuckArms'
-      });
-      action.inputs.tuck_left = true;
-      action.inputs.tuck_right = true;
-
-      var _this = this;
-      action.on('result', function(result) {
-        console.log('Received result from tucking arms: ', result);
-        _this.set('progress_update', 'Tucking arms ' + result.outcome);
-        if (result.outcome === 'succeeded') {
-          // Tuckarms worked, now go
-          _this._pointHeadForward(function() {
-            _this._navigateTo2(place);
-          });
-        } else {
-          _this.set('progress_update', 'Arms not tucked, navigating anyway');
-        }
-      });
-
-      console.log('Sending TuckArm action');
-      action.inputs.tuck_left = true;
-      action.inputs.tuck_right = true;
-      console.log('Sending TuckArm action');
-      action.execute();
-    },
-
-    _navigateTo2: function(place) {
+      // Navigate to pose
       this.set('progress_update', 'Navigating to ' + place.get('name'));
       var action = new Action({
         ros: this.ros,
-        name: 'NavigateToPose'
+        name: 'turtlebin/NavigateToPose'
       });
 
       // Get notified when navigation finishes
       var _this = this;
       action.on('result', function(result) {
-        console.log('navigation result: ' + result.outcome);
+        console.log('navigation result: ' + result);
         _this.set('progress_update', 'Navigation ' + result.outcome);
         // Return to navigation view
         App.get('router').send('navigate', _this);
