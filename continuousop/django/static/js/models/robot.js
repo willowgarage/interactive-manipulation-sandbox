@@ -273,6 +273,7 @@ function( Ember, DS, App, ROS, Action) {
 
     navigateTo: function(place) {
       // Sanity checks to make sure we are navigating to a reasonable place
+      /*
       if (!place.get('pose_x') || !place.get('pose_y')) {
         this.set('progress_update', 'Invalid navigation coordinates');
         // Redirect to navigate view. We probably got here because the user
@@ -280,55 +281,27 @@ function( Ember, DS, App, ROS, Action) {
         App.get('router').send('navigate', this);
         return;
       }
+      */
 
       // Make sure we aren't plugged in first
+      /*
       if (this.get('plugged_in')) {
         this.set('progress_update', 'Please unplug before navigating');
         return;
       }
+      */
 
-      // First tuck arms before navigating
-      this.set('progress_update', 'Tucking arms...');
-
-      var action = new Action({
-        ros: this.ros,
-        name: 'TuckArms'
-      });
-      action.inputs.tuck_left = true;
-      action.inputs.tuck_right = true;
-
-      var _this = this;
-      action.on('result', function(result) {
-        console.log('Received result from tucking arms: ', result);
-        _this.set('progress_update', 'Tucking arms ' + result.outcome);
-        if (result.outcome === 'succeeded') {
-          // Tuckarms worked, now go
-          _this._pointHeadForward(function() {
-            _this._navigateTo2(place);
-          });
-        } else {
-          _this.set('progress_update', 'Arms not tucked, navigating anyway');
-        }
-      });
-
-      console.log('Sending TuckArm action');
-      action.inputs.tuck_left = true;
-      action.inputs.tuck_right = true;
-      console.log('Sending TuckArm action');
-      action.execute();
-    },
-
-    _navigateTo2: function(place) {
+      // Navigate to pose
       this.set('progress_update', 'Navigating to ' + place.get('name'));
       var action = new Action({
         ros: this.ros,
-        name: 'NavigateToPose'
+        name: 'turtlebin/NavigateToPose'
       });
 
       // Get notified when navigation finishes
       var _this = this;
       action.on('result', function(result) {
-        console.log('navigation result: ' + result.outcome);
+        console.log('navigation result: ' + result);
         _this.set('progress_update', 'Navigation ' + result.outcome);
         // Return to navigation view
         App.get('router').send('navigate', _this);
