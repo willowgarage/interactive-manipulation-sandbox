@@ -171,27 +171,34 @@ function( Ember, DS, App, ROS, Action) {
           _this.set('status_code', 1);
 
           _this.topic_dashboard = new _this.ros.Topic({
-            name: '/dashboard_agg',
-            messageType: 'pr2_msgs/DashboardState'
+            name: '/diagnostics_agg',
+            messageType: 'diagnostic_msgs/DiagnosticArray'
           });
           _this.topic_dashboard.subscribe(function(message) {
-            _this.set('battery', message.power_state.relative_capacity);
-            _this.set('plugged_in_value', message.power_state.AC_present);
-            if (message.power_board_state) {
-              if (message.power_board_state.wireless_stop && message.power_board_state.run_stop) {
-                _this.set('runstop_activated', false);
-              } else {
-                _this.set('runstop_activated', true);
+            for (var i=0; i<message.status.length; i++) {
+              var s = message.status[i];
+              if (s.name === '/Power System/Battery') {
+                for (var j=0; j<s.values.length; j++) {
+                  var value = s.values[j];
+                  if (value.key === 'Percent') {
+                    _this.set('battery', value.value);
+                  } else if (value.key === 'Charging State') {
+                    if (value.value === 'Full Charging') {
+                      _this.set('plugged_in_value', true);
+                    } else {
+                      _this.set('plugged_in_value', false);
+                    }
+                  }
+                }
+              } else if (s.name === '/Other/mobile_base_nodelet_manager: Motor State') {
+                if (s.message === 'Motors Enabled') {
+                  _this.set('motors_not_halted', true);
+                } else {
+                  _this.set('motors_not_halted', false);
+                }
               }
-            } else {
-              _this.set('runstop_activated', null);
             }
 
-            if (message.motors_halted_valid) {
-              _this.set('motors_not_halted', !(message.motors_halted.data));
-            } else {
-              _this.set('motors_not_halted', null);
-            }
           });
           _this.ros.on('close',function() {
             _this.set('status_code',2);
