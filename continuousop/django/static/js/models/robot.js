@@ -119,13 +119,13 @@ function( Ember, DS, App, ROS, Action) {
         map_x = -1;
       }
       else {
-        map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
+        map_x = pose.x * 41.893833 + pose.y * -6.064490 + 143.505863;
       }
       if (pose.y === -1) {
         map_y = -1;
       }
       else {
-        map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+        map_y = pose.x * -7.040622 + pose.y * -42.326424 + 143.429741;
       }
       return {'x' : map_x, 'y' : map_y};
     },
@@ -339,7 +339,7 @@ function( Ember, DS, App, ROS, Action) {
 
       var action = new Action({
         ros: this.ros,
-        name: 'Unplug'
+        name: 'turtlebin/Undock'
       });
 
       var _this = this;
@@ -353,15 +353,10 @@ function( Ember, DS, App, ROS, Action) {
         console.log('unplug result: ' + result.outcome);
         _this.set('progress_update', 'Unplugging ' + result.outcome);
         if (result.outcome === 'succeeded') {
-          // Unplug worked, now tuck arms
-          _this._tuckArms(function() {
-            _this._pointHeadForward(function() {
-              _this.set('progress_update', 'Unplugging successful');
-              _this.set('is_plugging_in', false);
-            });
-          }, onError);
-
+          // Unplug worked, we're done
+          _this.set('is_plugging_in', false);
         } else {
+          // It failed, but we're still done
           _this.set('is_plugging_in', false);
         }
       });
@@ -471,7 +466,7 @@ function( Ember, DS, App, ROS, Action) {
 
       var action = new Action({
         ros: this.ros,
-        name: 'PlugIn'
+        name: 'turtlebin/Dock'
       });
       var _this = this;
       //myDebugEvents( action, this.get('name') + ' plugIn action', ['result','status','feedback']);
@@ -488,11 +483,7 @@ function( Ember, DS, App, ROS, Action) {
         }
         else {
           // TODO: notify the user that plugging in failed
-          // and point our head forwards
-          _this._pointHeadForward(function() {
-            _this.set('is_plugging_in', false);
-          });
-
+          _this.set('is_plugging_in', false);
         }
 
       });
