@@ -188,7 +188,9 @@ function(
 
           cancelAllGoals: function(router) {
             this.robot.cancelAllGoals();
-          }
+          },
+
+          navigate: Ember.Route.transitionTo('navigate')
         }),
       })
     })

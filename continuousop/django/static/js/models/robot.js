@@ -273,7 +273,6 @@ function( Ember, DS, App, ROS, Action) {
 
     navigateTo: function(place) {
       // Sanity checks to make sure we are navigating to a reasonable place
-      /*
       if (!place.get('pose_x') || !place.get('pose_y')) {
         this.set('progress_update', 'Invalid navigation coordinates');
         // Redirect to navigate view. We probably got here because the user
@@ -281,15 +280,12 @@ function( Ember, DS, App, ROS, Action) {
         App.get('router').send('navigate', this);
         return;
       }
-      */
 
       // Make sure we aren't plugged in first
-      /*
       if (this.get('plugged_in')) {
         this.set('progress_update', 'Please unplug before navigating');
         return;
       }
-      */
 
       // Navigate to pose
       this.set('progress_update', 'Navigating to ' + place.get('name'));
