@@ -1,0 +1,29 @@
+---
+
+- name: create nginx log directory
+  action: file path=${webapps_dir}/${app_name}/log state=directory
+
+- name: create nginx site config
+  action: template src=templates/nginx_site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+
+- name: link nginx config
+  action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+
+- name: reload nginx
+  action: service name=nginx state=reloaded
+
+- name: create gunicorn config
+  action: template src=templates/gunicorn.conf.py dest=${webapps_dir}/${app_name}/gunicorn.conf.py
+
+- name: create supervisor program config
+  action: template src=templates/supervisor.ini dest=/etc/supervisor/${app_name}.ini
+
+- name: restart supervisor
+  action: service name=supervisord state=restarted
+
+- name: set up local_settings.py
+  action: template src=templates/${server_type}_server.local_settings.py dest=${webapps_dir}/${app_name}/django/server/local_settings.py
+
+- name: restart app with supervisor
+  action: supervisorctl name=${app_name} state=restarted
+

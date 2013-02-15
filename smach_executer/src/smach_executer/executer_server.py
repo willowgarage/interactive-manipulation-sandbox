@@ -20,6 +20,8 @@ from smach_executer.actions.pickup_object import PickupObject
 from smach_executer.actions.move_torso import MoveTorso
 from smach_executer.actions.interactive_gripper import InteractiveGripper
 from smach_executer.actions.reset_collision_objects import ResetCollisionObjects
+from smach_executer.actions.move_arm_to_joint import MoveArmToJoint
+from smach_executer.actions.switch_controllers import SwitchControllers
 
 class ExecuterServer:
     def __init__(self, debug_mode=False):
@@ -42,7 +44,9 @@ class ExecuterServer:
             'PickupObject': PickupObject,
             'MoveTorso': MoveTorso,
             'InteractiveGripper': InteractiveGripper,
-            'ResetCollisionObjects': ResetCollisionObjects
+            'ResetCollisionObjects': ResetCollisionObjects,
+            'MoveArmToJoint': MoveArmToJoint,
+            'SwitchControllers': SwitchControllers
             }
 
         self.sm = None

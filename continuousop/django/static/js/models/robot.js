@@ -824,7 +824,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
       action.inputs.frame_id = '/base_footprint';
-      action.inputs.x = 0.20;
+      action.inputs.x = 0.5;
       action.inputs.y = 0;
       action.inputs.theta = 0;
       action.inputs.collision_aware = false;
@@ -851,7 +851,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
       action.inputs.frame_id = '/base_footprint';
-      action.inputs.x = -0.20;
+      action.inputs.x = -0.5;
       action.inputs.y = 0;
       action.inputs.theta = 0;
       action.inputs.collision_aware = false;

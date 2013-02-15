@@ -1,9 +1,0 @@
----
-
-- name: set up node.js
-  hosts: webservers
-  sudo: True
-
-  tasks:
-    - include: tasks/setup.yml
-
