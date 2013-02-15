@@ -923,19 +923,6 @@ function( Ember, DS, App, ROS, Action) {
 
     _undockFromTable4: function() {
       this.set('progress_update', 'Undocked from table');
-    },
-
-
-    // ----------------------------------------------------------------------
-    // Stop everything now!
-
-    cancelAllActions: function() {
-      var action = new Action({
-        ros: this.ros
-      });
-
-      this.set('progress_update', 'Canceling all robot instructions');
-      action.cancelAll();
     }
 
   });
