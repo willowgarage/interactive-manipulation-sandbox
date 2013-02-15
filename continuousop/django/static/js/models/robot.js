@@ -339,7 +339,7 @@ function( Ember, DS, App, ROS, Action) {
 
       var action = new Action({
         ros: this.ros,
-        name: 'Unplug'
+        name: 'turtlebin/Undock'
       });
 
       var _this = this;
@@ -353,15 +353,10 @@ function( Ember, DS, App, ROS, Action) {
         console.log('unplug result: ' + result.outcome);
         _this.set('progress_update', 'Unplugging ' + result.outcome);
         if (result.outcome === 'succeeded') {
-          // Unplug worked, now tuck arms
-          _this._tuckArms(function() {
-            _this._pointHeadForward(function() {
-              _this.set('progress_update', 'Unplugging successful');
-              _this.set('is_plugging_in', false);
-            });
-          }, onError);
-
+          // Unplug worked, we're done
+          _this.set('is_plugging_in', false);
         } else {
+          // It failed, but we're still done
           _this.set('is_plugging_in', false);
         }
       });
@@ -471,7 +466,7 @@ function( Ember, DS, App, ROS, Action) {
 
       var action = new Action({
         ros: this.ros,
-        name: 'PlugIn'
+        name: 'turtlebin/Dock'
       });
       var _this = this;
       //myDebugEvents( action, this.get('name') + ' plugIn action', ['result','status','feedback']);
@@ -488,11 +483,7 @@ function( Ember, DS, App, ROS, Action) {
         }
         else {
           // TODO: notify the user that plugging in failed
-          // and point our head forwards
-          _this._pointHeadForward(function() {
-            _this.set('is_plugging_in', false);
-          });
-
+          _this.set('is_plugging_in', false);
         }
 
       });
