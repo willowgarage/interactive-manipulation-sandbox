@@ -94,7 +94,7 @@
   <node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" respawn="true" />
 
   <!-- world model -->
-  <node name="world_model" pkg="worldlib" type="world_model" />
+  <node name="world_model" pkg="worldlib" type="world_model" >
     <param name="host" value="$(arg wm)" />
   </node>
   <node name="map_listener" pkg="world_listeners" type="map_listener" />
