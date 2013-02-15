@@ -627,6 +627,7 @@ function( Ember, DS, App, ROS, Action) {
     // ----------------------------------------------------------------------
     // Manipulating objects in the world
 
+    // These are the objects that segment-and-recognize has detected in front of the robot
     recognized_objects: {},
 
     segmentAndRecognize: function(pickupController) {
@@ -878,6 +879,9 @@ function( Ember, DS, App, ROS, Action) {
     },
 
     undockFromTable: function() {
+      // Clear out the recognized objects since we'll be moving around and the data is stale
+      this.set('recognized_objects', {});
+
       // First move backwards a bit
       this.set('progress_update', 'Moving backwards');
 
