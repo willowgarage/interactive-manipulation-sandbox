@@ -13,7 +13,11 @@
 
 	
       {{#if robot.isConnected}}
-	    <div class="navigate_button button" {{action navigateTo}}>Go!</div>
+          {{#if robot.plugged_in}}
+            <div class="navigate_button button" {{action touch robot}}>Unplug</div>
+          {{else}}
+            <div class="navigate_button button" {{action navigateTo}}>Go!</div>
+          {{/if}}
       {{/if}}
     </div>
 </td>
