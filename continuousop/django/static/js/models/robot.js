@@ -655,9 +655,6 @@ function( Ember, DS, App, ROS, Action) {
     },
 
     pickupObject: function(object_id) {
-    },
-
-    _pickupObject2: function(object_id) {
       this.set('progress_update', 'Picking up object ' + object_id);
       var action = new Action({
         ros: this.ros,
@@ -827,7 +824,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
       action.inputs.frame_id = '/base_footprint';
-      action.inputs.x = 0.20;
+      action.inputs.x = 0.5;
       action.inputs.y = 0;
       action.inputs.theta = 0;
       action.inputs.collision_aware = false;
@@ -854,7 +851,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
       action.inputs.frame_id = '/base_footprint';
-      action.inputs.x = -0.20;
+      action.inputs.x = -0.5;
       action.inputs.y = 0;
       action.inputs.theta = 0;
       action.inputs.collision_aware = false;
