@@ -5,6 +5,7 @@
   <arg name="launch_kinect" default="true" />
   <arg name="kinect_frame_prefix" default="/head_kinect" />
   <arg name="multi_ros" default="true" />
+  <arg name="wm" default="btm" />
 
   <arg name="http_streamer" default="true" />
   <arg name="web_pointcloud_streaming" default="true" />
@@ -94,7 +95,7 @@
 
   <!-- world model -->
   <node name="world_model" pkg="worldlib" type="world_model" />
-    <param name="host" value="btm" />
+    <param name="host" value="$(arg wm)" />
   </node>
   <node name="map_listener" pkg="world_listeners" type="map_listener" />
   <node name="robot_pose_listener" pkg="world_listeners" type="robot_pose_listener" />
