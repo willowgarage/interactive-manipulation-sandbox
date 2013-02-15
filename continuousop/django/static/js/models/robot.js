@@ -119,13 +119,13 @@ function( Ember, DS, App, ROS, Action) {
         map_x = -1;
       }
       else {
-        map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
+        map_x = pose.x * 41.893833 + pose.y * -6.064490 + 143.505863;
       }
       if (pose.y === -1) {
         map_y = -1;
       }
       else {
-        map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+        map_y = pose.x * -7.040622 + pose.y * -42.326424 + 143.429741;
       }
       return {'x' : map_x, 'y' : map_y};
     },
