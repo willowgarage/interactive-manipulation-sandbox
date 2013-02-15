@@ -655,9 +655,6 @@ function( Ember, DS, App, ROS, Action) {
     },
 
     pickupObject: function(object_id) {
-    },
-
-    _pickupObject2: function(object_id) {
       this.set('progress_update', 'Picking up object ' + object_id);
       var action = new Action({
         ros: this.ros,
