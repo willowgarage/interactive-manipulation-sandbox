@@ -834,12 +834,47 @@ function( Ember, DS, App, ROS, Action) {
         console.log('Result from NavigateToPose:', result);
         if (result.outcome === 'succeeded') {
           // It worked!
-          _this.set('progress_update', 'Finished docking with table');
+          _this.set('progress_update', 'Moving forward successful');
+          _this._dockWithTable6();
         } else {
           _this.set('progress_update', 'Failed to move torso');
         }
       });
       action.execute();
+    },
+
+    _dockWithTable6: function() {
+      // Finally look down at the table
+      this.set('progress_update', 'Looking down');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'PointHead'
+      });
+
+      // Get notified when head movement finishes
+      var _this = this;
+      action.on('result', function(result) {
+        _this.set('progress_update', 'Look forward ' + result.outcome);
+        // Regardless of outcome, tell the UI to say that plugging is done
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Finished docking with table');
+        } else {
+          _this.set('progress_update', 'Failed to look at table');
+        }
+      });
+
+      action.inputs.target_frame   = 'torso_lift_link';
+      action.inputs.target_x       = 1.0;
+      action.inputs.target_y       = 0;
+      action.inputs.target_z       = -0.4;
+      action.inputs.pointing_frame = 'head_mount_kinect_rgb_optical_frame';
+      action.inputs.pointing_x     = 0.0;
+      action.inputs.pointing_y     = 0.0;
+      action.inputs.pointing_z     = 1.0;
+      action.execute();
+      console.log('Calling PointHead action', action.inputs);
     },
 
     undockFromTable: function() {
