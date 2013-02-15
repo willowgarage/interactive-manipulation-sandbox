@@ -113,6 +113,8 @@ function(
         navigate: Ember.Route.extend({
           route: '/navigate',
 
+          touch: Ember.Route.transitionTo('touch'),
+
           /* Initialize the 'navigate' state */
           connectOutlets: function(router, context) {
             var robot =  router.get('robotController').get('content');
@@ -188,7 +190,9 @@ function(
 
           cancelAllGoals: function(router) {
             this.robot.cancelAllGoals();
-          }
+          },
+
+          navigate: Ember.Route.transitionTo('navigate')
         }),
       })
     })
