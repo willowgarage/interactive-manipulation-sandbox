@@ -24,7 +24,8 @@ class Migration(DataMigration):
                            ).save()
         orm['world.Place'](name="Plug",
                            pose_x=-0.295, pose_y=2.333, pose_angle=1.2545,
-                           map_x=97, map_y=35, map_width=20, map_height=20
+                           map_x=97, map_y=35, map_width=20, map_height=20,
+                           tags="outlet",
                            ).save()
         orm['world.Place'](name="Mariano's desk",
                            pose_x=1.333, pose_y=2.156, pose_angle=-1.595,
