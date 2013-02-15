@@ -302,7 +302,7 @@ function( Ember, DS, App, ROS, Action) {
       var _this = this;
       action.on('result', function(result) {
         console.log('navigation result: ' + result);
-        _this.set('progress_update', 'Navigation ' + result.outcome);
+        _this.set('progress_update', 'Navigation finished');
         // Return to navigation view
         App.get('router').send('navigate', _this);
       });
