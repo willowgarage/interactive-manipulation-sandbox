@@ -118,13 +118,22 @@ define([
           angularThres: 1.5,
           transThres: 0.01
         });
-        // Show interactive markers
-        var imClient = new ImProxy.Client(robot.ros,tfClient);
+
         // TODO: this should most definitely not be hardcoded to blh
         var meshBaseUrl = 'http://blh.willowgarage.com:8000/resources/';
-        var imViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), imClient, meshBaseUrl);
 
-        imClient.subscribe('/pr2_marker_control');
+        // Show interactive markers
+        var markerControlClient = new ImProxy.Client(robot.ros,tfClient);
+        var markerControlViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), markerControlClient, meshBaseUrl);
+        markerControlClient.subscribe('/pr2_marker_control');
+
+        var inHandObjectsClient = new ImProxy.Client(robot.ros,tfClient);
+        var inHandObjectsViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), inHandObjectsClient, meshBaseUrl);
+        inHandObjectsClient.subscribe('/in_hand_objects');
+
+        var interactiveManipulationClient = new ImProxy.Client(robot.ros,tfClient);
+        var interactiveManipulationViewer = new ImThree.Viewer(this.get('selectableObjects'), this.get('camera'), interactiveManipulationClient, meshBaseUrl);
+        interactiveManipulationClient.subscribe('/interactive_manipulation');
 
         var depthNode = new THREE.Object3D();
         scene.add(depthNode);
