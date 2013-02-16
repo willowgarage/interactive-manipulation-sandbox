@@ -14,6 +14,7 @@
     <arg name="sim" value="$(arg sim)" />
     <arg name="im" value="$(arg im)" />
     <arg name="launch_kinect" value="$(arg launch_kinect)" />
+    <arg name="kinect_data_skip" value="$(arg kinect_data_skip)" />
   </include>
 
   <!-- rosbridge -->
@@ -79,8 +80,6 @@
 	args="messages /l_forearm_cam/image_color_rotated 3.0 /l_forearm_cam_throttled/image"> 
       <param name="lazy" value="true"/>
     </node>
-
-     <param name="/head_mount_kinect/driver/data_skip" value="$(arg kinect_data_skip)" /> 
 
   </group>
 
