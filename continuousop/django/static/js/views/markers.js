@@ -115,7 +115,7 @@ define([
         var tfClient = new TfClient({
           ros: robot.ros,
           fixedFrame: 'base_link',
-          angularThres: 1.5,
+          angularThres: 0.5 / 180.0 * Math.PI,
           transThres: 0.01
         });
 
