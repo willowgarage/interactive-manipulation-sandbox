@@ -159,6 +159,7 @@ function(
 
         navigating: Ember.Route.extend({
           route: '/navigating/:id',
+          navigate: Ember.Router.transitionTo('navigate'),
 
           connectOutlets: function(router, context) {
             console.log('navigating.connectOutlets: ', context);

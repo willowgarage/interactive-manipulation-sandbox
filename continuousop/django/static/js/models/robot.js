@@ -631,6 +631,35 @@ function( Ember, DS, App, ROS, Action) {
     recognized_objects: {},
 
     segmentAndRecognize: function(pickupController) {
+      this.set('progress_update', 'Resetting collision objects');
+      var action = new Action({
+        ros: this.ros,
+        name: 'ResetCollisionObjects'
+      });
+
+      // Set parameters
+      action.inputs.map = true;
+      action.inputs.unattached_objects = true;
+      action.inputs.attached_objects = true;
+      action.inputs.arm = 'both';
+
+      var _this = this;
+      action.on('result', function(result) {
+        console.log('Result from ResetCollisionObjects:', result);
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this._segmentAndRecognize2(pickupController);
+        }
+        else {
+          _this.set('progress_update', 'Failed to reset collision objects');
+        }
+      });
+
+      console.log('Calling SegmentAndRecognize');
+      action.execute();
+    },
+
+    _segmentAndRecognize2: function(pickupController) {
       this.set('progress_update', 'Identifying objects in view');
       var action = new Action({
         ros: this.ros,
