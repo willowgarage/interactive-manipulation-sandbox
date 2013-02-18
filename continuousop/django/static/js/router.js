@@ -162,8 +162,6 @@ function(
           navigate: Ember.Router.transitionTo('navigate'),
 
           connectOutlets: function(router, context) {
-            console.log('navigating.connectOutlets: ', context);
-
             var robot =  router.get('robotController').get('content');
             var place = App.Place.find(context.id);
 
@@ -188,7 +186,9 @@ function(
           },
 
           cancelAllGoals: function(router) {
-            this.robot.cancelAllGoals();
+            var robot =  router.get('robotController').get('content');
+            robot.cancelAllGoals();
+            Ember.Router.transitionTo('navigate');
           }
         }),
       })
