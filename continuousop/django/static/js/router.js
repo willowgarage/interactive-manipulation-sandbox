@@ -162,8 +162,6 @@ function(
           navigate: Ember.Router.transitionTo('navigate'),
 
           connectOutlets: function(router, context) {
-            console.log('navigating.connectOutlets: ', context);
-
             var robot =  router.get('robotController').get('content');
             var place = App.Place.find(context.id);
 
