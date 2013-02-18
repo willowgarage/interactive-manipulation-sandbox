@@ -188,7 +188,8 @@ function(
           },
 
           cancelAllGoals: function(router) {
-            this.robot.cancelAllGoals();
+            var robot =  router.get('robotController').get('content');
+            robot.cancelAllGoals();
           }
         }),
       })
