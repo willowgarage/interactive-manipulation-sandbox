@@ -190,6 +190,7 @@ function(
           cancelAllGoals: function(router) {
             var robot =  router.get('robotController').get('content');
             robot.cancelAllGoals();
+            Ember.Router.transitionTo('navigate');
           }
         }),
       })
