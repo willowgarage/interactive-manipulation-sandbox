@@ -68,15 +68,18 @@ define([
         }
 
         var _this = this;
-        svg.selectAll('.recognized_object')
-          .data(data)
-          .enter().append('svg:rect')
+        var boxes = svg.selectAll('.recognized_object')
+          .data(data);
+
+        boxes.enter().append('svg:rect')
           .attr('class', 'recognized_object')
           .attr('x', function(d) { return d.xmin * _this.width; })
           .attr('y', function(d) { return d.ymin * _this.height; })
           .attr('width', function(d) { return (d.xmax - d.xmin) * _this.width; })
           .attr('height', function(d) { return (d.ymax - d.ymin) * _this.height; })
           .on('click', objSelected);
+
+        boxes.exit().remove();
       }
 
     });

@@ -538,6 +538,7 @@ function( Ember, DS, App, ROS, Action) {
     // ----------------------------------------------------------------------
     // Manipulating objects in the world
 
+    // These are the objects that segment-and-recognize has detected in front of the robot
     recognized_objects: {},
 
     segmentAndRecognize: function(pickupController) {
@@ -566,9 +567,6 @@ function( Ember, DS, App, ROS, Action) {
     },
 
     pickupObject: function(object_id) {
-    },
-
-    _pickupObject2: function(object_id) {
       this.set('progress_update', 'Picking up object ' + object_id);
       var action = new Action({
         ros: this.ros,
@@ -738,7 +736,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
       action.inputs.frame_id = '/base_footprint';
-      action.inputs.x = 0.20;
+      action.inputs.x = 0.5;
       action.inputs.y = 0;
       action.inputs.theta = 0;
       action.inputs.collision_aware = false;
@@ -748,7 +746,8 @@ function( Ember, DS, App, ROS, Action) {
         console.log('Result from NavigateToPose:', result);
         if (result.outcome === 'succeeded') {
           // It worked!
-          _this.set('progress_update', 'Finished docking with table');
+          _this.set('progress_update', 'Moving forward successful');
+          _this._dockWithTable6();
         } else {
           _this.set('progress_update', 'Failed to move torso');
         }
@@ -756,7 +755,44 @@ function( Ember, DS, App, ROS, Action) {
       action.execute();
     },
 
+    _dockWithTable6: function() {
+      // Finally look down at the table
+      this.set('progress_update', 'Looking down');
+
+      var action = new Action({
+        ros: this.ros,
+        name: 'PointHead'
+      });
+
+      // Get notified when head movement finishes
+      var _this = this;
+      action.on('result', function(result) {
+        _this.set('progress_update', 'Look forward ' + result.outcome);
+        // Regardless of outcome, tell the UI to say that plugging is done
+        if (result.outcome === 'succeeded') {
+          // It worked!
+          _this.set('progress_update', 'Finished docking with table');
+        } else {
+          _this.set('progress_update', 'Failed to look at table');
+        }
+      });
+
+      action.inputs.target_frame   = 'torso_lift_link';
+      action.inputs.target_x       = 1.0;
+      action.inputs.target_y       = 0;
+      action.inputs.target_z       = -0.4;
+      action.inputs.pointing_frame = 'head_mount_kinect_rgb_optical_frame';
+      action.inputs.pointing_x     = 0.0;
+      action.inputs.pointing_y     = 0.0;
+      action.inputs.pointing_z     = 1.0;
+      action.execute();
+      console.log('Calling PointHead action', action.inputs);
+    },
+
     undockFromTable: function() {
+      // Clear out the recognized objects since we'll be moving around and the data is stale
+      this.set('recognized_objects', {});
+
       // First move backwards a bit
       this.set('progress_update', 'Moving backwards');
 
@@ -765,7 +801,7 @@ function( Ember, DS, App, ROS, Action) {
         name: 'NavigateToPose'
       });
       action.inputs.frame_id = '/base_footprint';
-      action.inputs.x = -0.20;
+      action.inputs.x = -0.5;
       action.inputs.y = 0;
       action.inputs.theta = 0;
       action.inputs.collision_aware = false;
@@ -837,19 +873,6 @@ function( Ember, DS, App, ROS, Action) {
 
     _undockFromTable4: function() {
       this.set('progress_update', 'Undocked from table');
-    },
-
-
-    // ----------------------------------------------------------------------
-    // Stop everything now!
-
-    cancelAllActions: function() {
-      var action = new Action({
-        ros: this.ros
-      });
-
-      this.set('progress_update', 'Canceling all robot instructions');
-      action.cancelAll();
     }
 
   });
