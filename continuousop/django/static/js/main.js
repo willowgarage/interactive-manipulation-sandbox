@@ -8,7 +8,7 @@ requirejs.config({
     blockUI      : 'libs/jquery.blockUI',
     // Three
     three        : 'libs/interactivemarkersjs/examples/include/three',
-    colladaloader: 'libs/interactivemarkersjs/examples/include/ColladaLoader',
+    colladaloader: 'libs/interactivemarkersjs/examples/include/threejs/ColladaLoader',
     // Ember
     handlebars   : 'libs/handlebars',
     ember        : 'libs/ember',
