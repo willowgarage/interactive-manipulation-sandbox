@@ -28,8 +28,16 @@
 			  <!--arg name="im_debug" value="true" /-->
          </include>
 
-	 <node pkg="interactive_marker_proxy" type="proxy" name="im_proxy">
+         <node pkg="interactive_marker_proxy" type="proxy" name="pr2_marker_control_proxy">
               <remap from="topic_ns" to="/pr2_marker_control" />
+              <remap from="target_frame" to="/base_link" />
+         </node>
+         <node pkg="interactive_marker_proxy" type="proxy" name="in_hand_objects_proxy">
+              <remap from="topic_ns" to="/in_hand_objects" />
+              <remap from="target_frame" to="/base_link" />
+         </node>
+         <node pkg="interactive_marker_proxy" type="proxy" name="interactive_manipulation_proxy">
+              <remap from="topic_ns" to="/interactive_manipulation" />
               <remap from="target_frame" to="/base_link" />
          </node>
     </group>
