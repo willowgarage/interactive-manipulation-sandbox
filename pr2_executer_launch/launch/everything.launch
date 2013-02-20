@@ -4,7 +4,9 @@
   <arg name="im" default="true" />
   <arg name="launch_kinect" default="true" />
   <arg name="multi_ros" default="true" />
-  <arg name="wm" default="btm" />
+  <arg name="wm_host" default="babylon1.willowgarage.com" />
+  <arg name="wm_user" default="robot" />
+  <arg name="wm_pass" default="willow" />
   <arg name="kinect_data_skip" default="1" />
 
   <arg name="http_streamer" default="true" />
@@ -97,9 +99,9 @@
   <node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" respawn="true" />
 
   <!-- world model -->
-  <node name="world_model" pkg="worldlib" type="world_model" >
-    <param name="host" value="$(arg wm)" />
-  </node>
-  <node name="map_listener" pkg="world_listeners" type="map_listener" />
-  <node name="robot_pose_listener" pkg="world_listeners" type="robot_pose_listener" />
+  <include file="$(find world_listeners)/launch/world_model.launch">
+    <arg name="host" value="$(arg wm_host)" />
+    <arg name="user" value="$(arg wm_user)" />
+    <arg name="password" value="$(arg wm_pass)" />
+  </include>
 </launch>
