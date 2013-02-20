@@ -6,6 +6,8 @@ import tf.transformations as trans
 from smach_ros import SimpleActionState
 from pr2_common_action_msgs.msg import TuckArmsAction, TuckArmsGoal
 
+from smach_executer.controller_client import ControllerClient
+
 class TuckArms(SimpleActionState):
     """
     Tucks the PR2's arms.
@@ -20,6 +22,12 @@ class TuckArms(SimpleActionState):
         SimpleActionState.__init__(self, tuck_arms_uri, TuckArmsAction, goal_cb=self.goal_cb, input_keys=input_keys)
 
     def goal_cb(self, userdata, goal):
+        cc = ControllerClient()
+        cc.set_controller_names('left')
+        cc.switch_to_joint_mode()
+        cc.set_controller_names('right')
+        cc.switch_to_joint_mode()
+
         goal = TuckArmsGoal()
         goal.tuck_left = userdata['tuck_left']
         goal.tuck_right = userdata['tuck_right']
