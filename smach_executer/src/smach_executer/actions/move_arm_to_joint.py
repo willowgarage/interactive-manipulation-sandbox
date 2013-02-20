@@ -9,6 +9,8 @@ from actionlib_msgs.msg import GoalStatus
 from arm_navigation_msgs.msg import MoveArmAction, MoveArmGoal, JointConstraint
 from arm_navigation_msgs.srv import SetPlanningSceneDiff, SetPlanningSceneDiffRequest
 
+from smach_executer.controller_client import ControllerClient
+
 class MoveArmToJoint(State):
     """
     Moves the arm to a set of joint goals (collision-aware, with motion planning)
@@ -133,7 +135,12 @@ class MoveArmToJoint(State):
 
 
     def execute(self, userdata):
+        rospy.loginfo('Switching to joint controller for %s arm' % userdata['arm'])
+        cc = ControllerClient()
+        cc.set_controller_names(userdata['arm'])
+        cc.switch_to_joint_mode()
         
+        rospy.loginfo('Moving %s arm' % userdata['arm'])
         result = self.move_arm_joint(userdata['arm'], userdata['arm_angles'])
         if result == 1:
             return 'succeeded'
