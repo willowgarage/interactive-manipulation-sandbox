@@ -1,14 +1,11 @@
 from socketio.namespace import BaseNamespace
 from sockets.health_monitor import HealthMonitorMixin
 
-# from robotproxy import RobotProxy  # thread based ROS package
-from robot import RobotProxy  # thread based module
-# from robot_greenlet import RobotProxy  # greenlet based module
+# from robot import RobotProxy  # threading based module
+from robot_greenlet import RobotProxy  # greenlet based module
 
 import logging
-# logger = logging.getLogger('robot')
-logging.basicConfig()
-logger = logging.getLogger('rospy.internal')
+logger = logging.getLogger('robot')
 
 
 class Namespace(BaseNamespace, HealthMonitorMixin):
