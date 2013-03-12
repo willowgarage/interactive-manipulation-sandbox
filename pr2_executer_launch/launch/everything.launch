@@ -20,8 +20,9 @@
   </include>
 
   <!-- rosbridge -->
-  <param name="/rosbridge/port" value="9099"/>
-  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+     <arg name="port" value="9099"/>
+  </include>
 
   <group if="$(arg http_streamer)">
     <!-- http image topic video streamer -->
