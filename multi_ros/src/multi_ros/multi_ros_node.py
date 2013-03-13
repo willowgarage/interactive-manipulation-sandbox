@@ -185,12 +185,12 @@ class MultiRosNode:
         # tell the remote to advertise each of the forwarded topics
         command = {'COMMAND': 'ADVERTISE', 'TOPICS': remote_pub_topics}
         self._zmq_config_socket.send(pickle.dumps(command))
-        rep = pickle.loads(self._zmq_config_socket.recv())
+        pickle.loads(self._zmq_config_socket.recv())
 
         # tell the remote to subscribe to each of the forwarded topics
         command = {'COMMAND': 'SUBSCRIBE', 'TOPICS': remote_sub_topics}
         self._zmq_config_socket.send(pickle.dumps(command))
-        rep = pickle.loads(self._zmq_config_socket.recv())
+        pickle.loads(self._zmq_config_socket.recv())
 
         # spin an wait for remote messages to publish
         self.remote_message_thread_func()

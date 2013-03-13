@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 PACKAGE_NAME = 'multi_ros'
-import roslib; roslib.load_manifest(PACKAGE_NAME)
+import roslib
+roslib.load_manifest(PACKAGE_NAME)
 import rospy
 
 from multi_ros.ros_interface import RosInterface
