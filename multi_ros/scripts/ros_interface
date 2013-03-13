@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-PACKAGE_NAME='mros'
+PACKAGE_NAME = 'mros'
 import roslib; roslib.load_manifest(PACKAGE_NAME)
-import sys
 import rospy
 
 from mros.ros_interface import RosInterface

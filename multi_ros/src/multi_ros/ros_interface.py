@@ -1,6 +1,11 @@
-import copy, threading, os
+import copy
+import threading
+import os
 from new import classobj
-import roslib, rospy, rosgraph
+import roslib
+import rospy
+import rosgraph
+
 
 def make_passthrough_message_class(message_type, md5sum):
     '''
@@ -11,10 +16,11 @@ def make_passthrough_message_class(message_type, md5sum):
         message_type (str) : ROS message type.
     '''
     message_class = classobj('t_passthrough_%s' % message_type, (rospy.msg.AnyMsg,), {
-        '_type' : message_type,
-        '_md5sum' : md5sum
-        })
+        '_type': message_type,
+        '_md5sum': md5sum
+    })
     return message_class
+
 
 class TopicInfo:
     '''
@@ -32,6 +38,7 @@ class TopicInfo:
         self.publisher = None
         self.subscriber = None
 
+
 class RosInterface:
     def __init__(self, ros_master_uri, node_name, user_message_callback=None):
         self._user_message_callback = user_message_callback
@@ -42,15 +49,16 @@ class RosInterface:
         # install an ugly hack to keep us from subscribing to ourselves
         _my_rospy_uri = None
         _orig_rospy_connect_cb = rospy.impl.registration.RegManager._connect_topic_thread
+
         def _subscribe_hack(self, topic, uri):
             if uri == _my_rospy_uri:
                 return
             return _orig_rospy_connect_cb(self, topic, uri)
-        
+
         rospy.impl.registration.RegManager._connect_topic_thread = _subscribe_hack
 
         rospy.init_node(node_name, anonymous=True)
-        
+
         self._topics = {}
         self._topics_lock = threading.Lock()
 
@@ -71,11 +79,11 @@ class RosInterface:
             for topic in self._topics:
                 topic_info = self._topics[topic]
                 graph[topic] = {
-                    'message_type' : topic_info.message_type,
-                    'md5sum' : topic_info.md5sum,
-                    'subscribers' : copy.copy(topic_info.subscribers),
-                    'publishers' : copy.copy(topic_info.publishers)
-                    }
+                    'message_type': topic_info.message_type,
+                    'md5sum': topic_info.md5sum,
+                    'subscribers': copy.copy(topic_info.subscribers),
+                    'publishers': copy.copy(topic_info.publishers)
+                }
         return graph
 
     def update_ros_graph(self):
@@ -95,7 +103,7 @@ class RosInterface:
 
         # get the types of all topics from the ROS master
         topic_types = dict(self._master.getTopicTypes())
-        
+
         with self._topics_lock:
             # clear previous info on local subscribers/publishers
             for topic in self._topics:
@@ -176,7 +184,3 @@ class RosInterface:
             return
 
         self._user_message_callback(msg, topic)
-        
-
-               
-            

@@ -1,9 +1,14 @@
-import threading, zlib, time
+import threading
+import zlib
+import time
 import cPickle as pickle
 import zmq
-import rospy, roslib, roslib.message
+import rospy
+import roslib
+import roslib.message
 
 from multi_ros.ros_interface import RosInterface
+
 
 class PublishedTopic:
     def __init__(self):
@@ -11,7 +16,8 @@ class PublishedTopic:
         self.compression = None
         self.bytes_sent = 0
         self.bytes_received = 0
-        
+
+
 class SubscribedTopic:
     def __init__(self):
         self.topic = None
@@ -21,12 +27,13 @@ class SubscribedTopic:
         self.bytes_received = 0
         self.last_forwarded_t = None
 
+
 class MultiRosNode:
     def __init__(self, name, prefix, ros_master_uri, poll_rate=1.0):
         self._name = name
         self._prefix = prefix
         self._ros_master_uri = ros_master_uri
-        self._poll_rate = poll_rate        
+        self._poll_rate = poll_rate
         self._pub_topics = {}
         self._pub_topics_lock = threading.Lock()
         self._sub_topics = {}
@@ -49,7 +56,7 @@ class MultiRosNode:
         # socket for receiving messages
         self._zmq_sub_socket = self._zmq_context.socket(zmq.SUB)
         self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
-        
+
         rospy.loginfo('%s binding to %s for configuring' % (self._name, config_uri))
         self._zmq_config_socket = self._zmq_context.socket(zmq.REP)
         self._zmq_config_socket.bind(config_uri)
@@ -100,9 +107,9 @@ class MultiRosNode:
             else:
                 rospy.logerr('Unknown command %s' % cmd)
                 self._zmq_config_socket.send(pickle.dumps('ERROR'))
-            
+
             loop_rate.sleep()
-        
+
     def run_as_parent(self, config_uri, pub_uri, sub_uri, config_dict):
         '''
         Connect to these addressses.
@@ -119,7 +126,7 @@ class MultiRosNode:
         self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
 
         rospy.loginfo('%s connecting to %s for configuring' % (self._name, config_uri))
-        self._zmq_config_socket = self._zmq_context.socket(zmq.REQ)        
+        self._zmq_config_socket = self._zmq_context.socket(zmq.REQ)
         self._zmq_config_socket.connect(config_uri)
         rospy.loginfo('%s connecting to %s for publishing' % (self._name, pub_uri))
         self._zmq_pub_socket.connect(pub_uri)
@@ -127,7 +134,7 @@ class MultiRosNode:
         self._zmq_sub_socket.connect(sub_uri)
 
         remote_sub_topics = []
-        remote_pub_topics = []        
+        remote_pub_topics = []
         rospy.loginfo('%s connecting: %s' % (self._name, str(config_dict)))
         for topic_dict in config_dict['topics']:
             remote_topic = str(topic_dict['topic'])
@@ -138,13 +145,13 @@ class MultiRosNode:
             if 'compression' in topic_dict:
                 compression = topic_dict['compression']
             else:
-                compresssion = None
+                compression = None
             if 'rate' in topic_dict:
                 rate = topic_dict['rate']
             else:
                 rate = None
             md5sum = str(message_class._md5sum)
-            
+
             remote_sub_topics.append({
                 'topic': remote_topic, 'message_type': message_type,
                 'md5sum': md5sum, 'compression': compression, 'rate': rate})
@@ -165,8 +172,8 @@ class MultiRosNode:
             pub_topic_info.message_type = message_type
             pub_topic_info.md5sum = md5sum
             pub_topic_info.compression = compression
-            self._pub_topics[pub_topic_info.topic] = pub_topic_info            
-            
+            self._pub_topics[pub_topic_info.topic] = pub_topic_info
+
             # subscribe to the topic on the local ROS system
             rospy.loginfo('%s subscribing to %s' % (self._name, local_topic))
             self._ros_interface.subscribe(local_topic, message_type, md5sum)
@@ -188,7 +195,6 @@ class MultiRosNode:
         # spin an wait for remote messages to publish
         self.remote_message_thread_func()
 
-
     def local_message_callback(self, msg, local_topic):
         '''
         Received a message on the local ROS system. Forward it to the remote system.
@@ -202,22 +208,22 @@ class MultiRosNode:
         current_t = time.time()
         if topic_info.rate is not None:
             if topic_info.last_forwarded_t is not None:
-                if (current_t - topic_info.last_forwarded_t)  < (1.0/topic_info.rate):
+                if (current_t - topic_info.last_forwarded_t) < (1.0/topic_info.rate):
                     # just forwarded a message on this topic; don't need to forward this one
                     return
         topic_info.last_forwarded_t = current_t
-            
+
         if self._zmq_pub_socket is not None:
             with self._zmq_pub_lock:
                 rospy.logdebug('%s forwarding message on topic %s' % (self._name, local_topic))
                 if topic_info.compression is None:
-                    msg_buf = msg._buf
+                    msg_buf = msg._buff
                 elif topic_info.compression == 'zlib':
                     msg_buf = zlib.compress(msg._buff)
                 else:
                     rospy.logerr('Unknown compression type %s for topic %s' % (str(topic_info.compression), local_topic))
                     return
-                
+
                 rospy.loginfo('Topic: %s  Uncompressed: %d  Compressed: %d' % (local_topic, len(msg._buff), len(msg_buf)))
                 remote_topic = self.local_to_remote_topic(local_topic)
                 self._zmq_pub_socket.send(pickle.dumps((remote_topic, msg_buf)))
@@ -237,21 +243,17 @@ class MultiRosNode:
                     continue
                 topic_info = self._pub_topics[local_topic]
 
-            if topic_info.compression is None:
-                msg_buf = msg._buf
-            elif topic_info.compression == 'zlib':
+            if topic_info.compression == 'zlib':
                 msg_buf = zlib.decompress(msg_buf)
-            else:
+            elif topic_info.compression is not None:
                 rospy.logerr('Unknown compression type %s for topic %s' % (str(topic_info.compression), local_topic))
                 continue
 
-            
             rospy.logdebug('%s publishing message received over link to topic %s' % (self._name, local_topic))
             self._ros_interface.publish(local_topic, msg_buf)
 
     def remote_to_local_topic(self, remote_topic):
-        return self._prefix + remote_topic        
+        return self._prefix + remote_topic
 
     def local_to_remote_topic(self, local_topic):
         return local_topic[len(self._prefix):]
-
