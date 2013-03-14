@@ -6,11 +6,11 @@ import sys
 import os
 import json
 
-from multi_ros.multi_ros_node import MultiRosNode
+from multi_ros.multi_ros_parent import MultiRosParent
 
 
 def run_parent(parent_ros_master_uri, child_config_uri, child_pub_uri, child_sub_uri, robot, config_dict):
-    parent = MultiRosNode('multi_ros_parent', robot, parent_ros_master_uri)
+    parent = MultiRosParent('multi_ros_parent', robot, parent_ros_master_uri)
     parent.run_as_parent(child_config_uri, child_sub_uri, child_pub_uri, config_dict)
     parent.run()
 
