@@ -15,7 +15,7 @@ class MultiRosNode(object):
             self._ros_master_uri = ros_master_uri
         else:
             self._ros_master_uri = os.environ['ROS_MASTER_URI']
-
+# TODO FIGURE OUT WHAT IS WRONG WITH THE PUB/SUB MESSAGES NEVER GET TO THEIR DESTINATION.
         #self._ros_master_uri = ros_master_uri
         self._poll_rate = poll_rate
         self._pub_topics = {}

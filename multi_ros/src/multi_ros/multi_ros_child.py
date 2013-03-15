@@ -19,7 +19,7 @@ class MultiRosChild(MultiRosNode):
         self._zmq_config_socket = self._zmq_context.socket(zmq.REP)
         self._zmq_config_socket.bind(config_uri)
         rospy.loginfo('%s binding to %s for pub' % (self._name, pub_uri))
-        self._zmq_pub_socket.bind(pub_uri)
+        self._zmq_pub_socket.connect(pub_uri)
         rospy.loginfo('%s binding to %s for sub' % (self._name, sub_uri))
         self._zmq_sub_socket.connect(sub_uri)
 
