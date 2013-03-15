@@ -9,31 +9,19 @@ from multi_ros.subscribed_topic import SubscribedTopic
 
 
 class MultiRosChild(MultiRosNode):
-    def __init__(self, name, prefix, ros_master_uri, poll_rate=1.0):
-        super(MultiRosChild, self).__init__(name, prefix, ros_master_uri, poll_rate)
+    def __init__(self, uri, name='MultiRosChild', child_ros_master_uri=None, poll_rate=1.0):
+        super(MultiRosChild, self).__init__(name, child_ros_master_uri, poll_rate)
 
-    def run_as_child(self, config_uri, pub_uri, sub_uri):
-        '''
-        Bind to these addresses.
-        '''
-        # socket for configuration requests
-        self._zmq_context = zmq.Context()
-
-        # socket for publishing messages
-        self._zmq_pub_socket = self._zmq_context.socket(zmq.PUB)
-        self._zmq_pub_lock = threading.Lock()
-
-        # socket for receiving messages
-        self._zmq_sub_socket = self._zmq_context.socket(zmq.SUB)
-        self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
-
+        config_uri = uri + ':5000'
+        pub_uri = uri + ':5001'
+        sub_uri = uri + ':5002'
         rospy.loginfo('%s binding to %s for conf' % (self._name, config_uri))
         self._zmq_config_socket = self._zmq_context.socket(zmq.REP)
         self._zmq_config_socket.bind(config_uri)
         rospy.loginfo('%s binding to %s for pub' % (self._name, pub_uri))
         self._zmq_pub_socket.bind(pub_uri)
         rospy.loginfo('%s binding to %s for sub' % (self._name, sub_uri))
-        self._zmq_sub_socket.bind(sub_uri)
+        self._zmq_sub_socket.connect(sub_uri)
 
         # start thread that publishes remote messages
         self._remote_message_thread = threading.Thread(target=self.remote_message_thread_func)
@@ -79,3 +67,9 @@ class MultiRosChild(MultiRosNode):
                 self._zmq_config_socket.send(pickle.dumps('ERROR'))
 
             loop_rate.sleep()
+
+    def remote_to_local_topic(self, remote_topic):
+        return remote_topic
+
+    def local_to_remote_topic(self, local_topic):
+        return local_topic

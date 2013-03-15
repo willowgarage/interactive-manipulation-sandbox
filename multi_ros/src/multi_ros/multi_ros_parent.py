@@ -1,4 +1,3 @@
-import threading
 import zmq
 import roslib
 import roslib.message
@@ -11,29 +10,18 @@ from multi_ros.subscribed_topic import SubscribedTopic
 
 
 class MultiRosParent(MultiRosNode):
-    def __init__(self, name, prefix, ros_master_uri, poll_rate=1.0):
-        super(MultiRosParent, self).__init__(name, prefix, ros_master_uri, poll_rate)
+    def __init__(self, uri, config_dict, name='MultiRosParent', ros_master_uri=None, poll_rate=1.0):
+        super(MultiRosParent, self).__init__(name, ros_master_uri, poll_rate)
+        self._prefix = config_dict['prefix']
 
-    def run_as_parent(self, config_uri, pub_uri, sub_uri, config_dict):
-        '''
-        Connect to these addressses.
-        '''
-        # socket for configuration requests
-        self._zmq_context = zmq.Context()
-
-        # socket for publishing messages
-        self._zmq_pub_socket = self._zmq_context.socket(zmq.PUB)
-        self._zmq_pub_lock = threading.Lock()
-
-        # socket for receiving messages
-        self._zmq_sub_socket = self._zmq_context.socket(zmq.SUB)
-        self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
-
-        rospy.loginfo('%s connecting to %s forconf' % (self._name, config_uri))
+        config_uri = uri + ':5000'
+        pub_uri = uri + ':5001'
+        sub_uri = uri + ':5002'
+        rospy.loginfo('%s connecting to %s for conf' % (self._name, config_uri))
         self._zmq_config_socket = self._zmq_context.socket(zmq.REQ)
         self._zmq_config_socket.connect(config_uri)
         rospy.loginfo('%s connecting to %s for pub' % (self._name, pub_uri))
-        self._zmq_pub_socket.connect(pub_uri)
+        self._zmq_pub_socket.bind(pub_uri)
         rospy.loginfo('%s connecting to %s for sub' % (self._name, sub_uri))
         self._zmq_sub_socket.connect(sub_uri)
 
@@ -98,3 +86,9 @@ class MultiRosParent(MultiRosNode):
 
         # spin an wait for remote messages to publish
         self.remote_message_thread_func()
+
+    def remote_to_local_topic(self, remote_topic):
+        return self._prefix + remote_topic
+
+    def local_to_remote_topic(self, local_topic):
+        return local_topic[len(self._prefix):]

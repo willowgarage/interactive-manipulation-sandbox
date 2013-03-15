@@ -3,14 +3,20 @@ import zlib
 import time
 import cPickle as pickle
 import rospy
+import zmq
+import os
 from multi_ros.ros_interface import RosInterface
 
 
 class MultiRosNode(object):
-    def __init__(self, name, prefix, ros_master_uri, poll_rate=1.0):
+    def __init__(self, name='MultiRosNode', ros_master_uri=None, poll_rate=1.0):
         self._name = name
-        self._prefix = prefix  #TODO move this to multi_ros_parent
-        self._ros_master_uri = ros_master_uri
+        if ros_master_uri is not None:
+            self._ros_master_uri = ros_master_uri
+        else:
+            self._ros_master_uri = os.environ['ROS_MASTER_URI']
+
+        #self._ros_master_uri = ros_master_uri
         self._poll_rate = poll_rate
         self._pub_topics = {}
         self._pub_topics_lock = threading.Lock()
@@ -19,6 +25,17 @@ class MultiRosNode(object):
 
         # used to interact the local ROS system
         self._ros_interface = RosInterface(self._ros_master_uri, self._name, self.local_message_callback)
+
+        # socket for configuration requests
+        self._zmq_context = zmq.Context()
+
+        # socket for publishing messages
+        self._zmq_pub_socket = self._zmq_context.socket(zmq.PUB)
+        self._zmq_pub_lock = threading.Lock()
+
+        # socket for receiving messages
+        self._zmq_sub_socket = self._zmq_context.socket(zmq.SUB)
+        self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
 
     def local_message_callback(self, msg, local_topic):
         '''
@@ -55,10 +72,11 @@ class MultiRosNode(object):
 
     def remote_message_thread_func(self):
         '''
-        Receive messages from the remote ROS system and republish
-        them locally.
+        Receive messages from the remote ROS system and republish them locally.
         '''
+        print '%s: starting listener' % self._name
         while not rospy.is_shutdown():
+            print '%s: message received' % self._name
             msg_str = self._zmq_sub_socket.recv()
             remote_topic, msg_buf = pickle.loads(msg_str)
             local_topic = self.remote_to_local_topic(remote_topic)
@@ -76,9 +94,3 @@ class MultiRosNode(object):
 
             rospy.logdebug('%s publishing message received over link to topic %s' % (self._name, local_topic))
             self._ros_interface.publish(local_topic, msg_buf)
-
-    def remote_to_local_topic(self, remote_topic):
-        return self._prefix + remote_topic
-
-    def local_to_remote_topic(self, local_topic):
-        return local_topic[len(self._prefix):]
