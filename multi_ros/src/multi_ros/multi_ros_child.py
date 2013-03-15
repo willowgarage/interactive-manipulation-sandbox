@@ -13,15 +13,15 @@ class MultiRosChild(MultiRosNode):
         super(MultiRosChild, self).__init__(name, child_ros_master_uri, poll_rate)
 
         config_uri = uri + ':5000'
-        pub_uri = uri + ':5001'
-        sub_uri = uri + ':5002'
+        sub_uri = uri + ':5001'
+        pub_uri = uri + ':5002'
         rospy.loginfo('%s binding to %s for conf' % (self._name, config_uri))
         self._zmq_config_socket = self._zmq_context.socket(zmq.REP)
         self._zmq_config_socket.bind(config_uri)
         rospy.loginfo('%s binding to %s for pub' % (self._name, pub_uri))
-        self._zmq_pub_socket.connect(pub_uri)
+        self._zmq_pub_socket.bind(pub_uri)
         rospy.loginfo('%s binding to %s for sub' % (self._name, sub_uri))
-        self._zmq_sub_socket.connect(sub_uri)
+        self._zmq_sub_socket.bind(sub_uri)
 
         # start thread that publishes remote messages
         self._remote_message_thread = threading.Thread(target=self.remote_message_thread_func)

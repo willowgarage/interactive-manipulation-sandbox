@@ -15,7 +15,6 @@ class MultiRosNode(object):
             self._ros_master_uri = ros_master_uri
         else:
             self._ros_master_uri = os.environ['ROS_MASTER_URI']
-# TODO FIGURE OUT WHAT IS WRONG WITH THE PUB/SUB MESSAGES NEVER GET TO THEIR DESTINATION.
         #self._ros_master_uri = ros_master_uri
         self._poll_rate = poll_rate
         self._pub_topics = {}
@@ -76,8 +75,8 @@ class MultiRosNode(object):
         '''
         print '%s: starting listener' % self._name
         while not rospy.is_shutdown():
-            print '%s: message received' % self._name
             msg_str = self._zmq_sub_socket.recv()
+            print '%s: message received' % self._name
             remote_topic, msg_buf = pickle.loads(msg_str)
             local_topic = self.remote_to_local_topic(remote_topic)
             with self._pub_topics_lock:
