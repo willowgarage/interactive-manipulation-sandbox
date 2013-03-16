@@ -9,5 +9,6 @@ from multi_ros.multi_ros_child import MultiRosChild
 if __name__ == '__main__':
     child_uri = 'tcp://*'
 
-    # start the multi_ros child in a new process  TODO CLEAN UP THIS BS
-    MultiRosChild(child_uri)
+    # start the multi_ros child in a new process
+    child = MultiRosChild(child_uri)
+    child.remote_forwarding_loop()

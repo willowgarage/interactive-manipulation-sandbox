@@ -15,8 +15,10 @@ class MultiRosNode(object):
             self._ros_master_uri = ros_master_uri
         else:
             self._ros_master_uri = os.environ['ROS_MASTER_URI']
-        #self._ros_master_uri = ros_master_uri
+
         self._poll_rate = poll_rate
+
+        # These dictionaries must be populated by the child classes to forward messages
         self._pub_topics = {}
         self._pub_topics_lock = threading.Lock()
         self._sub_topics = {}
@@ -36,47 +38,51 @@ class MultiRosNode(object):
         self._zmq_sub_socket = self._zmq_context.socket(zmq.SUB)
         self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
 
-    def local_message_callback(self, msg, local_topic):
+    def local_message_callback(self, msg, topic):
         '''
-        Received a message on the local ROS system. Forward it to the remote system.
+        Receive a message on the local ROS system. Forward it to the remote system.
         '''
         with self._sub_topics_lock:
-            if not local_topic in self._sub_topics:
-                rospy.logwarn('%s: Message received on %s but no config info for this topic' % (self._name, local_topic))
+            if topic not in self._sub_topics:
+                rospy.logwarn('%s: Message received on %s but no config file rule for this topic' % (self._name, topic))
                 return
-            topic_info = self._sub_topics[local_topic]
+            topic_info = self._sub_topics[topic]
 
         current_t = time.time()
         if topic_info.rate is not None:
             if topic_info.last_forwarded_t is not None:
                 if (current_t - topic_info.last_forwarded_t) < (1.0/topic_info.rate):
-                    # just forwarded a message on this topic; don't need to forward this one
+                    #  just forwarded a message on this topic ignore this one
                     return
         topic_info.last_forwarded_t = current_t
+        self.forward_message(msg, topic_info, topic)
 
+    def forward_message(self, msg, topic_info,  topic):
+        """
+        Forwards a message to the topic of the same name on the remote system
+        """
         if self._zmq_pub_socket is not None:
             with self._zmq_pub_lock:
-                rospy.logdebug('%s forwarding message on topic %s' % (self._name, local_topic))
+                rospy.loginfo('%s forwarding message to topic %s on the remote system' % (self._name, topic))
                 if topic_info.compression is None:
                     msg_buf = msg._buff
+                    rospy.logdebug('Topic: %s  Uncompressed: %d' % (topic, len(msg._buff), len(msg_buf)))
                 elif topic_info.compression == 'zlib':
                     msg_buf = zlib.compress(msg._buff)
+                    rospy.logdebug('Topic: %s  Uncompressed: %d  Compressed: %d' % (topic, len(msg._buff), len(msg_buf)))
                 else:
-                    rospy.logerr('Unknown compression type %s for topic %s' % (str(topic_info.compression), local_topic))
+                    rospy.logerr('Unknown compression type %s for topic %s' % (str(topic_info.compression), topic))
                     return
 
-                rospy.loginfo('Topic: %s  Uncompressed: %d  Compressed: %d' % (local_topic, len(msg._buff), len(msg_buf)))
-                remote_topic = self.local_to_remote_topic(local_topic)
-                self._zmq_pub_socket.send(pickle.dumps((remote_topic, msg_buf)))
+                self._zmq_pub_socket.send(pickle.dumps((topic, msg_buf)))
 
-    def remote_message_thread_func(self):
+    def remote_forwarding_loop(self):
         '''
         Receive messages from the remote ROS system and republish them locally.
         '''
-        print '%s: starting listener' % self._name
+        rospy.loginfo('%s: starting message listener' % self._name)
         while not rospy.is_shutdown():
             msg_str = self._zmq_sub_socket.recv()
-            print '%s: message received' % self._name
             remote_topic, msg_buf = pickle.loads(msg_str)
             local_topic = self.remote_to_local_topic(remote_topic)
             with self._pub_topics_lock:
@@ -91,5 +97,11 @@ class MultiRosNode(object):
                 rospy.logerr('Unknown compression type %s for topic %s' % (str(topic_info.compression), local_topic))
                 continue
 
-            rospy.logdebug('%s publishing message received over link to topic %s' % (self._name, local_topic))
+            rospy.loginfo('%s: publishing received message to topic %s' % (self._name, local_topic))
             self._ros_interface.publish(local_topic, msg_buf)
+
+    def remote_to_local_topic(self, remote_topic):
+        """
+        Default conversion assumes remote and local are the same
+        """
+        return remote_topic

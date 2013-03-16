@@ -15,5 +15,6 @@ if __name__ == '__main__':
     config_dict = json.loads(open(config_file).read())
     child_uri = 'tcp://%s' % child_name
 
-    # start the multi_ros parent in the main process TODO CLEAN UP THIS BS
-    MultiRosParent(child_uri, config_dict)
+    # start the multi_ros parent in the main process
+    parent = MultiRosParent(child_uri, config_dict)
+    parent.remote_forwarding_loop()

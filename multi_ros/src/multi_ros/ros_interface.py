@@ -1,42 +1,12 @@
 import copy
 import threading
 import os
-from new import classobj
 import roslib
 import rospy
 import rosgraph
 
-
-def make_passthrough_message_class(message_type, md5sum):
-    '''
-    Creates a message class which knows its type, but doesnt serialize
-    or deserialize.
-
-    Args:
-        message_type (str) : ROS message type.
-    '''
-    message_class = classobj('t_passthrough_%s' % message_type, (rospy.msg.AnyMsg,), {
-        '_type': message_type,
-        '_md5sum': md5sum
-    })
-    return message_class
-
-
-class TopicInfo:
-    '''
-    Contains information about a single topic.
-
-    This topic may exist on the remote ROS system, the local
-    ROS system, or both.
-    '''
-    def __init__(self, local_topic):
-        self.local_topic = local_topic
-        self.message_type = None
-        self.md5sum = None
-        self.subscribers = []
-        self.publishers = []
-        self.publisher = None
-        self.subscriber = None
+from new import classobj
+from multi_ros.topic_info import TopicInfo
 
 
 class RosInterface:
@@ -67,8 +37,22 @@ class RosInterface:
         # create class for interfacing with the ROS master
         caller_id = rospy.get_caller_id()
         self._master = rosgraph.Master(caller_id)
-        print 'My URI is: %s' % self._master.lookupNode(caller_id)
+        rospy.loginfo('My URI is: %s' % self._master.lookupNode(caller_id))
         _my_rospy_uri = self._master.lookupNode(caller_id)
+
+    def make_passthrough_message_class(self, message_type, md5sum):
+        '''
+        Creates a message class which knows its type, but doesnt serialize
+        or deserialize.
+
+        Args:
+            message_type (str) : ROS message type.
+        '''
+        message_class = classobj('t_passthrough_%s' % message_type, (rospy.msg.AnyMsg,), {
+            '_type': message_type,
+            '_md5sum': md5sum
+        })
+        return message_class
 
     def get_ros_graph(self):
         '''
@@ -99,7 +83,6 @@ class RosInterface:
         pubs = dict(pubs)
         subs = dict(subs)
         all_local_topics = set.union(set(pubs.keys()), set(subs.keys()))
-        print subs
 
         # get the types of all topics from the ROS master
         topic_types = dict(self._master.getTopicTypes())
@@ -112,57 +95,50 @@ class RosInterface:
 
             # update info on publishers
             for topic in all_local_topics:
-                if not topic in self._topics:
-                    self._topics[topic] = TopicInfo(topic)
-                topic_info = self._topics[topic]
-
                 # set the topic's message type (this is just a string)
-                topic_info.message_type = topic_types[topic]
-
                 # this is getting the md5sum from the message class, not from the node
                 # publishing the topic. we're assuming that it is using the same message
                 # definition as we find in our ROS_PACKAGE_PATH
-                message_class = roslib.message.get_message_class(topic_info.message_type)
+                message_class = roslib.message.get_message_class(self._topics[topic].message_type)
                 if message_class is None:
-                    rospy.logdebug('Warning: no message class for message type %s' % topic_info.message_type)
+                    rospy.logdebug('Warning: no message class for message type %s' % self._topics[topic].message_type)
+                    md5sum = None
                 else:
-                    topic_info.md5sum = message_class._md5sum
+                    md5sum = message_class._md5sum
+                self.update_topic(topic, topic_types[topic], message_class, md5sum)
 
                 if topic in pubs:
                     for publishing_node in pubs[topic]:
                         if not publishing_node == self._node_name:
-                            topic_info.publishers.append(publishing_node)
+                            self._topics[topic].publishers.append(publishing_node)
 
                 if topic in pubs:
                     for subscribing_node in pubs[topic]:
                         if not subscribing_node == self._node_name:
-                            topic_info.subscribers.append(subscribing_node)
+                            self._topics[topic].subscribers.append(subscribing_node)
 
     def advertise(self, topic, message_type, md5sum):
-        if not topic in self._topics:
-            self._topics[topic] = TopicInfo(topic)
-        topic_info = self._topics[topic]
-        topic_info.message_type = message_type
-        topic_info.md5sum = md5sum
-        topic_info.message_class = make_passthrough_message_class(message_type, md5sum)
+        message_class = self.make_passthrough_message_class(message_type, md5sum)
+        self.update_topic(topic, message_type, message_class, md5sum)
 
         # only create publisher for topic if we haven't already
-        if topic_info.publisher is None:
-            message_class = make_passthrough_message_class(message_type, md5sum)
-            topic_info.publisher = rospy.Publisher(topic, message_class)
+        if self._topics[topic].publisher is None:
+            message_class = self.make_passthrough_message_class(message_type, md5sum)
+            self._topics[topic].publisher = rospy.Publisher(topic, message_class)
 
     def subscribe(self, topic, message_type, md5sum):
-        if not topic in self._topics:
-            self._topics[topic] = TopicInfo(topic)
-        topic_info = self._topics[topic]
-        topic_info.message_type = message_type
-        topic_info.md5sum = md5sum
-        topic_info.message_class = make_passthrough_message_class(message_type, md5sum)
+        message_class = self.make_passthrough_message_class(message_type, md5sum)
+        self.update_topic(topic, message_type, message_class, md5sum)
 
         # only create subscriber for topic if we haven't already
-        if topic_info.subscriber is None:
-            message_class = make_passthrough_message_class(message_type, md5sum)
-            topic_info.subscriber = rospy.Subscriber(topic, message_class, self.message_callback, topic)
+        if self._topics[topic].subscriber is None:
+            self._topics[topic].subscriber = rospy.Subscriber(topic, message_class, self.message_callback, topic)
+
+    def update_topic(self, topic, message_type, message_class, md5sum):
+        if not topic in self._topics:
+            self._topics[topic] = TopicInfo(topic, message_type, message_class, md5sum)
+        else:
+            self._topics[topic].update(topic, message_type, message_class, md5sum)
 
     def publish(self, topic, msg_data):
         with self._topics_lock:

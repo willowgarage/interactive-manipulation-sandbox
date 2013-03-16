@@ -11,6 +11,9 @@ from multi_ros.subscribed_topic import SubscribedTopic
 
 class MultiRosParent(MultiRosNode):
     def __init__(self, uri, config_dict, name='MultiRosParent', ros_master_uri=None, poll_rate=1.0):
+        """
+        Connects zmq sockets to the child
+        """
         super(MultiRosParent, self).__init__(name, ros_master_uri, poll_rate)
         self._prefix = config_dict['prefix']
 
@@ -25,6 +28,9 @@ class MultiRosParent(MultiRosNode):
         rospy.loginfo('%s connecting to %s for sub' % (self._name, sub_uri))
         self._zmq_sub_socket.connect(sub_uri)
 
+        self.configure_child(config_dict)
+
+    def configure_child(self, config_dict):
         remote_sub_topics = []
         remote_pub_topics = []
         rospy.loginfo('%s connecting: %s' % (self._name, str(config_dict)))
@@ -34,14 +40,12 @@ class MultiRosParent(MultiRosNode):
 
             message_type = str(topic_dict['message_type'])
             message_class = roslib.message.get_message_class(message_type)
+            compression = None
             if 'compression' in topic_dict:
                 compression = topic_dict['compression']
-            else:
-                compression = None
+            rate = None
             if 'rate' in topic_dict:
                 rate = topic_dict['rate']
-            else:
-                rate = None
             md5sum = str(message_class._md5sum)
 
             remote_sub_topics.append({
@@ -51,44 +55,34 @@ class MultiRosParent(MultiRosNode):
                 'topic': remote_topic, 'message_type': message_type,
                 'md5sum': md5sum, 'compression': compression})
 
-            sub_topic_info = SubscribedTopic()
-            sub_topic_info.topic = local_topic
-            sub_topic_info.message_type = message_type
-            sub_topic_info.md5sum = md5sum
-            sub_topic_info.rate = rate
-            sub_topic_info.compression = compression
-            self._sub_topics[sub_topic_info.topic] = sub_topic_info
+            self._sub_topics[local_topic] = SubscribedTopic(local_topic, message_type, md5sum, rate, compression)
+            self._pub_topics[local_topic] = PublishedTopic(local_topic, message_type, md5sum, compression)
 
-            pub_topic_info = PublishedTopic()
-            pub_topic_info.topic = local_topic
-            pub_topic_info.message_type = message_type
-            pub_topic_info.md5sum = md5sum
-            pub_topic_info.compression = compression
-            self._pub_topics[pub_topic_info.topic] = pub_topic_info
-
-            # subscribe to the topic on the local ROS system
+            # subscribe/advertise to the topic on the local ROS system
             rospy.loginfo('%s subscribing to %s' % (self._name, local_topic))
             self._ros_interface.subscribe(local_topic, message_type, md5sum)
-
-            # advertise the topic on the local ROS system
             rospy.loginfo('%s advertising %s' % (self._name, local_topic))
             self._ros_interface.advertise(local_topic, message_type, md5sum)
 
-        # tell the remote to advertise each of the forwarded topics
+        # tell the remote to advertise/subscribe to each of the forwarded topics
         command = {'COMMAND': 'ADVERTISE', 'TOPICS': remote_pub_topics}
         self._zmq_config_socket.send(pickle.dumps(command))
         pickle.loads(self._zmq_config_socket.recv())
 
-        # tell the remote to subscribe to each of the forwarded topics
         command = {'COMMAND': 'SUBSCRIBE', 'TOPICS': remote_sub_topics}
         self._zmq_config_socket.send(pickle.dumps(command))
         pickle.loads(self._zmq_config_socket.recv())
 
-        # spin an wait for remote messages to publish
-        self.remote_message_thread_func()
+    # Parent Prefix handling functions
+    def forward_message(self, msg, topic_info,  local_topic):
+        """
+        Overrides the MultiRosNode forward_message to remove the prefix before forwarding the message to the child
+        """
+        local_topic = local_topic[len(self._prefix):]
+        super(MultiRosParent, self).forward_message(msg, topic_info, local_topic)
 
     def remote_to_local_topic(self, remote_topic):
+        """
+        Overrides default conversion to add the prefix to the child topic
+        """
         return self._prefix + remote_topic
-
-    def local_to_remote_topic(self, local_topic):
-        return local_topic[len(self._prefix):]

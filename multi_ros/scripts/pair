@@ -11,11 +11,13 @@ from multi_ros.multi_ros_child import MultiRosChild
 
 
 def run_child(child_ros_master_uri, child_uri):
-    MultiRosChild(child_uri, 'multi_ros_child', child_ros_master_uri)
+    child = MultiRosChild(child_uri, 'multi_ros_child', child_ros_master_uri)
+    child.remote_forwarding_loop()
 
 
 def run_parent(parent_ros_master_uri, child_uri, config_dict):
-    MultiRosParent(child_uri, config_dict, 'multi_ros_parent', parent_ros_master_uri)
+    parent = MultiRosParent(child_uri, config_dict, 'multi_ros_parent', parent_ros_master_uri)
+    parent.remote_forwarding_loop()
 
 if __name__ == '__main__':
     parent_ros_master_uri = sys.argv[1]
