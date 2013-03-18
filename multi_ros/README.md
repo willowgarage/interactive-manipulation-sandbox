@@ -10,34 +10,58 @@ Description
 
 Forwards ROS messages between two ROS systems.
 
-multi_ros consists of two processes, the multi_ros_child and the
-multi_ros_parent. Typically, the multi_ros_child will run as a server on the
+multi_ros consists of two processes, the multi_ros_client and the
+multi_ros_server. Typically, the multi_ros_client will run as a server on the
 robot. It simply waits for configuration requests. When the
-multi_ros_parent is run, it sends configuration requests to the multi_ros_child
+multi_ros_server is run, it sends configuration requests a number of multi_ros_clients
 (using a ZeroMQ request/reply socket). Using configuration requests,
 the multi_ros_parent can get a list of topics currently advertised on the
-ROS system to which multi_ros_child is connect; it can tell multi_ros_child what
+ROS system to which multi_ros_client is connected; it can tell multi_ros_client what
 topics to advertise, and it can tell multi_ros_child what topics it should
 subscribe to (and forward to the parent).
 
-After multi_ros_parent configures multi_ros_child, the two each wait for
-incoming ROS messages on their ROS system, and forward them to each
+After multi_ros_server configures the multi_ros_clients, it waits for
+incoming ROS messages on their ROS system, and forwards them to each
 other over two ZeroMQ pub/sub connections.
 
+Configuration
+==========
+Config files are in json format as the following example
+
+{
+"uri": "tcp://clientname",
+"prefix": "/uniquename",
+"topics": [
+   {"topic": "/chatter", "message_type": "std_msgs/String", "compression": "zlib", "rate": 1.0},
+   {"topic": "/rosout" , "message_type": "rosgraph_msgs/Log", "compression": "zlib", "rate": 1.0}
+   ]
+}
+
+uri
+Should be a tcp protocol and hostname
+
+prefix
+This prefix should be unique
+
+topics
+Any number of topics can be forwarded
+topic - name of topic
+message_type - ros message type of topic
+compression - zlib
+
+prefix
+
+
 Use
-=======
+==========
 
-For now, both processes are launched and configured by a single script
-called multi_ros_pair. This means that they actually run on the same
-computer for the moment, but because they use ZeroMQ for communication
-they can easily be split and run on different systems. To run multi_ros_child
-and multi_ros_parent, do:
-
+On server:
 ```bash
 roscd multi_ros
-rosrun multi_ros multi_ros_pair http://localhost:11312 http://localhost:11313 config/test.conf
+rosrun multi_ros multi_ros_server config/test.conf config/prn.conf
 ```
 
-Here the first URI is the ROS_MASTER_URI of the "parent" ROS system, and the second uri
-is the ROS_MASTER_URI of the "child" ROS system. test.conf is a json file which
-specifies what topics to forward, and what prefix the parent should add to the topics.
+On all clients(robots):
+```bash
+rosrun multi_ros multi_ros_client
+```
