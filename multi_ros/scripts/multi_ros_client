@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+import roslib
+roslib.load_manifest('multi_ros')
+from multi_ros.multi_ros_child import MultiRosChild
+
+if __name__ == '__main__':
+    # Starts a multi_ros child client in 2 threads
+    # One to listen for configuration and the other to forward messages
+    MultiRosChild()
