@@ -24,8 +24,36 @@ After multi_ros_server configures the multi_ros_clients, it waits for
 incoming ROS messages on their ROS system, and forwards them to each
 other over two ZeroMQ pub/sub connections.
 
+Configuration
+==========
+Config files are in json format as the following example
+
+{
+"uri": "tcp://clientname",
+"prefix": "/uniquename",
+"topics": [
+   {"topic": "/chatter", "message_type": "std_msgs/String", "compression": "zlib", "rate": 1.0},
+   {"topic": "/rosout" , "message_type": "rosgraph_msgs/Log", "compression": "zlib", "rate": 1.0}
+   ]
+}
+
+uri
+Should be a tcp protocol and hostname
+
+prefix
+This prefix should be unique
+
+topics
+Any number of topics can be forwarded
+topic - name of topic
+message_type - ros message type of topic
+compression - zlib
+
+prefix
+
+
 Use
-=======
+==========
 
 On server:
 ```bash
@@ -33,8 +61,7 @@ roscd multi_ros
 rosrun multi_ros multi_ros_server config/test.conf config/prn.conf
 ```
 
-On client(robot):
+On all clients(robots):
 ```bash
-roscd multi_ros
 rosrun multi_ros multi_ros_client
 ```

@@ -37,7 +37,6 @@ class MultiRosNode(object):
 
     def __del__(self):
         self._shutdown = True
-        print '%s: shutting down' % self._name
 
     def local_message_callback(self, msg, topic):
         '''

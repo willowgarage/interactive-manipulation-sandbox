@@ -31,10 +31,9 @@ class MultiRosParent(MultiRosNode):
         self._zmq_sub_socket.connect(sub_uri)
         self._config_dict = config_dict
         self.configure_child()
-        print 'starting thread'
+
         self._forwarding_thread = threading.Thread(target=self.remote_forwarding_loop)
         self._forwarding_thread.start()
-        print 'thread started'
 
     def configure_child(self):
         remote_sub_topics = []
@@ -78,7 +77,6 @@ class MultiRosParent(MultiRosNode):
         command = {'COMMAND': 'SUBSCRIBE', 'TOPICS': remote_sub_topics}
         self._zmq_config_socket.send(pickle.dumps(command))
         pickle.loads(self._zmq_config_socket.recv())
-        print 'completed configuration'
 
     # Parent Prefix handling functions
     def forward_message(self, msg, topic_info,  local_topic):
