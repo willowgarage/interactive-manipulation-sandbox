@@ -4,17 +4,13 @@ import time
 import cPickle as pickle
 import rospy
 import zmq
-import os
 from multi_ros.ros_interface import RosInterface
 
 
 class MultiRosNode(object):
     def __init__(self, name='MultiRosNode', ros_master_uri=None, poll_rate=1.0):
         self._name = name
-        if ros_master_uri is not None:
-            self._ros_master_uri = ros_master_uri
-        else:
-            self._ros_master_uri = os.environ['ROS_MASTER_URI']
+        self._ros_master_uri = ros_master_uri
 
         self._poll_rate = poll_rate
 
@@ -37,6 +33,11 @@ class MultiRosNode(object):
         # socket for receiving messages
         self._zmq_sub_socket = self._zmq_context.socket(zmq.SUB)
         self._zmq_sub_socket.setsockopt(zmq.SUBSCRIBE, '')
+        self._shutdown = False
+
+    def __del__(self):
+        self._shutdown = True
+        print '%s: shutting down' % self._name
 
     def local_message_callback(self, msg, topic):
         '''
@@ -81,8 +82,9 @@ class MultiRosNode(object):
         Receive messages from the remote ROS system and republish them locally.
         '''
         rospy.loginfo('%s: starting message listener' % self._name)
-        while not rospy.is_shutdown():
+        while not rospy.is_shutdown() and not self._shutdown:
             msg_str = self._zmq_sub_socket.recv()
+            print '%s: message received' % self._name
             remote_topic, msg_buf = pickle.loads(msg_str)
             local_topic = self.remote_to_local_topic(remote_topic)
             with self._pub_topics_lock:

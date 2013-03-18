@@ -10,11 +10,12 @@ from multi_ros.topic_info import TopicInfo
 
 
 class RosInterface:
-    def __init__(self, ros_master_uri, node_name, user_message_callback=None):
+    def __init__(self, ros_master_uri=None, node_name='RosInterface', user_message_callback=None):
         self._user_message_callback = user_message_callback
 
         # set the ROS master uri that rospy will use
-        os.environ['ROS_MASTER_URI'] = ros_master_uri
+        if ros_master_uri is not None:
+            os.environ['ROS_MASTER_URI'] = ros_master_uri
 
         # install an ugly hack to keep us from subscribing to ourselves
         _my_rospy_uri = None
@@ -118,6 +119,9 @@ class RosInterface:
                             self._topics[topic].subscribers.append(subscribing_node)
 
     def advertise(self, topic, message_type, md5sum):
+        """
+        Updates the topic dictionary and creates a Publisher instance if necessary
+        """
         message_class = self.make_passthrough_message_class(message_type, md5sum)
         self.update_topic(topic, message_type, message_class, md5sum)
 
@@ -127,6 +131,9 @@ class RosInterface:
             self._topics[topic].publisher = rospy.Publisher(topic, message_class)
 
     def subscribe(self, topic, message_type, md5sum):
+        """
+        Updates the topic dictionary and creates a Subscriber instance if necessary
+        """
         message_class = self.make_passthrough_message_class(message_type, md5sum)
         self.update_topic(topic, message_type, message_class, md5sum)
 
@@ -135,12 +142,19 @@ class RosInterface:
             self._topics[topic].subscriber = rospy.Subscriber(topic, message_class, self.message_callback, topic)
 
     def update_topic(self, topic, message_type, message_class, md5sum):
+        """
+        Creates a new topic entry if one does not exist.
+        Otherwise updates the topic information.
+        """
         if not topic in self._topics:
             self._topics[topic] = TopicInfo(topic, message_type, message_class, md5sum)
         else:
             self._topics[topic].update(topic, message_type, message_class, md5sum)
 
     def publish(self, topic, msg_data):
+        """
+        publish a an "AnyMsg" with the msg_data on the topic provided
+        """
         with self._topics_lock:
             if topic not in self._topics:
                 rospy.logwarn("Can't publish message on nonexistant topic %s" % topic)
@@ -149,14 +163,14 @@ class RosInterface:
                 rospy.logwarn("Can't publish message on topic %s (not advertised)" % topic)
                 return
 
-            topic_info = self._topics[topic]
-            msg = topic_info.message_class()
+            msg = self._topics[topic].message_class()
             msg._buff = msg_data
-
             self._topics[topic].publisher.publish(msg)
 
     def message_callback(self, msg, topic):
+        """
+        Called upon receipt of message
+        """
         if self._user_message_callback is None:
             return
-
         self._user_message_callback(msg, topic)

@@ -2,7 +2,9 @@ import zmq
 import roslib
 import roslib.message
 import rospy
+import threading
 import cPickle as pickle
+import time
 
 from multi_ros.multi_ros_node import MultiRosNode
 from multi_ros.published_topic import PublishedTopic
@@ -10,16 +12,16 @@ from multi_ros.subscribed_topic import SubscribedTopic
 
 
 class MultiRosParent(MultiRosNode):
-    def __init__(self, uri, config_dict, name='MultiRosParent', ros_master_uri=None, poll_rate=1.0):
+    def __init__(self, config_dict, name='MultiRosParent', ros_master_uri=None, poll_rate=1.0):
         """
         Connects zmq sockets to the child
         """
         super(MultiRosParent, self).__init__(name, ros_master_uri, poll_rate)
         self._prefix = config_dict['prefix']
 
-        config_uri = uri + ':5000'
-        pub_uri = uri + ':5001'
-        sub_uri = uri + ':5002'
+        config_uri = config_dict['uri'] + ':5000'
+        pub_uri = config_dict['uri'] + ':5001'
+        sub_uri = config_dict['uri'] + ':5002'
         rospy.loginfo('%s connecting to %s for conf' % (self._name, config_uri))
         self._zmq_config_socket = self._zmq_context.socket(zmq.REQ)
         self._zmq_config_socket.connect(config_uri)
@@ -27,14 +29,18 @@ class MultiRosParent(MultiRosNode):
         self._zmq_pub_socket.connect(pub_uri)
         rospy.loginfo('%s connecting to %s for sub' % (self._name, sub_uri))
         self._zmq_sub_socket.connect(sub_uri)
+        self._config_dict = config_dict
+        self.configure_child()
+        print 'starting thread'
+        self._forwarding_thread = threading.Thread(target=self.remote_forwarding_loop)
+        self._forwarding_thread.start()
+        print 'thread started'
 
-        self.configure_child(config_dict)
-
-    def configure_child(self, config_dict):
+    def configure_child(self):
         remote_sub_topics = []
         remote_pub_topics = []
-        rospy.loginfo('%s connecting: %s' % (self._name, str(config_dict)))
-        for topic_dict in config_dict['topics']:
+        rospy.loginfo('%s connecting: %s' % (self._name, str(self._config_dict)))
+        for topic_dict in self._config_dict['topics']:
             remote_topic = str(topic_dict['topic'])
             local_topic = self.remote_to_local_topic(remote_topic)
 
@@ -72,6 +78,7 @@ class MultiRosParent(MultiRosNode):
         command = {'COMMAND': 'SUBSCRIBE', 'TOPICS': remote_sub_topics}
         self._zmq_config_socket.send(pickle.dumps(command))
         pickle.loads(self._zmq_config_socket.recv())
+        print 'completed configuration'
 
     # Parent Prefix handling functions
     def forward_message(self, msg, topic_info,  local_topic):
