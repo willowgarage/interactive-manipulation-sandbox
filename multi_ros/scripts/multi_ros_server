@@ -1,8 +1,0 @@
-#!/usr/bin/env python
-import roslib
-roslib.load_manifest('multi_ros')
-from multi_ros.multi_ros_server import MultiRosServer
-
-if __name__ == '__main__':
-    # start the multi_ros_server it will process args with argparse
-    MultiRosServer()
