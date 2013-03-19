@@ -1,3 +1,0 @@
-string topic
-uint64 bytes_sent
-uint64 bytes_received
