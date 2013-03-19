@@ -1,3 +1,0 @@
-uint64 total_bytes_sent
-uint64 total_bytes_received
-TopicLinkStats[] topic_link_stats
