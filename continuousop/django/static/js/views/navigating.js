@@ -14,14 +14,6 @@ function(
 
   });
 
-  Ember.Handlebars.registerHelper('showPlace', function(value) {
-    // Show a place name appropriately:
-    //   "plug" ==> "the plug"
-    //   "Guy's desk" ==> "Guy's desk"
-
-    if (value.trim().toLowerCase().indexOf("'s") === 0)
-      return value;
-    return "the " + value;
-  });
 
 });
+
