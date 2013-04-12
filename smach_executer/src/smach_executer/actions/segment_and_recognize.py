@@ -8,7 +8,7 @@ import scipy
 from smach import State
 
 from pr2_interactive_object_detection.msg import UserCommandAction, UserCommandGoal
-from object_manipulation_msgs.msg import GraspableObjectList
+from manipulation_msgs.msg import GraspableObjectList
 from actionlib_msgs.msg import GoalStatus
 from object_manipulator.convert_functions import *
 
