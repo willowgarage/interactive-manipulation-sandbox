@@ -81,6 +81,7 @@ class Namespace(BaseNamespace, HealthMonitorMixin):
             del_user_from_context( old_context, self.socket.sessid)
             self.update_contexts( old_context)
             clear_context( self.socket.sessid)
+        self.disconnect()
 
     def log( self, message):
         pass
